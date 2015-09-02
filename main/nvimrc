@@ -1,0 +1,193 @@
+filetype off
+
+set autoindent
+set autoread
+set breakindent
+set completeopt-=preview
+set cursorline
+set encoding=utf-8
+set expandtab
+set fileencodings=utf-8,ucs-bom,iso-2022-jp,cp932,euc-jp,default,latin
+set laststatus=2
+set list
+set listchars=tab:>\ ,trail:~,nbsp:%
+set modeline
+set mouse=v
+set nocursorcolumn
+set nofoldenable
+set number
+set numberwidth=5
+set shiftwidth=2 "cindentや>><<で入力されるインデントの幅
+set showmatch
+set smartindent
+set softtabstop=2 "<TAB>を入力した際に入力されるインデントの幅
+set splitbelow
+set tabstop=2 "<TAB>の見た目の幅数
+set wrap
+set statusline=%f%{(fugitive#head(7)!=''?':'.fugitive#head(7):'')}%(\ %M%R%)
+set statusline+=%=\ \ 
+set statusline+=%{(&ft!=''?&ft:'plain').':'.(&fenc!=''?&fenc:&enc).':'.&ff}\ [%2B]\ %v:%l/%L
+let g:tex_flavor = 'lualatex'
+
+colorscheme desert
+highlight CursorLineNR cterm=bold
+
+call mkdir(expand("~/.cache/nvim/swap"), 'p')
+set swapfile
+set directory=~/.cache/nvim/swap
+call mkdir(expand("~/.cache/nvim/undo"), 'p')
+set undofile
+set undodir=~/.cache/nvim/undo
+call mkdir(expand("~/.cache/nvim/backup"), 'p')
+set backup
+set backupdir=~/.cache/nvim/backup
+
+nnoremap <silent> <C-n> gt
+nnoremap <silent> <C-p> gT
+nnoremap <expr> <C-k><C-p> ( &paste == 1 ) ? ":set nopaste\<CR>" : ":set paste\<CR>"
+nnoremap <expr> <C-k><C-n> ( &number == 1 ) ? ":set nonumber\<CR>" : ":set number\<CR>"
+nnoremap <expr> <C-k><C-r> ( &readonly == 1 ) ? ":set readonly!\<CR>" : ":set readonly\<CR>"
+nnoremap <expr> <C-k><C-e> ( &expandtab == 1 ) ? ":set expandtab!\<CR>" : ":set expandtab\<CR>"
+nnoremap <C-b> <Nop>
+nnoremap Y "+y
+nnoremap YY "+yy
+nnoremap - "+p
+nnoremap _ "+P
+vnoremap Y "+y
+inoremap <silent> <C-w>" <Esc>:split<CR>:terminal<CR>
+inoremap <silent> <C-w>% <Esc>:vsplit<CR>:terminal<CR>
+inoremap <silent> <C-w>x <Esc><C-w>q
+inoremap <silent> <C-w>c <Esc>:tabnew<CR>:terminal<CR>
+inoremap <silent> <C-w><C-c> <Esc>:tabnew<CR>:terminal<CR>
+inoremap <silent> <C-w>n <Esc>gt
+inoremap <silent> <C-w><C-n> <Esc>gt
+inoremap <silent> <C-w>p <Esc>gT
+inoremap <silent> <C-w><C-p> <Esc>gT
+inoremap <silent> <C-w>t <Esc>:tabnew<CR>
+nnoremap <silent> <C-w>" :split<CR>:terminal<CR>
+nnoremap <silent> <C-w>% :vsplit<CR>:terminal<CR>
+nnoremap <silent> <C-w>x <C-w>q
+nnoremap <silent> <C-w>c :tabnew<CR>:terminal<CR>
+nnoremap <silent> <C-w><C-c> :tabnew<CR>:terminal<CR>
+nnoremap <silent> <C-w>n gt
+nnoremap <silent> <C-w><C-n> gt
+nnoremap <silent> <C-w>p gT
+nnoremap <silent> <C-w><C-p> gT
+nnoremap <silent> <C-w>t :tabnew<CR>
+tnoremap <silent> <C-w>" <C-\><C-n>:split<CR>:terminal<CR>
+tnoremap <silent> <C-w>% <C-\><C-n>:vsplit<CR>:terminal<CR>
+tnoremap <silent> <C-w>x <C-\><C-n><C-w>q
+tnoremap <silent> <C-w>c <C-\><C-n>:tabnew<CR>:terminal<CR>
+tnoremap <silent> <C-w><C-c> <C-\><C-n>:tabnew<CR>:terminal<CR>
+tnoremap <silent> <C-w>n <C-\><C-n>gt
+tnoremap <silent> <C-w><C-n> <C-\><C-n>gt
+tnoremap <silent> <C-w>p <C-\><C-n>gT
+tnoremap <silent> <C-w><C-p> <C-\><C-n>gT
+tnoremap <silent> <C-w><C-w> <C-\><C-n>
+tnoremap <silent> <C-w>t <C-\><C-n>:tabnew<CR>
+
+if has('vim_starting')
+  set runtimepath+=~/.nvim/bundle/Vundle.vim
+endif
+call vundle#begin()
+Plugin 'gmarik/Vundle.vim'
+Plugin 'Shougo/neocomplcache.vim'
+Plugin 'Shougo/neosnippet'
+Plugin 'vim-scripts/vim-auto-save'
+Plugin 'scrooloose/nerdtree'
+Plugin 'tpope/vim-fugitive'
+Plugin 'majutsushi/tagbar'
+Plugin 'scrooloose/syntastic'
+Plugin 'dag/vim2hs'
+Plugin 'slim-template/vim-slim'
+Plugin 'stephpy/vim-yaml'
+call vundle#end()
+
+" neosnippet
+let path_snippet_local = expand('~/.cache/neosnippet/localsnippets')
+let g:neosnippet#disable_runtime_snippets = { '_': 1 }
+let g:neosnippet#snippets_directory = expand('~/.nvim/snippets')
+nnoremap <expr> <C-i><C-i> ":NeoSnippetSource " . path_snippet_local . "\<CR>"
+nnoremap <expr> <C-i>e ":new " . path_snippet_local . "\<CR>:set filetype=neosnippet\<CR>"
+nnoremap <silent> <C-i>E :sp<CR>:NeoSnippetEdit<CR>
+function! s:keymappings_tab()
+  if neosnippet#expandable()
+    return "\<Plug>(neosnippet_expand)"
+  elseif neosnippet#jumpable()
+    return "\<Plug>(neosnippet_jump)"
+  elseif pumvisible()
+    return "\<C-n>"
+  else
+    return "\<TAB>"
+  endif
+endfunction
+imap <expr> <TAB> <SID>keymappings_tab()
+smap <expr> <TAB> <SID>keymappings_tab()
+
+" neocomplcache
+let g:acp_enableAtStartup = 0
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_smart_case = 1
+let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+if !exists('g:neocomplcache_keyword_patterns')
+  let g:neocomplcache_keyword_patterns = {}
+endif
+let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+
+" syntastic
+let g:syntastic_mode_map = { 'mode': 'passive' }
+let g:syntastic_c_check_header = 1
+let g:syntastic_cpp_compiler_options = '-std=c++11'
+nnoremap <silent> <C-k><C-k> :SyntasticCheck<CR>:Errors<CR>
+
+" tagbar
+let g:tagbar_autoclose = 1
+let g:tagbar_autofocus = 1
+let g:tagbar_compact = 1
+let g:tagbar_iconchars = ['+', '-']
+let g:tagbar_type_tex = {
+      \ 'ctagstype': 'latex',
+      \ 'kinds': [
+      \              's:sections',
+      \              'g:graphics:0:0',
+      \              'l:labels',
+      \              'r:refs:1:0',
+      \              'p:pagerefs:1:0'
+      \          ],
+      \ 'sort': 0,
+      \ 'deffile': expand('~/.nvim/ctags/latex')
+      \ }
+nnoremap <silent> <C-k><C-l> :TagbarToggle<CR>
+
+" vim-auto-save
+let g:auto_save = 1
+let g:auto_save_in_insert_mode = 0
+nnoremap <silent> <C-k><C-a> :AutoSaveToggle<CR>
+
+" vim-fugitive
+nnoremap <silent> <C-g>a :Gwrite<CR>
+nnoremap <silent> <C-g>b :Gblame<CR>
+nnoremap <silent> <C-g>c :Gcommit<CR>
+nnoremap <silent> <C-g>C :Gcommit -a<CR>
+nnoremap <silent> <C-g>l :Glcd<CR>
+nnoremap <silent> <C-g>d :Gvdiff<CR>
+nnoremap <silent> <C-g>s :Gstatus<CR>
+nnoremap <silent> <C-g>p :Gpush<CR>
+nnoremap <silent> <C-g>P :Gpull<CR>
+
+" nerdtree
+let g:NERDTreeDirArrows = 0
+let g:NERDTreeHijackNetrw = 1
+let g:NERDTreeMinimalUI = 1
+let g:NERDTreeQuitOnOpen = 1
+call mkdir(expand("~/.cache/nvim"), 'p')
+let g:NERDTreeBookmarksFile = expand('~/.cache/nvim/NERDTreeBookmarks')
+nnoremap <silent> <C-l> :NERDTreeToggle<CR>
+
+" vim2hs
+let g:haskell_conceal = 0
+
+syntax on
+filetype indent plugin on
+

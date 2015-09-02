@@ -1,0 +1,85 @@
+# tex.snip
+
+snippet h1
+options head
+  \section{${0}}
+
+snippet h2
+options head
+  \subsection{${0}}
+
+snippet h3
+options head
+  \subsubsection{${0}}
+
+snippet h1i
+options head
+  \section*{${0}}
+
+snippet h2i
+options head
+  \subsection*{${0}}
+
+snippet h3i
+options head
+  \subsubsection*{${0}}
+
+snippet ul
+options head
+  \begin{itemize}
+    ${0}
+  \end{itemize}
+
+snippet ol
+options head
+  \begin{enumerate}
+    ${0}
+  \end{enumerate}
+
+snippet li
+options head
+  \item ${0}
+
+snippet dl
+options head
+  \begin{description}
+    ${0}
+  \end{description}
+
+snippet dt
+alias dd
+options head
+  \item[${1}] ${0}
+
+snippet table
+options head
+  \begin{table}[${1:ht}]
+    \begin{tabular}{${2}}${0}
+    \end{tabular}
+  \end{table}
+
+snippet img
+options head
+  \begin{figure}[${1:ht}]
+    \centering
+    \includegraphics{${2}}
+    \caption{${3}}
+  \end{figure}
+
+snippet Wc
+options head
+  \makeatletter
+  \def\WordCount#1{%
+    \@tempcnta\z@
+    \@tfor \@tempa:=#1\do{\advance\@tempcnta\@ne}%
+    #1%
+    \begin{flushright}(\the\@tempcnta 文字)\end{flushright}
+  }
+  \makeatother
+
+snippet wc
+options head
+  \WordCount{%
+  $0
+  }
+

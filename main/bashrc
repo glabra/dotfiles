@@ -1,0 +1,61 @@
+[[ $- != *i* ]] && return
+
+PS1='\[\e[1;37m\]\W\$\[\e[0m\] '
+export LANG="en_US.UTF-8"
+export PATH="${HOME}/.local/bin:${PATH}"
+unset HISTFILE
+unset HISTSIZE
+unset HISTFILESIZE
+
+alias rm='rm -i'
+alias ls='ls --color=auto'
+alias q='exit'
+alias x='exit'
+alias 'cd..'='cd ..'
+alias bmount='udisksctl mount -b'
+alias bumount='udisksctl unmount -b'
+alias fuserumount='fusermount -u'
+alias wifi='sudo wpa_cli'
+alias alsa-reload='alsactl nrestore'
+alias poweroff='systemctl poweroff'
+alias reboot='systemctl reboot'
+alias touchon='sudo modprobe hid_multitouch'
+alias touchoff='sudo modprobe -r hid_multitouch'
+
+xon () {
+  xrandr --output $1 --auto --right-of eDP1
+}
+
+xoff () {
+  xrandr --output $1 --off
+}
+
+# typo proof
+alias vi='nvim'
+alias vim='nvim'
+alias iv='nvim'
+alias sl='ls'
+alias ks='ls'
+alias l='ls'
+alias d='cd'
+alias scd='cd'
+alias svi='vi'
+alias rf='rm'
+alias vp='cp'
+
+# git-conf
+alias 'git-conf'='git config user.name "Yosuke INOUE";git config user.email "inoue@kamikakushi.net"'
+alias 'git-conf-decapoda'='git config user.name "burassica";git config user.email "postmaster@decapoda.net"'
+
+# rbenv
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+alias rx='rbenv exec'
+
+# stack
+alias s='stack'
+alias sg='stack exec -- ghci'
+alias sgi='stack ghci'
+alias sx='stack exec --'
+
+echo `LANG=C date`

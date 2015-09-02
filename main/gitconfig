@@ -1,0 +1,11 @@
+[push]
+  default = nothing
+[alias]
+  b = branch
+  c = config
+  cc = checkout
+  g = grep
+  l = log --graph --date=iso --stat
+  s = status
+  dm = diff master
+  lo = log --graph --date=iso --pretty=format:'%C(auto)%h: by %aN%n%s%n'

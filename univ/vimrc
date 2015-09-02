@@ -1,0 +1,40 @@
+if !1 | finish | endif
+
+set nocompatible
+syntax on
+
+set autoindent
+set autoread
+set cursorline
+set encoding=utf-8
+set expandtab
+set fileencodings=utf-8,ucs-bom,iso-2022-jp,cp932,euc-jp,default,latin
+set laststatus=2
+set list
+set listchars=tab:>\ ,trail:~,eol:\ ,nbsp:%
+set modeline
+set nocursorcolumn
+set number
+set numberwidth=5
+set shiftwidth=2 "cindentや>><<で入力されるインデントの幅
+set showmatch
+set smartindent
+set softtabstop=2 "<TAB>を入力した際に入力されるインデントの幅
+set splitbelow
+set statusline=%f%(\ %M%R%)%=\ \ %{(&ft!=''?&ft:'plain').':'.(&fenc!=''?&fenc:&enc).':'.&ff}\ [%2B]\ %v:%l/%L
+set tabstop=2 "<TAB>の見た目の幅数
+set wrap
+
+set nobackup
+set noswapfile
+"set noundofile
+
+colorscheme desert
+highlight CursorLineNR cterm=bold
+
+imap <expr> <C-n> pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>"
+nnoremap <expr> <C-p>p ( &paste == 1 ) ? ":set nopaste\<CR>" : ":set paste\<CR>"
+nnoremap <expr> <C-p><C-p> ( &paste == 1 ) ? ":set nopaste\<CR>" : ":set paste\<CR>"
+nnoremap <expr> <C-p>n ( &number == 1 ) ? ":set nonumber\<CR>" : ":set number\<CR>"
+nnoremap <expr> <C-p><C-n> ( &number == 1 ) ? ":set nonumber\<CR>" : ":set number\<CR>"
+

@@ -1,0 +1,30 @@
+#!/bin/sh
+
+whatoption="idle:handle-lid-switch"
+whymessage="initialized by toggle-sleeping script"
+user=${UID}/${USER}
+
+if test "${1}" = "check"
+then
+  check="true"
+fi
+
+if inhibitor=`systemd-inhibit --list | grep -B 2 "Why: ${whymessage}" | grep "UID ${user}"`
+then
+  if test -z "${check}"
+  then
+    pid=`echo ${inhibitor} | grep -oG "PID [0-9]\+" | tail -c +5`
+    kill ${pid}
+    echo "Sleeping by ${whatoption} is now enabled."
+  else
+    echo "Sleeping by ${whatoption} is disabled."
+  fi
+else
+  if test -z "${check}"
+  then
+    systemd-inhibit --what=${whatoption} --why="${whymessage}" /bin/sh -c 'while true;do sleep 60;done' > /dev/null &
+    echo "Sleeping by ${whatoption} is now disabled."
+  else
+    echo "Sleeping by ${whatoption} is enabled."
+  fi
+fi

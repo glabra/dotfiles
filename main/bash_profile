@@ -1,0 +1,16 @@
+# ~/.profile
+
+if test -z "${DISPLAY}"
+then
+  echo -n "startx? [Y/n] > "
+  entry=""
+  read entry
+  if test "${entry}" \!= "n" && test "${entry}" \!= "N"
+  then
+    exec startx
+  else
+    setfont sun12x22
+  fi
+fi
+
+source ${HOME}/.bashrc
