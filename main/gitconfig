@@ -2,7 +2,7 @@
   default = nothing
 [alias]
   b = branch
-  c = config
+  c = commit
   cc = checkout
   g = grep
   l = log --graph --date=iso --stat
