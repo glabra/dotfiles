@@ -2,11 +2,9 @@
   default = nothing
 [alias]
   b = branch
-  c = commit
   d = diff
   g = grep
   l = log --graph --date=iso --stat
   s = status
-  cc = checkout
   dm = diff master
   lo = log --graph --date=iso --pretty=format:'%C(auto)%h: by %aN%n%s%n'

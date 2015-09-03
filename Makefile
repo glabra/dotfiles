@@ -3,7 +3,7 @@ FIND := find
 GIT := git
 srcdir ?= ${PWD}
 destdir ?= ${HOME}
-src_types = $(shell $(FIND) * -maxdepth 0 -type d)
+src_types := $(shell $(FIND) * -maxdepth 0 -type d)
 SRC_TYPE ?= $(shell if test -e '.src_type'; then cat .src_type; fi)
 
 .PHONY: usage install uninstall nvim-init
@@ -12,8 +12,8 @@ ifeq ("$(filter $(src_types), $(SRC_TYPE))","")
 install uninstall: usage
 
 else # if $(SRC_TYPE) is valid
-destfiles = $(addprefix $(destdir)/., $(shell cd $(srcdir)/$(SRC_TYPE); $(FIND) * -type f))
-vundle_destdir = $(destdir)/.nvim/bundle/Vundle.vim
+destfiles := $(addprefix $(destdir)/., $(shell cd $(srcdir)/$(SRC_TYPE); $(FIND) * -type f))
+vundle_destdir := $(destdir)/.nvim/bundle/Vundle.vim
 vundle_url := https://github.com/gmarik/Vundle.vim.git
 
 install: .src_type $(destfiles)

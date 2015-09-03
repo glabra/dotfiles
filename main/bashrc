@@ -58,4 +58,7 @@ alias sg='stack exec -- ghci'
 alias sgi='stack ghci'
 alias sx='stack exec --'
 
+# for delete key
+tput smkx
+
 echo `LANG=C date`
