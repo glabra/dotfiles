@@ -35,7 +35,7 @@ endif
 
 $(destfiles): $(destdir)/.%: $(srcdir)/$(SRC_TYPE)/%
 	@mkdir -p $(dir $@) 2>&1 || true
-	cp -f $< $@
+	ln $< $@
 
 nvim-init:
 	$(GIT) clone '$(vundle_url)' '$(vundle_destdir)'
