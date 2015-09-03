@@ -42,6 +42,9 @@ call mkdir(expand("~/.cache/nvim/backup"), 'p')
 set backup
 set backupdir=~/.cache/nvim/backup
 
+" rubyなファイルがストレスレスに開くようになる魔法の呪文
+let g:ruby_path = ""
+
 nnoremap <silent> <C-n> gt
 nnoremap <silent> <C-p> gT
 nnoremap <expr> <C-k><C-p> ( &paste == 1 ) ? ":set nopaste\<CR>" : ":set paste\<CR>"
