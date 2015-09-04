@@ -3,7 +3,7 @@ filetype off
 set autoindent
 set autoread
 set breakindent
-set completeopt-=preview
+set completeopt& completeopt-=preview
 set cursorline
 set encoding=utf-8
 set expandtab
@@ -70,6 +70,23 @@ nnoremap <silent> <C-w>x <C-w>q
 nnoremap <silent> <C-w>c :tabnew<CR>:terminal<CR>
 nnoremap <silent> <C-w>t :tabnew<CR>
 tnoremap <silent> <C-w><C-w> <C-\><C-n>
+
+function! s:view_image_file()
+  let l:current_dir = expand('%:p:s?\(.*\)[\/][^\/]*$?\1?')
+  let l:image_browser = "feh --scale-down /dev/stdin &"
+  setlocal binary readonly
+  edit
+  execute "write !" . l:image_browser
+  bwipeout
+  tabnew
+  execute "Dirvish " . l:current_dir
+endfunction
+
+augroup vimrc_loading
+  autocmd!
+  autocmd BufRead *.jpg,*.png,*.gif call <SID>view_image_file()
+  autocmd BufNewFile *.rb 0r expand('~/.nvim/templates/ruby.txt')
+augroup END
 
 if has('vim_starting')
   set runtimepath+=~/.nvim/bundle/Vundle.vim
