@@ -75,10 +75,12 @@ bind C-x remove
 #bind C-X gremove
 
 definekey top M-l exec /usr/bin/slock
-definekey top XF86Tools exec ratpoison --command "echo `${HOME}/.local/bin/battery` `LANG=C date`"
+definekey top XF86Tools   exec ratpoison --command "echo `${HOME}/.local/bin/battery` `LANG=C date`"
 definekey top S-XF86Tools exec ratpoison --command "echo `wpa_cli status`"
-definekey top XF86Search exec ratpoison --command "echo `${HOME}/.local/bin/toggle-sleeping check`"
+definekey top XF86Search   exec ratpoison --command "echo `${HOME}/.local/bin/toggle-sleeping check`"
 definekey top S-XF86Search exec ratpoison --command "echo `${HOME}/.local/bin/toggle-sleeping`"
+definekey top XF86LaunchA   exec ratpoison --command "echo `${HOME}/.local/bin/toggle-multitouch check`"
+definekey top S-XF86LaunchA exec ratpoison --command "echo `${HOME}/.local/bin/toggle-multitouch`"
 definekey top XF86Explorer   echo w/Ctrl: reboot | w/Shift: poweroff
 definekey top C-XF86Explorer exec systemctl reboot
 definekey top S-XF86Explorer exec systemctl poweroff

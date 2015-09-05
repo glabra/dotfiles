@@ -1,0 +1,24 @@
+#!/bin/sh
+
+state='*** Exception: invalid state'
+
+if `lsmod | grep -q 'hid_multitouch'`
+then
+  if test "${1}" = 'check'
+  then
+    state='enabled'
+  else
+    sudo modprobe -r hid_multitouch
+    state='now disabled'
+  fi
+else
+  if test "${1}" = 'check'
+  then
+    state='disabled'
+  else
+    sudo modprobe hid_multitouch
+    state='now enabled'
+  fi
+fi
+
+echo "Multitouch is ${state}."

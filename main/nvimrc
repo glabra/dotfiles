@@ -63,12 +63,16 @@ nnoremap <silent> <C-n> gt
 nnoremap <silent> <C-p> gT
 nnoremap <silent> <C-w><C-n> gt
 nnoremap <silent> <C-w><C-p> gT
-inoremap <silent> <C-w><C-w> <Esc>
 nnoremap <silent> <C-w>" :split<CR>:terminal<CR>
 nnoremap <silent> <C-w>% :vsplit<CR>:terminal<CR>
 nnoremap <silent> <C-w>x <C-w>q
 nnoremap <silent> <C-w>c :tabnew<CR>:terminal<CR>
 nnoremap <silent> <C-w>t :tabnew<CR>
+inoremap <silent> <C-w><C-n> <Esc>gt
+inoremap <silent> <C-w><C-p> <Esc>gT
+inoremap <silent> <C-w><C-w> <Esc>
+inoremap <silent> <C-w><C-n> <C-\><C-n>gt
+inoremap <silent> <C-w><C-p> <C-\><C-n>gT
 tnoremap <silent> <C-w><C-w> <C-\><C-n>
 
 function! s:view_image_file()
@@ -103,6 +107,7 @@ Plugin 'scrooloose/syntastic'
 Plugin 'slim-template/vim-slim'
 Plugin 'justinmk/vim-dirvish'
 Plugin 'thinca/vim-splash'
+Plugin 'stephpy/vim-yaml'
 call vundle#end()
 
 " neosnippet
