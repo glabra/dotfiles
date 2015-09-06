@@ -19,8 +19,6 @@ alias wifi='sudo wpa_cli'
 alias alsa-reload='alsactl nrestore'
 alias poweroff='systemctl poweroff'
 alias reboot='systemctl reboot'
-alias touchon='sudo modprobe hid_multitouch'
-alias touchoff='sudo modprobe -r hid_multitouch'
 
 xon () {
   xrandr --output $1 --auto --right-of eDP1

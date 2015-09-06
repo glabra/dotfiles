@@ -44,7 +44,7 @@ options head
 
 snippet random
 options word
-    `od -vAn -tu2 -N2 < /dev/urandom`
+    \`od -vAn -tu2 -N2 < /dev/urandom\`
 
 snippet tmp
     ${1:TMPFILE}="mktemp -t ${2:untitled}"

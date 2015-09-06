@@ -2,43 +2,6 @@ startup_message off
 set fwcolor #66AAAA
 set historysize 0
 escape C-t
-unbind c
-unbind f
-unbind k
-unbind m
-unbind s
-unbind t
-unbind v
-unbind A
-unbind F
-unbind K
-unbind R
-unbind S
-unbind U
-unbind V
-unbind space
-unbind Return
-unbind Tab
-unbind C-a
-unbind C-b
-unbind C-c
-unbind C-f
-unbind C-g
-unbind C-i
-unbind C-m
-unbind C-s
-unbind C-v
-unbind C-A
-unbind C-K
-unbind C-S
-unbind C-V
-unbind C-apostrophe
-unbind C-exclam
-unbind C-space
-unbind C-underscore
-unbind C-Right
-unbind C-Return
-unbind M-Tab
 bind b banish
 bind h focusleft
 bind j focusdown
@@ -77,34 +40,26 @@ bind C-x remove
 definekey top M-l exec /usr/bin/slock
 definekey top XF86Tools   exec ratpoison --command "echo `${HOME}/.local/bin/battery` `LANG=C date`"
 definekey top S-XF86Tools exec ratpoison --command "echo `wpa_cli status`"
-definekey top XF86Search   exec ratpoison --command "echo `${HOME}/.local/bin/toggle-sleeping check`"
-definekey top S-XF86Search exec ratpoison --command "echo `${HOME}/.local/bin/toggle-sleeping`"
-definekey top XF86LaunchA   exec ratpoison --command "echo `${HOME}/.local/bin/toggle-multitouch check`"
-definekey top S-XF86LaunchA exec ratpoison --command "echo `${HOME}/.local/bin/toggle-multitouch`"
+definekey top XF86Search exec ratpoison --command "echo `${HOME}/.local/bin/toggle-sleeping`"
+definekey top XF86LaunchA exec ratpoison --command "echo `${HOME}/.local/bin/toggle-multitouch`"
 definekey top XF86Explorer   echo w/Ctrl: reboot | w/Shift: poweroff
 definekey top C-XF86Explorer exec systemctl reboot
 definekey top S-XF86Explorer exec systemctl poweroff
 definekey top XF86AudioMute          exec ratpoison --command "echo `amixer set Master toggle|tail -n 1|grep -oG '\[[onf]\+\]$'`"
-definekey top M-XF86AudioMute        exec ratpoison --command "echo `amixer get Master|tail -n 1|grep -oG '\[[onf]\+\]$'`"
 definekey top XF86AudioRaiseVolume   exec ratpoison --command "echo `amixer set Master 5%+|tail -n 1|grep -oG '[0-9]\+%'`"
 definekey top XF86AudioLowerVolume   exec ratpoison --command "echo `amixer set Master 5%-|tail -n 1|grep -oG '[0-9]\+%'`"
 definekey top C-XF86AudioRaiseVolume exec ratpoison --command "echo `amixer set Master 1%+|tail -n 1|grep -oG '[0-9]\+%'`"
 definekey top C-XF86AudioLowerVolume exec ratpoison --command "echo `amixer set Master 1%-|tail -n 1|grep -oG '[0-9]\+%'`"
-definekey top S-XF86AudioRaiseVolume exec ratpoison --command "echo `amixer set Master 10%+|tail -n 1|grep -oG '[0-9]\+%'`"
-definekey top S-XF86AudioLowerVolume exec ratpoison --command "echo `amixer set Master 10%-|tail -n 1|grep -oG '[0-9]\+%'`"
 definekey top M-XF86AudioRaiseVolume exec ratpoison --command "echo `amixer get Master|tail -n 1|grep -oG '[0-9]\+%'`"
 definekey top M-XF86AudioLowerVolume exec ratpoison --command "echo `amixer get Master|tail -n 1|grep -oG '[0-9]\+%'`"
 definekey top XF86MonBrightnessUp     exec xbacklight -time 0 -inc 5; ratpoison --command "echo `xbacklight -get|grep -oG '^[0-9]\+'`%"
 definekey top XF86MonBrightnessDown   exec xbacklight -time 0 -dec 5; ratpoison --command "echo `xbacklight -get|grep -oG '^[0-9]\+'`%"
 definekey top C-XF86MonBrightnessUp   exec xbacklight -time 0 -inc 1; ratpoison --command "echo `xbacklight -get|grep -oG '^[0-9]\+'`%"
 definekey top C-XF86MonBrightnessDown exec xbacklight -time 0 -dec 1; ratpoison --command "echo `xbacklight -get|grep -oG '^[0-9]\+'`%"
-definekey top S-XF86MonBrightnessUp   exec xbacklight -time 0 -inc 10; ratpoison --command "echo `xbacklight -get|grep -oG '^[0-9]\+'`%"
-definekey top S-XF86MonBrightnessDown exec xbacklight -time 0 -dec 10; ratpoison --command "echo `xbacklight -get|grep -oG '^[0-9]\+'`%"
-definekey top M-XF86MonBrightnessUp   exec ratpoison --command "echo `xbacklight -get|grep -oG '^[0-9]\+'`%"
-definekey top M-XF86MonBrightnessDown exec ratpoison --command "echo `xbacklight -get|grep -oG '^[0-9]\+'`%"
 
 bind c exec ${HOME}/.local/bin/st
 bind f exec /usr/bin/chromium
 bind t exec /usr/bin/sylpheed
+bind a exec ratpoison --command "echo `${HOME}/.local/bin/battery` `LANG=C date`"
 
 echo Welcome!
