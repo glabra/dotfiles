@@ -18,4 +18,4 @@ export GTK_IM_MODULE='fcitx'
 export QT_IM_MODULE='fcitx'
 /usr/bin/fcitx
 /usr/bin/xmodmap ${HOME}/.Xmodmap
-exec /usr/bin/ratpoison
+exec ${HOME}/.local/bin/dwm

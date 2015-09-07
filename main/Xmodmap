@@ -2,9 +2,13 @@
 remove lock = Caps_Lock
 keycode 66 = Control_L NoSymbol Control_L
 add control = Control_L
-! PtrSc to Mode_switch
-keycode 107 = Mode_switch NoSymbol Mode_switch
+! Ctrl_R to Mode_switch
+keycode 105 = Mode_switch NoSymbol Mode_switch
 add mod5 = Mode_switch
+! PrtSc to Ctrl_R
+remove control = Control_R
+keycode 107 = Control_R NoSymbol Control_R
+add control = Control_R
 ! APL Key Layout
 keycode 49 =        grave  asciitilde      grave    U2368
 keycode 10 =            1      exclam      U00A8    U221E

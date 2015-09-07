@@ -8,8 +8,6 @@ then
   if test "${entry}" \!= "n" && test "${entry}" \!= "N"
   then
     exec startx
-  else
-    setfont sun12x22
   fi
 fi
 
