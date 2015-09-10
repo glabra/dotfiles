@@ -2,8 +2,9 @@
 remove lock = Caps_Lock
 keycode 66 = Control_L NoSymbol Control_L
 add control = Control_L
-! Ctrl_R to Mode_switch
-keycode 105 = Mode_switch NoSymbol Mode_switch
+! Alt_R to Mode_switch
+remove mod1 = Alt_R
+keycode 108 = Mode_switch NoSymbol Mode_switch
 add mod5 = Mode_switch
 ! PrtSc to Ctrl_R
 remove control = Control_R

@@ -1,0 +1,27 @@
+#!/bin/sh
+
+if ! type feh > /dev/null 2>&1
+then
+  echo "feh is required for setting wallpaper."
+  exit 1
+fi
+
+wallpapers_path="${HOME}/.local/wallpapers"
+if test -d "${wallpapers_path}"
+then
+  wallpapers=`cd ${wallpapers_path};find * -type f`
+  wallpapers_length=`cd ${wallpapers_path};find * -type f | wc -l`
+  selected=`od -vAn -tu2 -N2 < /dev/urandom`
+  selected=`expr ${selected} % ${wallpapers_length}`
+  for i in ${wallpapers}
+  do
+    if test ${selected} -lt 1
+    then
+      selected=${i}
+      break
+    else
+      selected=`expr ${selected} - 1`
+    fi
+  done
+  DISPLAY=${DISPLAY} feh --bg-scale "${wallpapers_path}/${selected}"
+fi

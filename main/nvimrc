@@ -89,7 +89,8 @@ endfunction
 augroup vimrc_loading
   autocmd!
   autocmd BufRead *.jpg,*.png,*.gif call <SID>view_image_file()
-  autocmd BufNewFile *.rb 0r expand('~/.nvim/templates/ruby.txt')
+  autocmd BufNewFile *.rb 0r ${HOME}/.nvim/templates/ruby.txt
+  autocmd BufNewFile *.sh 0r ${HOME}/.nvim/templates/sh.txt
 augroup END
 
 if has('vim_starting')

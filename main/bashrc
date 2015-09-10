@@ -43,10 +43,7 @@ for f in \
   '/usr/share/git/completion/git-completion.bash' \
   '/usr/share/git/completion/git-prompt.sh'
 do
-  if test -e "${f}"
-  then
-    . "${f}"
-  fi
+  [ -e "${f}" ] && . "${f}"
 done
 
 if type '__git_ps1' > /dev/null 2>&1
@@ -73,7 +70,12 @@ alias sg='stack exec -- ghci'
 alias sgi='stack ghci'
 alias sx='stack exec --'
 
+# nvm
+export NVM_DIR="/home/meu/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
 # for delete key
 tput smkx
 
 echo `LANG=C date`
+
