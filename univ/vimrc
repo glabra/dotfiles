@@ -33,8 +33,27 @@ colorscheme desert
 highlight CursorLineNR cterm=bold
 
 imap <expr> <C-n> pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>"
-nnoremap <expr> <C-p>p ( &paste == 1 ) ? ":set nopaste\<CR>" : ":set paste\<CR>"
-nnoremap <expr> <C-p><C-p> ( &paste == 1 ) ? ":set nopaste\<CR>" : ":set paste\<CR>"
-nnoremap <expr> <C-p>n ( &number == 1 ) ? ":set nonumber\<CR>" : ":set number\<CR>"
-nnoremap <expr> <C-p><C-n> ( &number == 1 ) ? ":set nonumber\<CR>" : ":set number\<CR>"
-
+nnoremap <C-b> <C-u>
+nnoremap <C-f> <C-d>
+nnoremap <C-u> <C-y>
+nnoremap <C-d> <C-e>
+nnoremap <expr> <C-k><C-p> ( &paste == 1 ) ? ":set nopaste\<CR>" : ":set paste\<CR>"
+nnoremap <expr> <C-k><C-n> ( &number == 1 ) ? ":set nonumber\<CR>" : ":set number\<CR>"
+nnoremap <expr> <C-k><C-r> ( &readonly == 1 ) ? ":set readonly!\<CR>" : ":set readonly\<CR>"
+nnoremap <expr> <C-k><C-e> ( &expandtab == 1 ) ? ":set expandtab!\<CR>" : ":set expandtab\<CR>"
+nnoremap x "_x
+nnoremap X "_X
+nnoremap Y "+y
+nnoremap YY "+yy
+nnoremap - "+p
+nnoremap _ "+P
+vnoremap Y "+y
+nnoremap <silent> <C-n> gt
+nnoremap <silent> <C-p> gT
+nnoremap <silent> <C-w><C-n> gt
+nnoremap <silent> <C-w><C-p> gT
+nnoremap <silent> <C-w>x <C-w>q
+nnoremap <silent> <C-w>t :tabnew<CR>
+inoremap <silent> <C-w><C-n> <Esc>gt
+inoremap <silent> <C-w><C-p> <Esc>gT
+inoremap <silent> <C-w><C-w> <Esc>
