@@ -1,14 +1,11 @@
-# ~/.profile
+#!/bin/bash
 
-if test -z "${DISPLAY}"
+if test -e "${HOME}/.disableX"
 then
-  echo -n "startx? [Y/n] > "
-  entry=""
-  read entry
-  if test "${entry}" \!= "n" && test "${entry}" \!= "N"
-  then
-    exec startx
-  fi
+  rm "${HOME}/.disableX"
+elif test -z "${DISPLAY}"
+then
+  exec startx
 fi
 
-source ${HOME}/.bashrc
+. ${HOME}/.bashrc

@@ -71,24 +71,12 @@ nnoremap <silent> <C-w>t :tabnew<CR>
 inoremap <silent> <C-w><C-n> <Esc>gt
 inoremap <silent> <C-w><C-p> <Esc>gT
 inoremap <silent> <C-w><C-w> <Esc>
-inoremap <silent> <C-w><C-n> <C-\><C-n>gt
-inoremap <silent> <C-w><C-p> <C-\><C-n>gT
+tnoremap <silent> <C-w><C-n> <C-\><C-n>gt
+tnoremap <silent> <C-w><C-p> <C-\><C-n>gT
 tnoremap <silent> <C-w><C-w> <C-\><C-n>
-
-function! s:view_image_file()
-  let l:current_dir = expand('%:p:s?\(.*\)[\/][^\/]*$?\1?')
-  let l:image_browser = "feh --scale-down /dev/stdin &"
-  setlocal binary readonly
-  edit
-  execute "write !" . l:image_browser
-  bwipeout
-  tabnew
-  execute "Dirvish " . l:current_dir
-endfunction
 
 augroup vimrc_loading
   autocmd!
-  autocmd BufRead *.jpg,*.png,*.gif call <SID>view_image_file()
   autocmd BufNewFile *.rb 0r ${HOME}/.nvim/templates/ruby.txt
   autocmd BufNewFile *.sh 0r ${HOME}/.nvim/templates/sh.txt
 augroup END
@@ -101,14 +89,17 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'Shougo/neocomplcache.vim'
 Plugin 'Shougo/neosnippet'
 Plugin 'vim-scripts/vim-auto-save'
-Plugin 'tpope/vim-fugitive'
-Plugin 'majutsushi/tagbar'
-Plugin 'travitch/hasksyn'
 Plugin 'scrooloose/syntastic'
-Plugin 'slim-template/vim-slim'
 Plugin 'justinmk/vim-dirvish'
 Plugin 'thinca/vim-splash'
 Plugin 'stephpy/vim-yaml'
+Plugin 'travitch/hasksyn'
+if executable('ctags')
+  Plugin 'majutsushi/tagbar'
+endif
+if executable('git')
+  Plugin 'tpope/vim-fugitive'
+endif
 call vundle#end()
 
 " neosnippet

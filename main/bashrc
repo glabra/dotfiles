@@ -30,9 +30,10 @@ alias svi='vi'
 alias iv='vi'
 alias rf='rm'
 alias vp='cp'
+alias gti='git'
 
 # alias vi to nvim
-if which 'nvim' > /dev/null 2>&1
+if type 'nvim' > /dev/null 2>&1
 then
   alias vi='nvim'
   alias vim='nvim'
@@ -65,17 +66,16 @@ then
 fi
 
 # stack
-alias s='stack'
-alias sg='stack exec -- ghci'
-alias sgi='stack ghci'
-alias sx='stack exec --'
-
-# nvm
-export NVM_DIR="/home/meu/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+if type 'stack' > /dev/null 2>&1
+then
+  alias s='stack'
+  alias sg='stack exec -- ghci'
+  alias sgi='stack ghci'
+  alias sx='stack exec --'
+fi
 
 # for delete key
 tput smkx
 
-echo `LANG=C date`
+printf '%s\n' "`LANG=C date`"
 

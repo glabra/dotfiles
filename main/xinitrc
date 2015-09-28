@@ -12,10 +12,12 @@ fi
 /usr/bin/amixer set Master off > /dev/null &
 /usr/bin/amixer set Master 0 > /dev/null &
 /usr/bin/xbacklight =5% > /dev/null &
-export LANG='ja_JP.UTF-8'
+/usr/bin/synclient PalmDetect=1
+export LANG='en_US.UTF-8'
 export XMODIFIERS='@im=fcitx'
 export GTK_IM_MODULE='fcitx'
 export QT_IM_MODULE='fcitx'
 (${HOME}/.local/bin/switch-wallpaper && /usr/bin/xcompmgr) > /dev/null &
 (/usr/bin/fcitx && /usr/bin/xmodmap ${HOME}/.Xmodmap) > /dev/null &
+/usr/bin/dunst &
 exec ${HOME}/.local/bin/dwm
