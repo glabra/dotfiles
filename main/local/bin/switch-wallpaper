@@ -1,8 +1,13 @@
 #!/bin/sh
 
+APPNAME='Wallpaper switcher'
+
 if ! type feh > /dev/null 2>&1
 then
-  echo "feh is required for setting wallpaper."
+  notify-send \
+    --app-name "${APPNAME}" \
+    'Wallpaper is not switched.' \
+    'feh is not installed.'
   exit 1
 fi
 

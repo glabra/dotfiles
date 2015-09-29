@@ -53,3 +53,19 @@ snippet tmp
     trap "rm -f \"${${1}}\"; exit 1" 1 15    # HUP TERM
     ${0}
 
+snippet executable
+alias exist?
+    if type '${1}' > /dev/null 2>&1
+    then
+      ${0}
+    fi
+
+snippet strict
+options head
+    set -u
+    set -e
+    umask 0750
+    export PATH="/bin:/usr/bin"
+    export LANG="C"
+    IFS="	 
+    "

@@ -1,22 +1,41 @@
 #!/bin/sh
+set -u
+set -e
+umask 0750
+export PATH="/bin:/usr/bin"
+export LANG="C"
+IFS="	 
+"
+
 BAT_TRESHOLD=5
 
 cd /sys/class/power_supply/
-
 if test `cat AC/online` -eq 1
 then
-	echo -n "o"
+  charge_status=o
 else
-	echo -n "x"
+  charge_status=x
 fi
 
 bat_full=$(( `cat BAT0/energy_full` + `cat BAT1/energy_full` ))
 bat_now=$(( `cat BAT0/energy_now` + `cat BAT1/energy_now` ))
 bat_percent=$(( bat_now * 100 / bat_full ))
 
-echo -n "${bat_percent}%"
+if test -z "${bat_percent}"
+then
+  bat_status=?
+else
+  bat_status="${charge_status}${bat_percent}%"
+fi
 
-#if ${bat_percent} -lt ${BAT_TRESHOLD}
-#then
-#    notify-send -u critical "Critical low-battery" "Battery remains less than 5 percents."
-#fi
+if test "$#" -gt 0 \
+   && test "$1" = '--with-notify' \
+   && test -n "${bat_percent}" \
+   && test "${bat_percent}" -lt "${BAT_TRESHOLD}" \
+   && test "${charge_status}" = 'x'
+then
+  notify-send -u critical "Critical low-battery" "Battery remains less than ${BAT_TRESHOLD} percents."
+fi
+
+printf '%s' "${bat_status}"
+

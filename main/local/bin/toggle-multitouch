@@ -1,24 +1,25 @@
 #!/bin/sh
+set -u
+set -e
+umask 0750
+export PATH="/bin:/usr/bin"
+export LANG="C"
+IFS="	 
+"
 
-state='*** Exception: invalid state'
+message='*** Exception: invalid state'
 
 if `lsmod | grep -q 'hid_multitouch'`
 then
-  if test "${1}" = 'check'
-  then
-    state='enabled'
-  else
-    sudo modprobe -r hid_multitouch
-    state='now disabled'
-  fi
+  sudo modprobe -r hid_multitouch
+  message='Multitouch is now disabled.'
 else
-  if test "${1}" = 'check'
-  then
-    state='disabled'
-  else
-    sudo modprobe hid_multitouch
-    state='now enabled'
-  fi
+  sudo modprobe hid_multitouch
+  message='Multitouch is now enabled.'
 fi
 
-echo "Multitouch is ${state}."
+if type 'notify-send' > /dev/null 2>&1
+then
+  notify-send "${message}"
+fi
+
