@@ -8,14 +8,16 @@ IFS="
 "
 
 audio_status=`amixer get Master | tail -n 1`
-audio_level=`echo ${audio_status} | grep -oG '[0-9]\\+%'`
-if echo "${audio_status}" | grep -q '\\[on\\]$'
-  then mute_indicator='+'
-  else mute_indicator='-'
+audio_level=`echo ${audio_status} | grep -oG '[0-9]\+%'`
+if echo "${audio_status}" | grep -q '\[on\]$'
+then
+  mute_indicator='+'
+else
+  mute_indicator='-'
 fi
 str="v:${mute_indicator}${audio_level}"
 
-light_level=`xbacklight -get | grep -oG '^[0-9]\\+'`
+light_level=`xbacklight -get | grep -oG '^[0-9]\+'`
 str="${str} l:${light_level}%"
 
 battery_status=`${HOME}/.local/bin/battery --with-notify`
