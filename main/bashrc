@@ -29,7 +29,6 @@ alias svi='vi'
 alias iv='vi'
 alias rf='rm'
 alias vp='cp'
-alias gti='git'
 
 # alias vi to nvim
 if type 'nvim' > /dev/null 2>&1
@@ -53,8 +52,12 @@ else
   PS1='\[\e[1;37m\]\W\$\[\e[0m\] '
 fi
 
-alias 'git-conf'='git config user.name "Yosuke INOUE";git config user.email "inoue@kamikakushi.net"'
-alias 'git-conf-decapoda'='git config user.name "burassica";git config user.email "postmaster@decapoda.net"'
+if type 'git' > /dev/null 2>&1
+then
+  alias gti='git'
+  alias 'git-conf'='git config user.name "Yosuke INOUE";git config user.email "inoue@kamikakushi.net"'
+  alias 'git-conf-decapoda'='git config user.name "burassica";git config user.email "postmaster@decapoda.net"'
+fi
 
 # rbenv
 if test -d "${HOME}/.rbenv"

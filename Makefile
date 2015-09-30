@@ -1,46 +1,48 @@
 SHELL = /bin/sh
 FIND := find
-GIT := git
 srcdir ?= ${PWD}
-destdir ?= ${HOME}
+export destdir ?= ${HOME}
 src_types := $(shell $(FIND) * -maxdepth 0 -type d)
 SRC_TYPE ?= $(shell if test -e '.src_type'; then cat .src_type; fi)
 
-.PHONY: usage install uninstall nvim-init
+.PHONY: usage install uninstall clean module-install module-uninstall
 
 ifeq ("$(filter $(src_types), $(SRC_TYPE))","")
 install uninstall: usage
 
 else # if $(SRC_TYPE) is valid
-destfiles := $(addprefix $(destdir)/., $(shell cd $(srcdir)/$(SRC_TYPE); $(FIND) * -type f))
-vundle_destdir := $(destdir)/.nvim/bundle/Vundle.vim
-vundle_url := https://github.com/gmarik/Vundle.vim.git
+sourcedir := $(srcdir)/$(SRC_TYPE)
+destfiles := $(addprefix $(destdir)/., $(shell cd $(sourcedir) && $(FIND) * -type f \! -name 'Makefile'))
+submakefiles := $(addprefix $(sourcedir)/, $(shell cd $(sourcedir) && $(FIND) * -type f -name 'Makefile'))
 
-install: .src_type $(destfiles)
-ifeq "$(SRC_TYPE)" "main"
-ifneq "$(shell test -d $(vundle_destdir); echo $$?)" "0"
-	$(MAKE) nvim-init
-endif
-endif
+install: .src_type $(destfiles) module-install
 
-uninstall:
-	rm -f $(destfiles)
-	@rmdir $(foreach d,$(dir $(destfiles)),$(d)) >/dev/null 2>&1 || true
-ifeq "$(SRC_TYPE)" "main"
-	rm -rf $(destdir)/.nvim # for .nvim/bundles
-endif
+uninstall: module-uninstall
+	@$(RM) -- $(foreach d,$(destfiles),'$(d)')
+	@rmdir -p  $(foreach d,$(dir $(destfiles)),$(d)) >/dev/null 2>&1 || true
+
+module-install: $(submakefiles)
+	@(IFS=' '; for i in $^; do \
+		cd `dirname $$i` && \
+		$(MAKE) install; \
+	done)
+
+module-uninstall: $(submakefiles)
+	@(IFS=' '; for i in $^; do \
+		cd `dirname $$i` && \
+		$(MAKE) uninstall; \
+	done)
 
 .src_type:
-	echo "$(SRC_TYPE)" > .src_type
+	echo '$(SRC_TYPE)' > '.src_type'
 
-$(destfiles): $(destdir)/.%: $(srcdir)/$(SRC_TYPE)/%
-	@mkdir -p $(dir $@) 2>&1 || true
-	ln $< $@
+$(destfiles): $(destdir)/.%: $(sourcedir)/%
+	@mkdir -p $(foreach d,$(dir $@),'$(d)') 2>&1 || true
+	ln -s '$<' '$@'
+endif
 
-nvim-init:
-	$(GIT) clone '$(vundle_url)' '$(vundle_destdir)'
-
-endif # end $(SRC_TYPE) is valid or not
+clean:
+	$(RM) -- .src_type
 
 usage:
 	@echo 'install:'

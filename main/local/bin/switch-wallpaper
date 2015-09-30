@@ -28,5 +28,5 @@ then
       selected=`expr ${selected} - 1`
     fi
   done
-  DISPLAY=${DISPLAY} feh --bg-scale "${wallpapers_path}/${selected}"
+  DISPLAY=${DISPLAY} feh --no-fehbg --bg-fill "${wallpapers_path}/${selected}"
 fi
