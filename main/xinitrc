@@ -9,10 +9,12 @@ then
    unset file
 fi
 
-export LANG='en_US.UTF-8'
+export LANG='ja_JP.UTF-8'
 export XMODIFIERS='@im=fcitx'
 export GTK_IM_MODULE='fcitx'
 export QT_IM_MODULE='fcitx'
+export _JAVA_AWT_WM_NONREPARENTING=1
+export ANDROID_HOME="${HOME}/Android/Sdk"
 /usr/bin/synclient PalmDetect=1 &
 /usr/bin/wpa_cli -a ${HOME}/.local/wpa_cli_action.sh &
 /usr/bin/dunst &

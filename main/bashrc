@@ -6,18 +6,50 @@ unset HISTFILE
 unset HISTSIZE
 unset HISTFILESIZE
 
+[ -f "${HOME}/.local/secrets.sh" ] && . "${HOME}/.local/secrets.sh"
+
 alias rm='rm -i'
 alias ls='ls --color=auto'
 alias q='exit'
 alias ':q'='exit'
 alias x='exit'
 alias 'cd..'='cd ..'
+alias less='less -R'
 alias bmount='udisksctl mount -b'
 alias bumount='udisksctl unmount -b'
 alias fuserumount='fusermount -u'
 alias alsa-reload='alsactl nrestore'
 alias poweroff='systemctl poweroff'
 alias reboot='systemctl reboot'
+
+alias box="riofs ${AWS_S3_BUCKET_DROPBOX}"
+
+ampache () {
+  local curl="curl --silent --header 'x-api-key: ${AWS_AMPACHE_API_KEY}'"
+  case "$1" in
+    'start')
+      eval "$curl ${AWS_AMPACHE_API_ENDPOINT}/ampache-initialize"
+      printf '\n'
+      ;;
+    'stop')
+      eval "$curl ${AWS_AMPACHE_API_ENDPOINT}/ampache-finalize"
+      printf '\n'
+      ;;
+    'go')
+      eval local url=`eval "$curl ${AWS_AMPACHE_API_ENDPOINT}/ampache-describe"`
+      echo $url
+      if test -z "${url}"
+      then
+        printf '%s\n' 'ampache is not running.'
+      else
+        chromium http://${url}/ampache
+      fi
+      ;;
+    *)
+      printf '%s\n' "ampache (start|stop|go)"
+      ;;
+  esac
+}
 
 # typo proof
 alias sl='ls'
@@ -55,8 +87,8 @@ fi
 if type 'git' > /dev/null 2>&1
 then
   alias gti='git'
-  alias 'git-conf'='git config user.name "Yosuke INOUE";git config user.email "inoue@kamikakushi.net"'
-  alias 'git-conf-decapoda'='git config user.name "burassica";git config user.email "postmaster@decapoda.net"'
+  alias 'git-conf'="git config user.name '${GITCONF_DEFAULT_USERNAME}';git config user.email '${GITCONF_DEFAULT_EMAIL}'"
+  alias 'git-conf-decapoda'="git config user.name '${GITCONF_DECAPODA_USERNAME}';git config user.email '${GITCONF_DECAPODA_EMAIL}'"
 fi
 
 # rbenv
@@ -74,6 +106,20 @@ then
   alias sg='stack exec -- ghci'
   alias sgi='stack ghci'
   alias sx='stack exec --'
+fi
+
+# android-studio
+if test -d "${HOME}/.local/android-studio"
+then
+  export PATH="${HOME}/.local/android-studio/bin:${PATH}"
+fi
+
+# nvm
+if test -d "${HOME}/.nvm"
+then
+  export NVM_DIR="${HOME}/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+  nvm use v0.10.36
 fi
 
 # for delete key

@@ -6,10 +6,10 @@ add control = Control_L
 remove mod1 = Alt_R
 keycode 108 = Mode_switch NoSymbol Mode_switch
 add mod5 = Mode_switch
-! PrtSc to Ctrl_R
-remove control = Control_R
-keycode 107 = Control_R NoSymbol Control_R
-add control = Control_R
+! PrtSc to Super_R
+remove mod4 = Super_R
+keycode 107 = Super_R NoSymbol Super_R
+add mod4 = Super_R
 ! APL Key Layout
 keycode 49 =        grave  asciitilde      grave    U2368
 keycode 10 =            1      exclam      U00A8    U221E

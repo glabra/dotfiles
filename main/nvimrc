@@ -79,6 +79,7 @@ augroup vimrc_loading
   autocmd!
   autocmd BufNewFile *.rb 0r ${HOME}/.nvim/templates/ruby.txt
   autocmd BufNewFile *.sh 0r ${HOME}/.nvim/templates/sh.txt
+  autocmd BufNewFile Makefile 0r ${HOME}/.nvim/templates/Makefile.txt
 augroup END
 
 if has('vim_starting')

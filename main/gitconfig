@@ -5,6 +5,6 @@
   d = diff
   g = grep
   l = log --graph --date=iso --stat
-  s = status
+  s = status --branch --short
   dm = diff master
   lo = log --graph --date=iso --pretty=format:'%C(auto)%h: by %aN%n%s%n'
