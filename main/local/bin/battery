@@ -9,23 +9,32 @@ IFS="
 
 BAT_TRESHOLD=5
 
-cd /sys/class/power_supply/
-if test `cat AC/online` -eq 1
+# _get_battery BATn (full|now)
+_get_battery () {
+  local value=`cat /sys/class/power_supply/${1}/energy_${2} 2> /dev/null`
+  if test -z "${value}"
+  then
+    printf '%s' '0'
+  else
+    printf '%s' "${value}"
+  fi
+}
+
+if test "`cat /sys/class/power_supply/AC/online`" -eq 1
 then
-  charge_status=o
+  charge_status='o'
 else
-  charge_status=x
+  charge_status='x'
 fi
 
-bat_full=$(( `cat BAT0/energy_full` + `cat BAT1/energy_full` ))
-bat_now=$(( `cat BAT0/energy_now` + `cat BAT1/energy_now` ))
-bat_percent=$(( bat_now * 100 / bat_full ))
+bat_full=$(( `_get_battery BAT0 full` + `_get_battery BAT1 full` ))
+bat_now=$(( `_get_battery BAT0 now` + `_get_battery BAT1 now` ))
 
-if test -z "${bat_percent}"
+if test "${bat_full}" -gt 0
 then
-  bat_status=?
+  bat_percent=$(( bat_now * 100 / bat_full ))
 else
-  bat_status="${charge_status}${bat_percent}%"
+  bat_percent=0
 fi
 
 if test "$#" -gt 0 \
@@ -37,5 +46,5 @@ then
   notify-send -u critical "Critical low-battery" "Battery remains less than ${BAT_TRESHOLD} percents."
 fi
 
-printf '%s' "${bat_status}"
+printf '%s' "${charge_status}${bat_percent}%"
 

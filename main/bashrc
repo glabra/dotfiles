@@ -6,8 +6,6 @@ unset HISTFILE
 unset HISTSIZE
 unset HISTFILESIZE
 
-[ -f "${HOME}/.local/secrets.sh" ] && . "${HOME}/.local/secrets.sh"
-
 alias rm='rm -i'
 alias ls='ls --color=auto'
 alias q='exit'
@@ -22,36 +20,6 @@ alias alsa-reload='alsactl nrestore'
 alias poweroff='systemctl poweroff'
 alias reboot='systemctl reboot'
 
-alias box="riofs ${AWS_S3_BUCKET_DROPBOX}"
-
-ampache () {
-  local curl="curl --silent --header 'x-api-key: ${AWS_AMPACHE_API_KEY}'"
-  case "$1" in
-    'start')
-      eval "$curl ${AWS_AMPACHE_API_ENDPOINT}/ampache-initialize"
-      printf '\n'
-      ;;
-    'stop')
-      eval "$curl ${AWS_AMPACHE_API_ENDPOINT}/ampache-finalize"
-      printf '\n'
-      ;;
-    'go')
-      eval local url=`eval "$curl ${AWS_AMPACHE_API_ENDPOINT}/ampache-describe"`
-      echo $url
-      if test -z "${url}"
-      then
-        printf '%s\n' 'ampache is not running.'
-      else
-        chromium http://${url}/ampache
-      fi
-      ;;
-    *)
-      printf '%s\n' "ampache (start|stop|go)"
-      ;;
-  esac
-}
-
-# typo proof
 alias sl='ls'
 alias ks='ls'
 alias l='ls'
@@ -61,6 +29,48 @@ alias svi='vi'
 alias iv='vi'
 alias rf='rm'
 alias vp='cp'
+
+[ -f "${HOME}/.local/secrets.sh" ] && . "${HOME}/.local/secrets.sh"
+
+alias box="mkdir /run/user/${UID}/dropbox 2> /dev/null; \
+  riofs ${AWS_S3_BUCKET_DROPBOX} /run/user/${UID}/dropbox && \
+  cd /run/user/${UID}/dropbox"
+alias unbox="fusermount -u /run/user/${UID}/dropbox && \
+  rmdir /run/user/${UID}/dropbox"
+
+# ampache on Amazon EC2 control command
+ampache () {
+  local __ampache_api="curl --silent --header x-api-key:${AWS_AMPACHE_API_KEY} ${AWS_AMPACHE_API_ENDPOINT}/ -X"
+  case "$1" in
+    'start')
+      ${__ampache_api} PUT
+      printf '\n'
+      ;;
+    'stop')
+      ${__ampache_api} DELETE
+      printf '\n'
+      ;;
+    'status' | 'get-host' | 'open')
+      local host=`${__ampache_api} GET | sed -ne 's/^"\(ec2[0-9-]\+\.compute-[0-9]\+\.amazonaws\.com\)"$/\1/p'`
+      if test -z "${host}"
+      then
+        printf '%s\n' 'ampache is stopped.'
+      elif test "$1" = 'open'
+      then
+        chromium http://${host}/ampache &
+      elif test "$1" = 'get-host'
+      then
+        printf '%s\n' "${host}"
+      else
+        printf '%s\n' "ampache is running. (Host: ${host})"
+      fi
+      ;;
+    *)
+      printf '%s\n' "ampache (start|stop|status|open|get-host)"
+      ;;
+  esac
+}
+complete -W 'start stop status open get-host' ampache
 
 # alias vi to nvim
 if type 'nvim' > /dev/null 2>&1
@@ -86,9 +96,11 @@ fi
 
 if type 'git' > /dev/null 2>&1
 then
+  alias g='git'
   alias gti='git'
   alias 'git-conf'="git config user.name '${GITCONF_DEFAULT_USERNAME}';git config user.email '${GITCONF_DEFAULT_EMAIL}'"
   alias 'git-conf-decapoda'="git config user.name '${GITCONF_DECAPODA_USERNAME}';git config user.email '${GITCONF_DECAPODA_EMAIL}'"
+  alias 'git-conf-dog'="git config user.name '${GITCONF_DOG_USERNAME}';git config user.email '${GITCONF_DOG_EMAIL}'"
 fi
 
 # rbenv
@@ -117,9 +129,17 @@ fi
 # nvm
 if test -d "${HOME}/.nvm"
 then
-  export NVM_DIR="${HOME}/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-  nvm use v0.10.36
+  nvm-init () {
+    if type 'nvm' > /dev/null 2>&1
+    then
+      printf '%s\n' 'nvm is already initialized.'
+    else
+      export NVM_DIR="${HOME}/.nvm"
+      [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+      nvm use v0.10.36
+    fi
+  }
+  [ -n "${BASHRC_ENABLE_NVM+true}" ] && nvm-init
 fi
 
 # for delete key
