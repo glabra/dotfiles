@@ -114,7 +114,7 @@ fi
 rbenv_path="${HOME}/.rbenv"
 if test -d "${rbenv_path}"
 then
-  export PATH="${rbenv_path}:${PATH}"
+  export PATH="${rbenv_path}/bin:${PATH}"
   eval "$(rbenv init -)"
   alias rx='rbenv exec'
 fi
