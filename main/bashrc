@@ -24,6 +24,7 @@ alias sl='ls'
 alias ks='ls'
 alias l='ls'
 alias d='cd'
+alias vf='cd'
 alias scd='cd'
 alias svi='vi'
 alias iv='vi'
@@ -124,6 +125,7 @@ fi
 if test -d "${HOME}/.local/android-studio"
 then
   export PATH="${HOME}/.local/android-studio/bin:${PATH}"
+  export ANDROID_HOME="${HOME}/Android/Sdk"
 fi
 
 # nvm

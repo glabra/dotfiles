@@ -68,6 +68,7 @@ nnoremap <silent> <C-w>% :vsplit<CR>:terminal<CR>
 nnoremap <silent> <C-w>x <C-w>q
 nnoremap <silent> <C-w>c :tabnew<CR>:terminal<CR>
 nnoremap <silent> <C-w>t :tabnew<CR>
+nnoremap <expr> <C-w>T ":vsplit " . tempname() . "\<CR>"
 inoremap <silent> <C-w><C-n> <Esc>gt
 inoremap <silent> <C-w><C-p> <Esc>gT
 inoremap <silent> <C-w><C-w> <Esc>
@@ -80,6 +81,7 @@ augroup vimrc_loading
   autocmd BufNewFile *.rb 0r ${HOME}/.nvim/templates/ruby.txt
   autocmd BufNewFile *.sh 0r ${HOME}/.nvim/templates/sh.txt
   autocmd BufNewFile Makefile 0r ${HOME}/.nvim/templates/Makefile.txt
+  autocmd BufNewFile *.c 0r ${HOME}/.nvim/templates/c.txt
 augroup END
 
 if has('vim_starting')
