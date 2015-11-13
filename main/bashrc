@@ -11,7 +11,7 @@ alias ls='ls --color=auto'
 alias q='exit'
 alias ':q'='exit'
 alias x='exit'
-alias 'cd..'='cd ..'
+alias '..'='cd ..'
 alias less='less -R'
 alias bmount='udisksctl mount -b'
 alias bumount='udisksctl unmount -b'
@@ -31,7 +31,7 @@ alias iv='vi'
 alias rf='rm'
 alias vp='cp'
 
-[ -f "${HOME}/.local/secrets.sh" ] && . "${HOME}/.local/secrets.sh"
+[[ -f "${HOME}/.local/secrets.sh" ]] && . "${HOME}/.local/secrets.sh"
 
 alias box="mkdir /run/user/${UID}/dropbox 2> /dev/null; \
   riofs ${AWS_S3_BUCKET_DROPBOX} /run/user/${UID}/dropbox && \
@@ -85,7 +85,7 @@ for f in \
   '/usr/share/git/completion/git-completion.bash' \
   '/usr/share/git/completion/git-prompt.sh'
 do
-  [ -e "${f}" ] && . "${f}"
+  [[ -e "${f}" ]] && . "${f}"
 done
 
 if type '__git_ps1' > /dev/null 2>&1
@@ -99,18 +99,26 @@ if type 'git' > /dev/null 2>&1
 then
   alias g='git'
   alias gti='git'
-  alias 'git-conf'="git config user.name '${GITCONF_DEFAULT_USERNAME}';git config user.email '${GITCONF_DEFAULT_EMAIL}'"
-  alias 'git-conf-decapoda'="git config user.name '${GITCONF_DECAPODA_USERNAME}';git config user.email '${GITCONF_DECAPODA_EMAIL}'"
-  alias 'git-conf-dog'="git config user.name '${GITCONF_DOG_USERNAME}';git config user.email '${GITCONF_DOG_EMAIL}'"
+
+  __git-conf () {
+    git config user.name "$1"
+    git config user.email "$2"
+  }
+
+  alias 'git-conf'="__git-conf '${GITCONF_DEFAULT_USERNAME}' '${GITCONF_DEFAULT_EMAIL}'"
+  alias 'git-conf-decapoda'="__git-conf '${GITCONF_DECAPODA_USERNAME}' '${GITCONF_DECAPODA_EMAIL}'"
+  alias 'git-conf-dog'="__git-conf '${GITCONF_DOG_USERNAME}' '${GITCONF_DOG_EMAIL}'"
 fi
 
 # rbenv
-if test -d "${HOME}/.rbenv"
+rbenv_path="${HOME}/.rbenv"
+if test -d "${rbenv_path}"
 then
-  export PATH="${HOME}/.rbenv/bin:${PATH}"
+  export PATH="${rbenv_path}:${PATH}"
   eval "$(rbenv init -)"
   alias rx='rbenv exec'
 fi
+unset rbenv_path
 
 # stack
 if type 'stack' > /dev/null 2>&1
@@ -122,27 +130,13 @@ then
 fi
 
 # android-studio
-if test -d "${HOME}/.local/android-studio"
+android_studio_path="${HOME}/.local/android-studio"
+if test -d "${android_studio_path}"
 then
-  export PATH="${HOME}/.local/android-studio/bin:${PATH}"
+  export PATH="${android_studio_path}:${PATH}"
   export ANDROID_HOME="${HOME}/Android/Sdk"
 fi
-
-# nvm
-if test -d "${HOME}/.nvm"
-then
-  nvm-init () {
-    if type 'nvm' > /dev/null 2>&1
-    then
-      printf '%s\n' 'nvm is already initialized.'
-    else
-      export NVM_DIR="${HOME}/.nvm"
-      [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-      nvm use v0.10.36
-    fi
-  }
-  [ -n "${BASHRC_ENABLE_NVM+true}" ] && nvm-init
-fi
+unset android_studio_path
 
 # for delete key
 tput smkx

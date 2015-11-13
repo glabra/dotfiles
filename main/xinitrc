@@ -15,7 +15,7 @@ export GTK_IM_MODULE='fcitx'
 export QT_IM_MODULE='fcitx'
 export _JAVA_AWT_WM_NONREPARENTING=1
 /usr/bin/synclient PalmDetect=1 &
-/usr/bin/wpa_cli -a ${HOME}/.local/wpa_cli_action.sh &
+/usr/bin/wpa_cli -a "${HOME}/.local/wpa_cli_action.sh" &
 /usr/bin/dunst &
 /usr/bin/slock &
 (while true; do ${HOME}/.local/bin/dwm-update-status; sleep 1; done) > /dev/null &
