@@ -10,7 +10,7 @@ set expandtab
 set fileencodings=utf-8,ucs-bom,iso-2022-jp,cp932,euc-jp,default,latin
 set laststatus=2
 set list
-set listchars=tab:>\ ,trail:~,nbsp:%
+set listchars=tab:>.,trail:~,nbsp:%
 set modeline
 set mouse=v
 set nocursorcolumn
@@ -24,25 +24,15 @@ set softtabstop=2 "<TAB>を入力した際に入力されるインデントの�
 set splitbelow
 set tabstop=2 "<TAB>の見た目の幅数
 set wrap
-set statusline=%f%{(fugitive#head(7)!=''?':'.fugitive#head(7):'')}%(\ %M%R%)
+set statusline=%f%(\ %M%R%)
 set statusline+=%=\ \ 
 set statusline+=%{(&ft!=''?&ft:'plain').':'.(&fenc!=''?&fenc:&enc).':'.&ff}\ [%2B]\ %v:%l/%L
 
 colorscheme desert
 highlight CursorLineNR cterm=bold
 
-call mkdir(expand("~/.cache/nvim/swap"), 'p')
-set swapfile
-set directory=~/.cache/nvim/swap
-call mkdir(expand("~/.cache/nvim/undo"), 'p')
-set undofile
-set undodir=~/.cache/nvim/undo
-call mkdir(expand("~/.cache/nvim/backup"), 'p')
-set backup
-set backupdir=~/.cache/nvim/backup
-
-let g:tex_flavor = 'lualatex'
-let g:ruby_path = "" " rubyなファイルがストレスレスに開くようになる魔法の呪文
+" rubyなファイルがストレスレスに開くようになる魔法の呪文
+let g:ruby_path = ""
 
 nnoremap <C-b> <C-u>
 nnoremap <C-f> <C-d>
@@ -76,44 +66,57 @@ tnoremap <silent> <C-w><C-n> <C-\><C-n>gt
 tnoremap <silent> <C-w><C-p> <C-\><C-n>gT
 tnoremap <silent> <C-w><C-w> <C-\><C-n>
 
+call mkdir(expand("~/.cache/nvim/swap"), 'p')
+set swapfile
+set directory=~/.cache/nvim/swap
+call mkdir(expand("~/.cache/nvim/undo"), 'p')
+set undofile
+set undodir=~/.cache/nvim/undo
+call mkdir(expand("~/.cache/nvim/backup"), 'p')
+set backup
+set backupdir=~/.cache/nvim/backup
+
 augroup vimrc_loading
   autocmd!
-  autocmd BufNewFile *.rb 0r ${HOME}/.nvim/templates/ruby.txt
-  autocmd BufNewFile *.sh 0r ${HOME}/.nvim/templates/sh.txt
-  autocmd BufNewFile Makefile 0r ${HOME}/.nvim/templates/Makefile.txt
-  autocmd BufNewFile *.c 0r ${HOME}/.nvim/templates/c.txt
+  autocmd BufNewFile *.rb 0r ${HOME}/.config/nvim/templates/ruby.txt
+  autocmd BufNewFile *.sh 0r ${HOME}/.config/nvim/templates/sh.txt
+  autocmd BufNewFile Makefile 0r ${HOME}/.config/nvim/templates/Makefile.txt
+  autocmd BufNewFile *.c 0r ${HOME}/.config/nvim/templates/c.txt
 augroup END
 
 if has('vim_starting')
-  set runtimepath+=~/.nvim/bundle/Vundle.vim
+  set runtimepath+=~/.config/nvim/bundle/Vundle.vim
 endif
-call vundle#begin('~/.nvim/bundle')
+call vundle#begin('~/.config/nvim/bundle')
 Plugin 'gmarik/Vundle.vim'
-Plugin 'Shougo/neocomplcache.vim'
+Plugin 'Shougo/deoplete.nvim'
 Plugin 'Shougo/neosnippet'
 Plugin 'vim-scripts/vim-auto-save'
-Plugin 'scrooloose/syntastic'
-Plugin 'justinmk/vim-dirvish'
 Plugin 'thinca/vim-splash'
-Plugin 'stephpy/vim-yaml'
 Plugin 'travitch/hasksyn'
+" vim-dirvish has serious bug after e430cdc949a743e2e13751db36a73b886dfa4c24.
+" so, must stay in a14c58bcdf7b2b0f8aae895c107626d3470d016e.
+Plugin 'justinmk/vim-dirvish', {'pinned': 1}
+
 if executable('ctags')
   Plugin 'majutsushi/tagbar'
 endif
-if executable('git')
-  Plugin 'tpope/vim-fugitive'
-endif
 call vundle#end()
+
+" deoplete
+let g:deoplete#enable_at_startup = 1
 
 " neosnippet
 let path_snippet_local = expand('~/.cache/neosnippet/localsnippets')
 let g:neosnippet#disable_runtime_snippets = { '_': 1 }
-let g:neosnippet#snippets_directory = expand('~/.nvim/snippets')
+let g:neosnippet#snippets_directory = expand('~/.config/nvim/snippets')
 nnoremap <expr> <C-i><C-i> ":NeoSnippetSource " . path_snippet_local . "\<CR>"
 nnoremap <expr> <C-i>e ":new " . path_snippet_local . "\<CR>:set filetype=neosnippet\<CR>"
 nnoremap <silent> <C-i>E :split<CR>:NeoSnippetEdit<CR>
-function! s:keymappings_tab()
-  if neosnippet#expandable()
+function! s:keymappings_tab() abort
+  if neosnippet#jumpable()
+    return "\<Plug>(neosnippet_jump)"
+  elseif neosnippet#expandable()
     return "\<Plug>(neosnippet_expand)"
   elseif pumvisible()
     return "\<C-n>"
@@ -121,23 +124,8 @@ function! s:keymappings_tab()
     return "\<TAB>"
   endif
 endfunction
-imap <expr> <C-k> (neosnippet#jumpable()) ? "\<Plug>(neosnippet_jump)" : "\<C-k>"
+imap <expr> <C-k> (neosnippet#expandable()) ? "\<Plug>(neosnippet_expand)" : "\<C-k>"
 imap <expr> <TAB> <SID>keymappings_tab()
-smap <expr> <TAB> <SID>keymappings_tab()
-
-" neocomplcache
-let g:neocomplcache_enable_at_startup = 1
-let g:neocomplcache_enable_smart_case = 1
-let g:neocomplcache_min_syntax_length = 3
-let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
-if !exists('g:neocomplcache_keyword_patterns')
-  let g:neocomplcache_keyword_patterns = {}
-endif
-let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-
-" syntastic
-let g:syntastic_mode_map = { 'mode': 'passive' }
-nnoremap <silent> <C-k><C-k> :SyntasticCheck<CR>:Errors<CR>
 
 " tagbar
 let g:tagbar_autoclose = 1
@@ -154,7 +142,7 @@ let g:tagbar_type_tex = {
       \              'p:pagerefs:1:0'
       \          ],
       \ 'sort': 0,
-      \ 'deffile': expand('~/.nvim/ctags/latex')
+      \ 'deffile': expand('~/.config/nvim/ctags/latex')
       \ }
 nnoremap <silent> <C-k><C-l> :TagbarToggle<CR>
 
@@ -167,7 +155,7 @@ nnoremap <silent> <C-k><C-a> :AutoSaveToggle<CR>
 nnoremap <expr> <C-l> (glob('%')=='') ? ":Dirvish\<CR>" : ":Dirvish %\<CR>"
 
 " vim-splash
-let g:splash#path = expand('~/.nvim/splash.txt')
+let g:splash#path = expand('~/.config/nvim/splash.txt')
 
 syntax on
 filetype indent plugin on

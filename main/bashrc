@@ -8,10 +8,6 @@ unset HISTFILESIZE
 
 alias rm='rm -i'
 alias ls='ls --color=auto'
-alias q='exit'
-alias ':q'='exit'
-alias x='exit'
-alias '..'='cd ..'
 alias less='less -R'
 alias bmount='udisksctl mount -b'
 alias bumount='udisksctl unmount -b'
@@ -20,6 +16,11 @@ alias alsa-reload='alsactl nrestore'
 alias poweroff='systemctl poweroff'
 alias reboot='systemctl reboot'
 
+alias q='exit'
+alias x='exit'
+alias ':q'='exit'
+alias c='cd'
+alias '..'='cd ..'
 alias sl='ls'
 alias ks='ls'
 alias l='ls'
@@ -30,6 +31,11 @@ alias svi='vi'
 alias iv='vi'
 alias rf='rm'
 alias vp='cp'
+
+if type 'libreoffice' > /dev/null 2>&1
+then
+  alias libreoffice='LANG=ja_JP.UTF-8 libreoffice'
+fi
 
 [[ -f "${HOME}/.local/secrets.sh" ]] && . "${HOME}/.local/secrets.sh"
 
@@ -58,7 +64,7 @@ ampache () {
         printf '%s\n' 'ampache is stopped.'
       elif test "$1" = 'open'
       then
-        chromium http://${host}/ampache &
+        firefox http://${host}/ampache &
       elif test "$1" = 'get-host'
       then
         printf '%s\n' "${host}"
@@ -124,19 +130,38 @@ unset rbenv_path
 if type 'stack' > /dev/null 2>&1
 then
   alias s='stack'
-  alias sg='stack exec -- ghci'
-  alias sgi='stack ghci'
+  alias sb='stack build'
+  alias sg='stack ghci'
   alias sx='stack exec --'
 fi
 
-# android-studio
-android_studio_path="${HOME}/.local/android-studio"
+# android
+android_sdk_path="${HOME}/.local/android/sdk"
+if test -d "${android_sdk_path}"
+then
+  export PATH="${android_sdk_path}/platform-tools:${PATH}"
+  export ANDROID_HOME="${HOME}/.local/android/sdk"
+fi
+unset android_sdk_path
+
+android_studio_path="${HOME}/.local/android/android-studio"
 if test -d "${android_studio_path}"
 then
-  export PATH="${android_studio_path}:${PATH}"
-  export ANDROID_HOME="${HOME}/Android/Sdk"
+  export PATH="${android_studio_path}/bin:${PATH}"
 fi
 unset android_studio_path
+
+# astah community
+if test -d "${HOME}/.local/astah_community"
+then
+  alias astah="sh ${HOME}/.local/astah_community/astah"
+fi
+
+# php7
+if test -d "${HOME}/.local/php"
+then
+  export PATH="${HOME}/.local/php/bin:${PATH}"
+fi
 
 # for delete key
 tput smkx
