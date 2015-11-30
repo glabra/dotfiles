@@ -9,7 +9,8 @@ cloning = \
 		$(filter-out $(shell test -d '$($(1)_destdir)'; echo $$?),0), \
 		$(GIT) clone '$($(1)_url)' '$($(1)_destdir)',)
 
-vundle_destdir := $(destdir)/.nvim/bundle/Vundle.vim
+nvim_config := $(destdir)/.config/nvim
+vundle_destdir := $(nvim_config)/bundle/Vundle.vim
 vundle_url := https://github.com/gmarik/Vundle.vim.git
 
 rbenv_destdir := $(destdir)/.rbenv
@@ -33,7 +34,7 @@ ifneq "$(shell test -d $(vundle_destdir); echo $$?)" "0"
 endif
 
 uninstall:
-	@rm -rf -- '$(destdir)/.nvim'
+	@$(RM) -- '$(nvim_config)'
 ifeq "$(shell test -d $(rbenv_destdir); echo $$?)" "0"
 	@printf '$(percent)s\n' "* Execute \`rm -rf -- '$(destdir)/.rbenv'\` to uninstall rbenv. *"
 endif
