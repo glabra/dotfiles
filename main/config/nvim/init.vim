@@ -1,3 +1,5 @@
+scriptencoding utf-8
+
 filetype off
 
 set autoindent
@@ -5,14 +7,12 @@ set autoread
 set breakindent
 set completeopt& completeopt-=preview
 set cursorline
-set encoding=utf-8
 set expandtab
 set fileencodings=utf-8,ucs-bom,iso-2022-jp,cp932,euc-jp,default,latin
 set laststatus=2
 set list
 set listchars=tab:>.,trail:~,nbsp:%
 set modeline
-set mouse=v
 set nocursorcolumn
 set nofoldenable
 set number
@@ -31,88 +31,127 @@ set statusline+=%{(&ft!=''?&ft:'plain').':'.(&fenc!=''?&fenc:&enc).':'.&ff}\ [%2
 colorscheme desert
 highlight CursorLineNR cterm=bold
 
-" rubyなファイルがストレスレスに開くようになる魔法の呪文
-let g:ruby_path = ""
-
-nnoremap <C-b> <C-u>
-nnoremap <C-f> <C-d>
-nnoremap <C-u> <C-y>
-nnoremap <C-d> <C-e>
-nnoremap <expr> <C-k><C-p> ( &paste == 1 ) ? ":set nopaste\<CR>" : ":set paste\<CR>"
-nnoremap <expr> <C-k><C-n> ( &number == 1 ) ? ":set nonumber\<CR>" : ":set number\<CR>"
-nnoremap <expr> <C-k><C-r> ( &readonly == 1 ) ? ":set readonly!\<CR>" : ":set readonly\<CR>"
-nnoremap <expr> <C-k><C-e> ( &expandtab == 1 ) ? ":set expandtab!\<CR>" : ":set expandtab\<CR>"
 nnoremap x "_x
 nnoremap X "_X
 nnoremap Y "+y
 nnoremap YY "+yy
 nnoremap - "+p
 nnoremap _ "+P
-vnoremap Y "+y
 nnoremap <silent> <C-n> gt
 nnoremap <silent> <C-p> gT
+nnoremap <expr> <C-w>T ":vsplit " . tempname() . "\<CR>"
+nnoremap <silent> <C-w>x <C-w>q
 nnoremap <silent> <C-w><C-n> gt
 nnoremap <silent> <C-w><C-p> gT
-nnoremap <silent> <C-w>" :split<CR>:terminal<CR>
-nnoremap <silent> <C-w>% :vsplit<CR>:terminal<CR>
-nnoremap <silent> <C-w>x <C-w>q
-nnoremap <silent> <C-w>c :tabnew<CR>:terminal<CR>
-nnoremap <silent> <C-w>t :tabnew<CR>
-nnoremap <expr> <C-w>T ":vsplit " . tempname() . "\<CR>"
+nnoremap <expr> <C-k><C-n> (&number == 1) ? ":setlocal nonumber\<CR>" : ":setlocal number\<CR>"
+nnoremap <expr> <C-k><C-p> (&paste == 1) ? ":setlocal nopaste\<CR>" : ":setlocal paste\<CR>"
+nnoremap <expr> <C-k><C-r> (&readonly == 1) ? ":setlocal readonly!\<CR>" : ":setlocal readonly\<CR>"
+nnoremap <expr> <C-k><C-e> (&expandtab == 1) ? ":setlocal expandtab!\<CR>" : ":setlocal expandtab\<CR>"
 inoremap <silent> <C-w><C-n> <Esc>gt
 inoremap <silent> <C-w><C-p> <Esc>gT
 inoremap <silent> <C-w><C-w> <Esc>
-tnoremap <silent> <C-w><C-n> <C-\><C-n>gt
-tnoremap <silent> <C-w><C-p> <C-\><C-n>gT
-tnoremap <silent> <C-w><C-w> <C-\><C-n>
+vnoremap Y "+y
 
-call mkdir(expand("~/.cache/nvim/swap"), 'p')
+if has('nvim')
+  nnoremap <silent> <C-w>" :split<CR>:terminal<CR>
+  nnoremap <silent> <C-w>% :vsplit<CR>:terminal<CR>
+  nnoremap <silent> <C-w>c :tabnew<CR>:terminal<CR>
+  nnoremap <silent> <C-w>t :tabnew<CR>
+  tnoremap <silent> <C-w><C-n> <C-\><C-n>gt
+  tnoremap <silent> <C-w><C-p> <C-\><C-n>gT
+  tnoremap <silent> <C-w><C-w> <C-\><C-n>
+endif
+
+" rubyなファイルがストレスレスに開くようになる魔法の呪文
+" 代償として、補完が少し弱くなる
+let g:ruby_path = ""
+
+" $MYVIM (vimの設定フォルダ格納するヤツ)
+if has('nvim')
+  if exists($XDG_CONFIG_HOME)
+    let $MYVIM = expand('$XDG_CONFIG_HOME')
+  else
+    let $MYVIM = expand('$HOME/.config/nvim')
+  endif
+else
+  let $MYVIM = expand('$HOME/.vim')
+endif
+
+" swapfile等の格納先変更
+if exists($XDG_DATA_HOME)
+  let s:datadir_prefix = expand('$XDG_CONFIG_HOME/nvim')
+else
+  let s:datadir_prefix = expand('$HOME/.local/share/nvim')
+endif
+
 set swapfile
-set directory=~/.cache/nvim/swap
-call mkdir(expand("~/.cache/nvim/undo"), 'p')
 set undofile
-set undodir=~/.cache/nvim/undo
-call mkdir(expand("~/.cache/nvim/backup"), 'p')
 set backup
-set backupdir=~/.cache/nvim/backup
 
+let &backupdir=s:datadir_prefix . "/backup"
+call mkdir(&backupdir, 'p')
+" default behavior
+"let &directory=s:datadir_prefix . "/swap"
+"let &undodir=s:datadir_prefix . "/undo"
+"let &viewdir=s:datadir_prefix . "/view"
+"call mkdir(&directory, 'p')
+"call mkdir(&undodir, 'p')
+"call mkdir(&viewdir, 'p')
+
+unlet s:datadir_prefix
+
+" Tab文字の数変更するヤツ
+function! ChangeTabSpaces(n) abort
+  let &l:shiftwidth = a:n
+  let &l:softtabstop = a:n
+  let &l:tabstop = a:n
+endfunction
+command! -nargs=1 Chtab :call ChangeTabSpaces(<f-args>)
+
+" autocmd!
 augroup vimrc_loading
   autocmd!
-  autocmd BufNewFile *.rb 0r ${HOME}/.config/nvim/templates/ruby.txt
-  autocmd BufNewFile *.sh 0r ${HOME}/.config/nvim/templates/sh.txt
-  autocmd BufNewFile Makefile 0r ${HOME}/.config/nvim/templates/Makefile.txt
-  autocmd BufNewFile *.c 0r ${HOME}/.config/nvim/templates/c.txt
+  autocmd BufNewFile *.rb 0r $MYVIM/templates/ruby.txt
+  autocmd BufNewFile *.sh 0r $MYVIM/templates/sh.txt
+  autocmd BufNewFile Makefile 0r $MYVIM/templates/Makefile.txt
+  autocmd BufNewFile *.c 0r $MYVIM/templates/c.txt
+  autocmd FileType c :setlocal noexpandtab
+  autocmd FileType c :call ChangeTabSpaces(8)
+  autocmd FileType java :call ChangeTabSpaces(4)
 augroup END
 
+" Plugins
 if has('vim_starting')
-  set runtimepath+=~/.config/nvim/bundle/Vundle.vim
+  set runtimepath+=$MYVIM/bundle/Vundle.vim
 endif
-call vundle#begin('~/.config/nvim/bundle')
+call vundle#begin(expand('$MYVIM/bundle'))
 Plugin 'gmarik/Vundle.vim'
-Plugin 'Shougo/deoplete.nvim'
 Plugin 'Shougo/neosnippet'
 Plugin 'vim-scripts/vim-auto-save'
 Plugin 'thinca/vim-splash'
+Plugin 'scrooloose/syntastic'
 Plugin 'travitch/hasksyn'
 " vim-dirvish has serious bug after e430cdc949a743e2e13751db36a73b886dfa4c24.
 " so, must stay in a14c58bcdf7b2b0f8aae895c107626d3470d016e.
 Plugin 'justinmk/vim-dirvish', {'pinned': 1}
 
+if has('nvim')
+  Plugin 'Shougo/deoplete.nvim'
+endif
 if executable('ctags')
   Plugin 'majutsushi/tagbar'
 endif
 call vundle#end()
 
-" deoplete
-let g:deoplete#enable_at_startup = 1
+if has('nvim')
+  " deoplete
+  let g:deoplete#enable_at_startup = 1
+endif
 
 " neosnippet
-let path_snippet_local = expand('~/.cache/neosnippet/localsnippets')
 let g:neosnippet#disable_runtime_snippets = { '_': 1 }
-let g:neosnippet#snippets_directory = expand('~/.config/nvim/snippets')
-nnoremap <expr> <C-i><C-i> ":NeoSnippetSource " . path_snippet_local . "\<CR>"
-nnoremap <expr> <C-i>e ":new " . path_snippet_local . "\<CR>:set filetype=neosnippet\<CR>"
-nnoremap <silent> <C-i>E :split<CR>:NeoSnippetEdit<CR>
+let g:neosnippet#snippets_directory = expand('$MYVIM/snippets')
+nnoremap <silent> <C-k>E :split<CR>:NeoSnippetEdit<CR>
 function! s:keymappings_tab() abort
   if neosnippet#jumpable()
     return "\<Plug>(neosnippet_jump)"
@@ -142,9 +181,9 @@ let g:tagbar_type_tex = {
       \              'p:pagerefs:1:0'
       \          ],
       \ 'sort': 0,
-      \ 'deffile': expand('~/.config/nvim/ctags/latex')
+      \ 'deffile': expand('$MYVIM/ctags/latex')
       \ }
-nnoremap <silent> <C-k><C-l> :TagbarToggle<CR>
+nnoremap <silent> <C-k><C-h> :TagbarToggle<CR>
 
 " vim-auto-save
 let g:auto_save = 1
@@ -152,10 +191,10 @@ let g:auto_save_in_insert_mode = 0
 nnoremap <silent> <C-k><C-a> :AutoSaveToggle<CR>
 
 " vim-dirvish
-nnoremap <expr> <C-l> (glob('%')=='') ? ":Dirvish\<CR>" : ":Dirvish %\<CR>"
+nnoremap <expr> <C-k><C-l> (glob('%')=='') ? ":Dirvish\<CR>" : ":Dirvish %\<CR>"
 
 " vim-splash
-let g:splash#path = expand('~/.config/nvim/splash.txt')
+let g:splash#path = expand('$MYVIM/splash.txt')
 
 syntax on
 filetype indent plugin on
