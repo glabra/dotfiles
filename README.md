@@ -34,6 +34,6 @@ make install
 - files that name is `Makefile` are always considered as `Makefile` regardless its content.
 
 ## License
-These dotfiles are avaliable under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+These dotfiles are avaliable under the terms of the [Do What the Fuck You Want to Public License](http://www.wtfpl.net/txt/copying/).
 See the `LICENSE` file for more details.
 
