@@ -129,7 +129,6 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'Shougo/neosnippet'
 Plugin 'vim-scripts/vim-auto-save'
 Plugin 'thinca/vim-splash'
-Plugin 'scrooloose/syntastic'
 Plugin 'travitch/hasksyn'
 " vim-dirvish has serious bug after e430cdc949a743e2e13751db36a73b886dfa4c24.
 " so, must stay in a14c58bcdf7b2b0f8aae895c107626d3470d016e.
