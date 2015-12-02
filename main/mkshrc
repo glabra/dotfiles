@@ -1,0 +1,202 @@
+[[ $- != *i* ]] && return
+
+### no persistence history {
+unset HISTFILE
+unset HISTSIZE
+### } no persistence history
+
+### set PS1 {
+# print branch name
+__git_ps1() {
+  if type 'git' > /dev/null 2>&1
+  then
+    local branch=$(git branch 2>/dev/null|grep '* ' -|tail -c +3)
+  else
+    local branch=""
+  fi
+
+  if test -n "${branch}"
+  then
+    tput sgr0
+    tput dim
+    printf '(%s)' "${branch}"
+    tput sgr0
+  fi
+}
+PS1='$(tput bold)$(basename ${PWD})$(__git_ps1)$(tput bold)\$$(tput sgr0) '
+### } set PS1
+
+### aliases {
+### general {{
+# foolproof
+alias rm='rm -i'
+# typosafe
+alias q='exit'
+alias x='exit'
+alias ':q'='exit'
+alias c='cd'
+alias '..'='cd ..'
+alias sl='ls'
+alias ks='ls'
+alias l='ls'
+alias d='cd'
+alias vf='cd'
+alias scd='cd'
+alias rf='rm'
+alias vp='cp'
+# obenri on linux
+alias ls='ls --color=auto'
+alias less='less -R'
+alias bmount='udisksctl mount -b'
+alias bumount='udisksctl unmount -b'
+alias fuserumount='fusermount -u'
+alias alsa-reload='alsactl nrestore'
+alias poweroff='systemctl poweroff'
+alias reboot='systemctl reboot'
+### }} general
+
+### applications {{
+# nvim
+if type 'nvim' > /dev/null 2>&1
+then
+  alias vi='nvim'
+  alias vim='nvim'
+  alias svi='nvim'
+  alias iv='nvim'
+fi
+# stack
+if type 'stack' > /dev/null 2>&1
+then
+  alias s='stack'
+  alias sb='stack build'
+  alias sg='stack ghci'
+  alias sx='stack exec --'
+fi
+# git
+if type 'git' > /dev/null 2>&1
+then
+  alias g='git'
+  alias gti='git'
+fi
+### }} applications
+### } aliases
+
+### secrets {
+if test -f "${HOME}/.local/secrets.sh"
+then
+  . "${HOME}/.local/secrets.sh"
+  ### AWS {{
+  alias riofs="\
+    AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+    AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+    riofs"
+  alias box="\
+    mkdir /run/user/${UID}/dropbox 2> /dev/null; \
+    riofs ${AWS_S3_BUCKET_DROPBOX} /run/user/${UID}/dropbox && \
+    cd /run/user/${UID}/dropbox"
+  alias unbox="\
+    fusermount -u /run/user/${UID}/dropbox && \
+    rmdir /run/user/${UID}/dropbox"
+  # ampache on Amazon EC2 control command
+  ampache () {
+    local __ampache_api="\
+      curl --silent \
+      --header x-api-key:${AWS_AMPACHE_API_KEY} \
+      ${AWS_AMPACHE_API_ENDPOINT}/ -X"
+    case "$1" in
+      'start')
+        ${__ampache_api} PUT
+        printf '\n'
+        ;;
+      'stop')
+        ${__ampache_api} DELETE
+        printf '\n'
+        ;;
+      'status' | 'get-host' | 'open')
+        local host=`\
+          ${__ampache_api} GET \
+          | sed -ne 's/^"\(ec2[0-9-]\+\.compute-[0-9]\+\.amazonaws\.com\)"$/\1/p'`
+        if test -z "${host}"
+        then
+          printf '%s\n' 'ampache is stopped.'
+        elif test "$1" = 'open'
+        then
+          firefox http://${host}/ampache &
+        elif test "$1" = 'get-host'
+        then
+          printf '%s\n' "${host}"
+        else
+          printf '%s\n' "ampache is running. (Host: ${host})"
+        fi
+        ;;
+      *)
+        printf '%s\n' "ampache (start|stop|status|open|get-host)"
+        ;;
+    esac
+  }
+  ### }} AWS
+  ### git {{
+  if type 'git' > /dev/null 2>&1
+  then
+    __git-conf () {
+      git config user.name "$1"
+      git config user.email "$2"
+    }
+
+    alias 'git-conf'="__git-conf '${GITCONF_DEFAULT_USERNAME}' '${GITCONF_DEFAULT_EMAIL}'"
+    alias 'git-conf-decapoda'="__git-conf '${GITCONF_DECAPODA_USERNAME}' '${GITCONF_DECAPODA_EMAIL}'"
+    alias 'git-conf-dog'="__git-conf '${GITCONF_DOG_USERNAME}' '${GITCONF_DOG_EMAIL}'"
+  fi
+  ### }} git
+fi
+### } secrets
+
+### apps initialize {{{
+# force LANG=ja_JP.UTF-8 on libreoffice to fcitx correctly working
+if type 'libreoffice' > /dev/null 2>&1; then
+  alias libreoffice='LANG=ja_JP.UTF-8 libreoffice'
+fi
+
+# rbenv
+rbenv_path="${HOME}/.rbenv"
+if test -d "${rbenv_path}"
+then
+  export PATH="${rbenv_path}/bin:${PATH}"
+  eval "$(rbenv init -)"
+  alias rx='rbenv exec'
+fi
+unset rbenv_path
+
+# android
+android_sdk_path="${HOME}/.local/android/sdk"
+android_studio_path="${HOME}/.local/android/android-studio"
+if test -d "${android_sdk_path}"
+then
+  export PATH="${android_sdk_path}/platform-tools:${PATH}"
+  export ANDROID_HOME="${HOME}/.local/android/sdk"
+fi
+if test -d "${android_studio_path}"
+then
+  export PATH="${android_studio_path}/bin:${PATH}"
+fi
+unset android_sdk_path
+unset android_studio_path
+
+# astah community
+if test -d "${HOME}/.local/astah_community"
+then
+  alias astah="sh ${HOME}/.local/astah_community/astah"
+fi
+
+# php7
+if test -d "${HOME}/.local/php"
+then
+  export PATH="${HOME}/.local/php/bin:${PATH}"
+fi
+### }}} apps initialize
+
+# for delete key in st
+tput smkx
+
+# initialization finished
+printf '%s\n' "`LANG=C date`"
