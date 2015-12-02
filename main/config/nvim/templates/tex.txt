@@ -1,0 +1,7 @@
+\documentclass{ltjsarticle}
+\title{}
+\author{}
+\date{\today}
+
+\begin{document}
+\end{document}

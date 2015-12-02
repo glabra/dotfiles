@@ -115,6 +115,7 @@ augroup vimrc_loading
   autocmd BufNewFile *.sh 0r $MYVIM/templates/sh.txt
   autocmd BufNewFile Makefile 0r $MYVIM/templates/Makefile.txt
   autocmd BufNewFile *.c 0r $MYVIM/templates/c.txt
+  autocmd BufNewFile *.tex 0r $MYVIM/templates/tex.txt
   autocmd BufReadPost .mkshrc :setlocal filetype=sh
   autocmd FileType c :setlocal noexpandtab
   autocmd FileType c :call ChangeTabSpaces(8)
