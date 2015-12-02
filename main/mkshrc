@@ -35,13 +35,13 @@ alias q='exit'
 alias x='exit'
 alias ':q'='exit'
 alias c='cd'
-alias '..'='cd ..'
-alias sl='ls'
-alias ks='ls'
-alias l='ls'
 alias d='cd'
 alias vf='cd'
 alias scd='cd'
+alias sl='ls'
+alias ks='ls'
+alias l='ls'
+alias dls='ls'
 alias rf='rm'
 alias vp='cp'
 # obenri on linux
@@ -67,7 +67,6 @@ fi
 # stack
 if type 'stack' > /dev/null 2>&1
 then
-  alias s='stack'
   alias sb='stack build'
   alias sg='stack ghci'
   alias sx='stack exec --'
@@ -161,11 +160,16 @@ fi
 rbenv_path="${HOME}/.rbenv"
 if test -d "${rbenv_path}"
 then
-  export PATH="${rbenv_path}/bin:${PATH}"
-  eval "$(rbenv init -)"
-  alias rx='rbenv exec'
+  # lazy loading
+  rbenv() {
+    export PATH="${rbenv_path}/bin:${PATH}"
+    unset rbenv_path
+    unset -f rbenv
+    eval "$(rbenv init -)"
+    alias rx='rbenv exec'
+    rbenv "$@"
+  }
 fi
-unset rbenv_path
 
 # android
 android_sdk_path="${HOME}/.local/android/sdk"
