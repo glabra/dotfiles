@@ -1,0 +1,34 @@
+# global
+\#*\#
+*~
+*.swp
+
+# Mac OS Fuckin' X
+.DS_Store
+__MACOSX
+
+# TeX
+*.aux
+*.class
+*.dvi
+*.log
+*.toc
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+
+# haskell
+dist
+cabal-dev
+*.o
+*.hi
+*.chi
+*.chs.h
+*.dyn_o
+*.dyn_hi
+.stack-work/
+
+# java
+*.class
+*.jar
+

@@ -4,7 +4,7 @@ if test -d /etc/X11/xinit/xinitrc.d
 then
    for file in /etc/X11/xinit/xinitrc.d/*
    do
-      test -x "${file}" && source "${file}"
+      test -x "${file}" && . "${file}"
    done
    unset file
 fi
@@ -15,9 +15,9 @@ export GTK_IM_MODULE='fcitx'
 export QT_IM_MODULE='fcitx'
 export _JAVA_AWT_WM_NONREPARENTING=1
 /usr/bin/synclient PalmDetect=1 &
-/usr/bin/wpa_cli -a "${HOME}/.local/wpa_cli_action.sh" &
 /usr/bin/dunst &
-(while true; do ${HOME}/.local/bin/dwm-update-status; sleep 1; done) > /dev/null &
-(${HOME}/.local/bin/switch-wallpaper && /usr/bin/xcompmgr) > /dev/null &
+/usr/bin/wpa_cli -a "${HOME}/.local/actions/wpa_cli_notify" &
+${HOME}/.local/actions/dwm_update_status &
 (/usr/bin/fcitx && /usr/bin/xmodmap ${HOME}/.Xmodmap) > /dev/null &
+(${HOME}/.local/bin/switch-wallpaper && /usr/bin/xcompmgr) > /dev/null &
 exec ${HOME}/.local/bin/dwm

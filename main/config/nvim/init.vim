@@ -1,5 +1,8 @@
 scriptencoding utf-8
 
+" only for vim compability
+if !1 | finish | endif
+
 filetype off
 
 set autoindent
@@ -31,6 +34,10 @@ set statusline+=%{(&ft!=''?&ft:'plain').':'.(&fenc!=''?&fenc:&enc).':'.&ff}\ [%2
 colorscheme desert
 highlight CursorLineNR cterm=bold
 
+imap <silent> <F1> <Esc>
+nmap <silent> <F1> <Esc>
+nnoremap <silent> <F5> :tabedit $MYVIMRC<CR>
+nnoremap <silent> <F6> :source $MYVIMRC<CR>
 nnoremap x "_x
 nnoremap X "_X
 nnoremap Y "+y
@@ -43,10 +50,10 @@ nnoremap <expr> <C-w>T ":vsplit " . tempname() . "\<CR>"
 nnoremap <silent> <C-w>x <C-w>q
 nnoremap <silent> <C-w><C-n> gt
 nnoremap <silent> <C-w><C-p> gT
-nnoremap <expr> <C-k><C-n> (&number == 1) ? ":setlocal nonumber\<CR>" : ":setlocal number\<CR>"
-nnoremap <expr> <C-k><C-p> (&paste == 1) ? ":setlocal nopaste\<CR>" : ":setlocal paste\<CR>"
-nnoremap <expr> <C-k><C-r> (&readonly == 1) ? ":setlocal readonly!\<CR>" : ":setlocal readonly\<CR>"
-nnoremap <expr> <C-k><C-e> (&expandtab == 1) ? ":setlocal expandtab!\<CR>" : ":setlocal expandtab\<CR>"
+nnoremap <silent> <C-k><C-n> :setlocal number!<CR>
+nnoremap <silent> <C-k><C-r> :setlocal readonly!<CR>
+nnoremap <silent> <C-k><C-p> :setlocal paste!<CR>:echo 'paste='.&paste<CR>
+nnoremap <silent> <C-k><C-e> :setlocal expandtab!<CR>:echo 'expandtab='.&expandtab<CR>
 inoremap <silent> <C-w><C-n> <Esc>gt
 inoremap <silent> <C-w><C-p> <Esc>gT
 inoremap <silent> <C-w><C-w> <Esc>
@@ -66,15 +73,15 @@ endif
 " 代償として、補完が少し弱くなる
 let g:ruby_path = ""
 
-" $MYVIM (vimの設定フォルダ格納するヤツ)
+" s:myvim (vimの設定フォルダ格納するヤツ)
 if has('nvim')
   if exists($XDG_CONFIG_HOME)
-    let $MYVIM = expand('$XDG_CONFIG_HOME')
+    let s:myvim = expand('$XDG_CONFIG_HOME')
   else
-    let $MYVIM = expand('$HOME/.config/nvim')
+    let s:myvim = expand('$HOME/.config/nvim')
   endif
 else
-  let $MYVIM = expand('$HOME/.vim')
+  let s:myvim = expand('$HOME/.vim')
 endif
 
 " swapfile等の格納先変更
@@ -101,32 +108,48 @@ call mkdir(&backupdir, 'p')
 unlet s:datadir_prefix
 
 " Tab文字の数変更するヤツ
-function! ChangeTabSpaces(n) abort
+function! s:change_tab_spaces(n) abort
   let &l:shiftwidth = a:n
   let &l:softtabstop = a:n
   let &l:tabstop = a:n
 endfunction
-command! -nargs=1 Chtab :call ChangeTabSpaces(<f-args>)
+function! s:get_and_change_tab_spaces() abort
+  let l:chartable = ['1','2','3','4','5','6','7','8','9']
+  let l:char = nr2char(getchar())
+  if 0 <= index(l:chartable, l:char)
+    call <SID>change_tab_spaces(l:char)
+    echo '<Tab> is now' l:char 'spaces.'
+  else
+    echo '<Tab> is still' &l:tabstop 'spaces.'
+  endif
+endfunction
+nnoremap <silent> <C-k><C-t> :call <SID>get_and_change_tab_spaces()<CR>
+nnoremap command! -nargs=1 ChangeTabSpaces :call <SID>change_tab_spaces(<f-args>)
 
 " autocmd!
+function! s:declare_template(fname,ftype) abort
+  execute 'autocmd BufNewFile '.a:fname.' execute ''0r '.s:myvim.'/templates/'.a:ftype.'.txt'''
+endfunction
 augroup vimrc_loading
   autocmd!
-  autocmd BufNewFile *.rb 0r $MYVIM/templates/ruby.txt
-  autocmd BufNewFile *.sh 0r $MYVIM/templates/sh.txt
-  autocmd BufNewFile Makefile 0r $MYVIM/templates/Makefile.txt
-  autocmd BufNewFile *.c 0r $MYVIM/templates/c.txt
-  autocmd BufNewFile *.tex 0r $MYVIM/templates/tex.txt
-  autocmd BufReadPost .mkshrc :setlocal filetype=sh
-  autocmd FileType c :setlocal noexpandtab
-  autocmd FileType c :call ChangeTabSpaces(8)
-  autocmd FileType java :call ChangeTabSpaces(4)
+  call s:declare_template('*.rb', 'ruby')
+  call s:declare_template('*.sh', 'sh')
+  call s:declare_template('Makefile', 'Makefile')
+  call s:declare_template('*.c', 'c')
+  call s:declare_template('*.tex', 'tex')
+  autocmd BufReadPost .mkshrc setlocal filetype=sh
+  autocmd FileType c setlocal noexpandtab
+  autocmd FileType c call <SID>change_tab_spaces(8)
+  autocmd FileType java call <SID>change_tab_spaces(4)
 augroup END
+delfunction s:declare_template
 
 " Plugins
 if has('vim_starting')
-  set runtimepath+=$MYVIM/bundle/Vundle.vim
+  set runtimepath&
+  execute 'set runtimepath+=' . expand(s:myvim . '/bundle/Vundle.vim')
 endif
-call vundle#begin(expand('$MYVIM/bundle'))
+call vundle#begin(expand(s:myvim . '/bundle'))
 Plugin 'gmarik/Vundle.vim'
 Plugin 'Shougo/neosnippet'
 Plugin 'vim-scripts/vim-auto-save'
@@ -151,19 +174,20 @@ endif
 
 " neosnippet
 let g:neosnippet#disable_runtime_snippets = { '_': 1 }
-let g:neosnippet#snippets_directory = expand('$MYVIM/snippets')
+let g:neosnippet#snippets_directory = expand(s:myvim . '/snippets')
 nnoremap <silent> <C-k>E :split<CR>:NeoSnippetEdit<CR>
 function! s:keymappings_tab() abort
   if neosnippet#jumpable()
     return "\<Plug>(neosnippet_jump)"
-  elseif neosnippet#expandable()
-    return "\<Plug>(neosnippet_expand)"
   elseif pumvisible()
     return "\<C-n>"
+  elseif neosnippet#expandable()
+    return "\<Plug>(neosnippet_expand)"
   else
     return "\<TAB>"
   endif
 endfunction
+imap <expr> <C-c> pumvisible() ? "\<C-y>" : "\<C-c>"
 imap <expr> <C-k> (neosnippet#expandable()) ? "\<Plug>(neosnippet_expand)" : "\<C-k>"
 imap <expr> <TAB> <SID>keymappings_tab()
 
@@ -182,7 +206,7 @@ let g:tagbar_type_tex = {
       \              'p:pagerefs:1:0'
       \          ],
       \ 'sort': 0,
-      \ 'deffile': expand('$MYVIM/ctags/latex')
+      \ 'deffile': expand(s:myvim . '/ctags/latex')
       \ }
 nnoremap <silent> <C-k><C-h> :TagbarToggle<CR>
 
@@ -195,7 +219,7 @@ nnoremap <silent> <C-k><C-a> :AutoSaveToggle<CR>
 nnoremap <expr> <C-k><C-l> (glob('%')=='') ? ":Dirvish\<CR>" : ":Dirvish %\<CR>"
 
 " vim-splash
-let g:splash#path = expand('$MYVIM/splash.txt')
+let g:splash#path = expand(s:myvim . '/splash.txt')
 
 syntax on
 filetype indent plugin on
