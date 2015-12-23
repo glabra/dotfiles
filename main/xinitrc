@@ -17,6 +17,7 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 /usr/bin/synclient PalmDetect=1 &
 /usr/bin/dunst &
 /usr/bin/wpa_cli -a "${HOME}/.local/actions/wpa_cli_notify" &
+pulseaudio --start &
 ${HOME}/.local/actions/dwm_update_status &
 (/usr/bin/fcitx && /usr/bin/xmodmap ${HOME}/.Xmodmap) > /dev/null &
 (${HOME}/.local/bin/switch-wallpaper && /usr/bin/xcompmgr) > /dev/null &

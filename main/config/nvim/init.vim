@@ -16,16 +16,14 @@ set laststatus=2
 set list
 set listchars=tab:>.,trail:~,nbsp:%
 set modeline
+set mouse-=a
 set nocursorcolumn
 set nofoldenable
 set number
 set numberwidth=5
-set shiftwidth=2 "cindentや>><<で入力されるインデントの幅
 set showmatch
 set smartindent
-set softtabstop=2 "<TAB>を入力した際に入力されるインデントの幅
 set splitbelow
-set tabstop=2 "<TAB>の見た目の幅数
 set wrap
 set statusline=%f%(\ %M%R%)
 set statusline+=%=\ \ 
@@ -123,26 +121,19 @@ function! s:get_and_change_tab_spaces() abort
     echo '<Tab> is still' &l:tabstop 'spaces.'
   endif
 endfunction
+call s:change_tab_spaces(2)
 nnoremap <silent> <C-k><C-t> :call <SID>get_and_change_tab_spaces()<CR>
 nnoremap command! -nargs=1 ChangeTabSpaces :call <SID>change_tab_spaces(<f-args>)
 
 " autocmd!
-function! s:declare_template(fname,ftype) abort
-  execute 'autocmd BufNewFile '.a:fname.' execute ''0r '.s:myvim.'/templates/'.a:ftype.'.txt'''
-endfunction
 augroup vimrc_loading
   autocmd!
-  call s:declare_template('*.rb', 'ruby')
-  call s:declare_template('*.sh', 'sh')
-  call s:declare_template('Makefile', 'Makefile')
-  call s:declare_template('*.c', 'c')
-  call s:declare_template('*.tex', 'tex')
   autocmd BufReadPost .mkshrc setlocal filetype=sh
+  autocmd BufNewFile *.tex setlocal filetype=tex
   autocmd FileType c setlocal noexpandtab
   autocmd FileType c call <SID>change_tab_spaces(8)
   autocmd FileType java call <SID>change_tab_spaces(4)
 augroup END
-delfunction s:declare_template
 
 " Plugins
 if has('vim_starting')
@@ -154,6 +145,7 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'Shougo/neosnippet'
 Plugin 'vim-scripts/vim-auto-save'
 Plugin 'thinca/vim-splash'
+Plugin 'mattn/sonictemplate-vim'
 Plugin 'travitch/hasksyn'
 " vim-dirvish has serious bug after e430cdc949a743e2e13751db36a73b886dfa4c24.
 " so, must stay in a14c58bcdf7b2b0f8aae895c107626d3470d016e.
@@ -177,18 +169,18 @@ let g:neosnippet#disable_runtime_snippets = { '_': 1 }
 let g:neosnippet#snippets_directory = expand(s:myvim . '/snippets')
 nnoremap <silent> <C-k>E :split<CR>:NeoSnippetEdit<CR>
 function! s:keymappings_tab() abort
-  if neosnippet#jumpable()
+  if neosnippet#expandable()
+    return "\<Plug>(neosnippet_expand)"
+  elseif neosnippet#jumpable()
     return "\<Plug>(neosnippet_jump)"
   elseif pumvisible()
     return "\<C-n>"
-  elseif neosnippet#expandable()
-    return "\<Plug>(neosnippet_expand)"
   else
     return "\<TAB>"
   endif
 endfunction
 imap <expr> <C-c> pumvisible() ? "\<C-y>" : "\<C-c>"
-imap <expr> <C-k> (neosnippet#expandable()) ? "\<Plug>(neosnippet_expand)" : "\<C-k>"
+imap <expr> <C-k> (neosnippet#jumpable()) ? "\<Plug>(neosnippet_jump)" : "\<C-k>"
 imap <expr> <TAB> <SID>keymappings_tab()
 
 " tagbar
@@ -208,7 +200,7 @@ let g:tagbar_type_tex = {
       \ 'sort': 0,
       \ 'deffile': expand(s:myvim . '/ctags/latex')
       \ }
-nnoremap <silent> <C-k><C-h> :TagbarToggle<CR>
+nnoremap <silent> <C-k><C-m> :TagbarToggle<CR>
 
 " vim-auto-save
 let g:auto_save = 1
@@ -217,6 +209,10 @@ nnoremap <silent> <C-k><C-a> :AutoSaveToggle<CR>
 
 " vim-dirvish
 nnoremap <expr> <C-k><C-l> (glob('%')=='') ? ":Dirvish\<CR>" : ":Dirvish %\<CR>"
+
+" vim-sonictemplate
+let g:sonictemplate_vim_template_dir = expand(s:myvim . '/templates')
+nnoremap <C-k><C-w> :Template 
 
 " vim-splash
 let g:splash#path = expand(s:myvim . '/splash.txt')

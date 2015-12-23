@@ -1,0 +1,38 @@
+#!/bin/sh
+set -u
+set -e
+umask 0750
+export PATH='/bin:/usr/bin'
+export LANG='C'
+IFS='	 
+'
+
+WPA_CLI=wpa_cli
+
+try () {
+  local cmd="${WPA_CLI} ${1}"
+  local result=$(${cmd} | tail -n 1)
+  if test "${result}" == "FAIL"; then
+    printf '%s\n' 'FAIL'
+    ${WPA_CLI} remove_network ${network_id:-999} > /dev/null
+    exit 1
+  fi
+  #printf '%s\n' "${cmd}"
+  printf '%s\n' "${result}"
+}
+
+network_id=$(try 'add_network')
+
+try "set_network ${network_id} proto RSN"
+try "set_network ${network_id} key_mgmt WPA-PSK"
+
+printf '%s' 'SSID? > '
+read line
+try "set_network ${network_id} ssid \"${line}\""
+
+printf '%s' 'PSK? > '
+read line
+try "set_network ${network_id} psk \"${line}\""
+
+try "enable_network ${network_id}"
+

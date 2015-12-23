@@ -57,11 +57,12 @@ options head
     }
 
 snippet println
-alias puts
+alias putStrLn
 options word
     System.out.println( ${1:hoge} );
 
 snippet print
+alias putStr
 options word
     System.out.print( ${1:hoge} );
 
