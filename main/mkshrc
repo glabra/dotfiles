@@ -176,7 +176,6 @@ then
     rbenv "$@"
   }
 fi
-
 # android
 android_sdk_path="${HOME}/.local/android/sdk"
 android_studio_path="${HOME}/.local/android/android-studio"
@@ -191,18 +190,6 @@ then
 fi
 unset android_sdk_path
 unset android_studio_path
-
-# astah community
-if test -d "${HOME}/.local/astah_community"
-then
-  alias astah="sh ${HOME}/.local/astah_community/astah"
-fi
-
-# php7
-if test -d "${HOME}/.local/php"
-then
-  export PATH="${HOME}/.local/php/bin:${PATH}"
-fi
 ### } apps initialize
 
 # initialization finished
