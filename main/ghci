@@ -1,1 +1,3 @@
 :set prompt "\ESC[1;37m>\ESC[m "
+:set -XTemplateHaskell
+:set -XQuasiQuotes

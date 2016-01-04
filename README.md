@@ -7,6 +7,7 @@ Category: Productivity
 - [GNU Make](https://www.gnu.org/software/make/)
 
 ### type: `main` only
+- [curl](http://curl.haxx.se/)
 - [neovim](https://github.com/neovim/neovim)
 
 ## Installation

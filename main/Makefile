@@ -1,5 +1,6 @@
 SHELL = /bin/sh
 GIT := git
+CURL := curl
 NVIM := nvim
 destdir ?= ${HOME}
 percent := %
@@ -10,8 +11,8 @@ cloning = \
 		$(GIT) clone '$($(1)_url)' '$($(1)_destdir)',)
 
 nvim_config := $(destdir)/.config/nvim
-vundle_destdir := $(nvim_config)/bundle/Vundle.vim
-vundle_url := https://github.com/gmarik/Vundle.vim.git
+vimplug_dest := $(nvim_config)/autoload/plug.vim
+vimplug_url := https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 rbenv_destdir := $(destdir)/.rbenv
 rbenv_url := https://github.com/sstephenson/rbenv.git
@@ -28,13 +29,13 @@ install:
 	$(call cloning,rubybuild)
 	$(call cloning,rbenvgemset)
 	$(call cloning,rbenvupdate)
-ifneq "$(shell test -d $(vundle_destdir); echo $$?)" "0"
-	$(GIT) clone '$(vundle_url)' '$(vundle_destdir)'
-	$(NVIM) +PluginInstall +qall
+ifneq "$(shell test -f $(vimplug_dest); echo $$?)" "0"
+	$(CURL) -fLo '$(vimplug_dest)' --create-dirs '$(vimplug_url)'
+	$(NVIM) +PlugInstall +qall
 endif
 
 uninstall:
-	@$(RM) -- '$(nvim_config)'
+	@$(RM) -r -- '$(nvim_config)'
 ifeq "$(shell test -d $(rbenv_destdir); echo $$?)" "0"
 	@printf '$(percent)s\n' "* Execute \`rm -rf -- '$(destdir)/.rbenv'\` to uninstall rbenv. *"
 endif

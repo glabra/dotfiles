@@ -1,9 +1,10 @@
-scriptencoding utf-8
-
 " only for vim compability
 if !1 | finish | endif
 
-filetype off
+scriptencoding utf-8
+
+" vim-plug do this
+"filetype off
 
 set autoindent
 set autoread
@@ -106,24 +107,25 @@ call mkdir(&backupdir, 'p')
 unlet s:datadir_prefix
 
 " Tab文字の数変更するヤツ
-function! s:change_tab_spaces(n) abort
-  let &l:shiftwidth = a:n
-  let &l:softtabstop = a:n
-  let &l:tabstop = a:n
+function! s:change_tab_spaces(scope, n) abort
+  exec "let &".a:scope.":shiftwidth = ".a:n."\n"
+    \. "let &".a:scope.":softtabstop = ".a:n."\n"
+    \. "let &".a:scope.":tabstop = ".a:n."\n"
 endfunction
-function! s:get_and_change_tab_spaces() abort
+function! s:get_and_change_local_tab_spaces() abort
   let l:chartable = ['1','2','3','4','5','6','7','8','9']
   let l:char = nr2char(getchar())
   if 0 <= index(l:chartable, l:char)
-    call <SID>change_tab_spaces(l:char)
+    call <SID>change_tab_spaces("l", l:char)
     echo '<Tab> is now' l:char 'spaces.'
   else
     echo '<Tab> is still' &l:tabstop 'spaces.'
   endif
 endfunction
-call s:change_tab_spaces(2)
-nnoremap <silent> <C-k><C-t> :call <SID>get_and_change_tab_spaces()<CR>
-nnoremap command! -nargs=1 ChangeTabSpaces :call <SID>change_tab_spaces(<f-args>)
+call s:change_tab_spaces("l",2)
+call s:change_tab_spaces("g",2)
+nnoremap <silent> <C-k><C-t> :call <SID>get_and_change_local_tab_spaces()<CR>
+nnoremap command! -nargs=2 ChangeTabSpaces :call <SID>change_tab_spaces(<f-args>)
 
 " autocmd!
 augroup vimrc_loading
@@ -131,34 +133,27 @@ augroup vimrc_loading
   autocmd BufReadPost .mkshrc setlocal filetype=sh
   autocmd BufNewFile *.tex setlocal filetype=tex
   autocmd FileType c setlocal noexpandtab
-  autocmd FileType c call <SID>change_tab_spaces(8)
-  autocmd FileType java call <SID>change_tab_spaces(4)
+  autocmd FileType c call <SID>change_tab_spaces("l",8)
+  autocmd FileType java call <SID>change_tab_spaces("l",4)
 augroup END
 
 " Plugins
-if has('vim_starting')
-  set runtimepath&
-  execute 'set runtimepath+=' . expand(s:myvim . '/bundle/Vundle.vim')
-endif
-call vundle#begin(expand(s:myvim . '/bundle'))
-Plugin 'gmarik/Vundle.vim'
-Plugin 'Shougo/neosnippet'
-Plugin 'vim-scripts/vim-auto-save'
-Plugin 'thinca/vim-splash'
-Plugin 'mattn/sonictemplate-vim'
-Plugin 'travitch/hasksyn'
-" vim-dirvish has serious bug after e430cdc949a743e2e13751db36a73b886dfa4c24.
-" so, must stay in a14c58bcdf7b2b0f8aae895c107626d3470d016e.
-Plugin 'justinmk/vim-dirvish', {'pinned': 1}
+call plug#begin(expand(s:myvim . '/bundle'))
+Plug 'Shougo/neosnippet'
+Plug 'vim-scripts/vim-auto-save'
+Plug 'mattn/sonictemplate-vim'
+Plug 'travitch/hasksyn', {'for': 'haskell'}
+Plug 'justinmk/vim-dirvish', {'commit': 'a14c58bcdf7b2b0f8aae895c107626d3470d016e'}
 
 if has('nvim')
-  Plugin 'Shougo/deoplete.nvim'
+  Plug 'Shougo/deoplete.nvim'
 endif
 if executable('ctags')
-  Plugin 'majutsushi/tagbar'
+  Plug 'majutsushi/tagbar', {'on': 'TagbarToggle'}
 endif
-call vundle#end()
+call plug#end()
 
+" Neovim only plugins
 if has('nvim')
   " deoplete
   let g:deoplete#enable_at_startup = 1
@@ -214,9 +209,7 @@ nnoremap <expr> <C-k><C-l> (glob('%')=='') ? ":Dirvish\<CR>" : ":Dirvish %\<CR>"
 let g:sonictemplate_vim_template_dir = expand(s:myvim . '/templates')
 nnoremap <C-k><C-w> :Template 
 
-" vim-splash
-let g:splash#path = expand(s:myvim . '/splash.txt')
-
-syntax on
-filetype indent plugin on
+" vim-plug do this
+"syntax on
+"filetype indent plugin on
 

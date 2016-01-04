@@ -78,6 +78,7 @@ fi
 if type 'stack' > /dev/null 2>&1
 then
   alias sb='stack build'
+  alias si='stack install'
   alias sg='stack ghci'
   alias sx='stack exec --'
 fi
