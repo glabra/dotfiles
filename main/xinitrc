@@ -19,6 +19,11 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 /usr/bin/wpa_cli -a "${HOME}/.local/actions/wpa_cli_notify" &
 pulseaudio --start &
 ${HOME}/.local/actions/dwm_update_status &
-(/usr/bin/fcitx && /usr/bin/xmodmap ${HOME}/.Xmodmap) > /dev/null &
+/usr/bin/fcitx &
 (${HOME}/.local/bin/switch-wallpaper && /usr/bin/xcompmgr) > /dev/null &
+setxkbmap \
+  -option ctrl:nocaps \
+  -option compose:prsc \
+  -option shift:both_capslock \
+  -option terminate:ctrl_alt_bksp &
 exec ${HOME}/.local/bin/dwm

@@ -7,9 +7,9 @@ options head
     }
 
 snippet method
-alias fn
+alias fun
 options head
-    ${1:public} ${2:static} ${3:void} ${4:#:methodname} ( ${5:void} ) {
+    ${1:public} ${2:static} ${3:void} ${4:#:methodname} (${5:void}) {
         ${0:TARGET}
     }
 
@@ -19,26 +19,26 @@ options word
 
 snippet if
 options head
-    if ( ${1:#:condition} ) {
+    if (${1:#:condition}) {
         ${0:TARGET}
     }
 
 snippet elif
 alias elseif
 options head
-    else if ( ${1:#:condition} ) {
+    else if (${1:#:condition}) {
         ${0:TARGET}
     }
 
 snippet while
 options head
-    while ( ${1:#:condition} ) {
+    while (${1:#:condition}) {
         ${0:TARGET}
     }
 
 snippet for
 options head
-    for ( int ${1:i} = 0; $1 < ${2}; ${3:$1++} ) {
+    for (int ${1:i} = 0; $1 < ${2}; ${3:$1++}) {
         ${0:TARGET}
     }
 
@@ -46,29 +46,29 @@ snippet try
 options head
     try {
         ${0:TARGET}
-    } catch ( Exception e ) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
 
 snippet main
 options head
-    public static void main( String[] args ) {
+    public static void main(String[] args) {
         ${0}
     }
 
 snippet println
 alias putStrLn
 options word
-    System.out.println( ${1:hoge} );
+    System.out.println(${0});
 
 snippet print
 alias putStr
 options word
-    System.out.print( ${1:hoge} );
+    System.out.print(${0});
 
 snippet bread
 options word
-    BufferedReader ${1:reader} = new BufferedReader(new InputStreamReader(System.in));
+    BufferedReader ${0} = new BufferedReader(new InputStreamReader(System.in));
 
 snippet parseInt
 options word
@@ -76,7 +76,7 @@ options word
 
 snippet switch
 options head
-	switch ( ${1:#:value} ) {
+	switch (${1:#:value}) {
 		${0:TARGET}
 		default:
 			break;

@@ -1,13 +1,13 @@
 # Global snippets
 
-snippet filename
-alias fname
+snippet filenamefull
+alias fnf
 options word
-abbr filename with extension
+abbr filename with full path
     `bufname('%')`
 
-snippet filenamex
-alias fnamex
+snippet filename
+alias fn
 options word
 abbr filename without extension
     `bufname('%') =='[command line]' ? expand('#:t:r:r:r') : expand('%:t:r:r:r')`
