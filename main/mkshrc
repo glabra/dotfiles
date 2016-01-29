@@ -30,7 +30,7 @@ __git_ps1() {
     tput sgr0
   fi
 }
-PS1='$(tput bold)$(basename ${PWD})$(__git_ps1)$(tput bold)\$$(tput sgr0) '
+PS1='$(tput bold)$(basename "${PWD}")$(__git_ps1)$(tput bold)\$$(tput sgr0) '
 ### } set PS1
 
 ### aliases {
@@ -123,10 +123,10 @@ then
     rmdir /run/user/${USER_ID}/dropbox'
   # ampache on Amazon EC2 control command
   ampache () {
-    local __ampache_api='\
+    local __ampache_api=" \
       curl --silent \
       --header x-api-key:${AWS_AMPACHE_API_KEY} \
-      ${AWS_AMPACHE_API_ENDPOINT}/ -X'
+      ${AWS_AMPACHE_API_ENDPOINT}/ -X"
     case "$1" in
       'start')
         ${__ampache_api} PUT
@@ -154,7 +154,7 @@ then
         fi
         ;;
       *)
-        printf '%s\n' "ampache (start|stop|status|open|get-host)"
+        printf '%s\n' 'ampache (start|stop|status|open|get-host)'
         ;;
     esac
   }

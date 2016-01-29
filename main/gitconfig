@@ -11,3 +11,4 @@
   dm = diff master
   lo = log --graph --date=iso --pretty=format:'%C(auto)%h: by %aN%n%s%n'
   smup = submodule foreach git pull origin master
+  commir = commit

@@ -16,6 +16,10 @@ __MACOSX
 *.fdb_latexmk
 *.fls
 *.synctex.gz
+*.nav
+*.snm
+*.out
+*.pdf
 
 # haskell
 dist
@@ -32,3 +36,7 @@ cabal-dev
 *.class
 *.jar
 
+# ruby
+.rbenv-gemsets
+.yardoc
+doc/
