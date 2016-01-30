@@ -1,17 +1,6 @@
 #!/bin/sh
 
-APPNAME='Wallpaper switcher'
-
-if ! type feh > /dev/null 2>&1
-then
-  notify-send \
-    --app-name "${APPNAME}" \
-    'Wallpaper is not switched.' \
-    'feh is not installed.'
-  exit 1
-fi
-
-wallpapers_path="${HOME}/.local/wallpapers"
+wallpapers_path="${HOME}/.local/walls"
 if test -d "${wallpapers_path}"
 then
   wallpapers=`cd ${wallpapers_path};find * -type f`

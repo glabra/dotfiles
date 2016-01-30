@@ -1,0 +1,67 @@
+#!/bin/sh
+set -u
+set -e
+umask 0750
+export PATH="/bin:/usr/bin"
+export LANG="C"
+IFS="	 
+"
+
+_get_battery () {
+  local value=`cat /sys/class/power_supply/${1}/energy_${2} 2> /dev/null`
+  if test -z "${value}"; then
+    printf '%s' '0'
+  else
+    printf '%s' "${value}"
+  fi
+}
+
+battery () {
+  local BAT_TRESHOLD=5
+  local charge_status='x'
+  local bat_full=1
+  local bat_now=0
+  local bat_persent=0
+
+  if test "`cat /sys/class/power_supply/AC/online`" -eq 1; then
+    charge_status='o'
+  fi
+
+  bat_full=$(( `_get_battery BAT0 full` + `_get_battery BAT1 full` ))
+  bat_now=$(( `_get_battery BAT0 now` + `_get_battery BAT1 now` ))
+
+  if test "${bat_full}" -gt 0; then
+    bat_percent=$(( bat_now * 100 / bat_full ))
+  fi
+
+  printf '%s' "${charge_status}${bat_percent}%"
+}
+
+dwm_update_status () {
+  local str=''
+  local audio_status=`amixer get Master | tail -n 1`
+  local audio_level=`echo "${audio_status}" | grep -oG '[0-9]\+%'`
+  local mute_indicator='-'
+
+  if echo "${audio_status}" | grep -q '\[on\]$'; then
+    mute_indicator='+'
+  fi
+  str="v:${mute_indicator}${audio_level}"
+
+  light_level=`xbacklight -get | grep -oG '^[0-9]\+'`
+  str="${str} l:${light_level}%"
+
+  battery_status=`battery`
+  str="${str} r:${battery_status}"
+
+  date=`date +%H:%M:%S`
+  str="${str} ${date}"
+
+  xsetroot -name "${str}"
+}
+
+while true
+do
+  dwm_update_status
+  sleep 1
+done

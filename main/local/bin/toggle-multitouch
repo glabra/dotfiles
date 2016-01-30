@@ -7,19 +7,9 @@ export LANG="C"
 IFS="	 
 "
 
-message='*** Exception: invalid state'
-
-if `lsmod | grep -q 'hid_multitouch'`
-then
+if `lsmod | grep -q 'hid_multitouch'`; then
   sudo modprobe -r hid_multitouch
-  message='Multitouch is now disabled.'
 else
   sudo modprobe hid_multitouch
-  message='Multitouch is now enabled.'
-fi
-
-if type 'notify-send' > /dev/null 2>&1
-then
-  notify-send "${message}"
 fi
 
