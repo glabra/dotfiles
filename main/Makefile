@@ -8,7 +8,7 @@ percent := %
 cloning = \
 	$(if \
 		$(filter-out $(shell test -d '$($(1)_destdir)'; echo $$?),0), \
-		$(GIT) clone '$($(1)_url)' '$($(1)_destdir)',)
+		$(GIT) clone --depth 1 '$($(1)_url)' '$($(1)_destdir)',)
 
 nvim_config := $(destdir)/.config/nvim
 vimplug_dest := $(nvim_config)/autoload/plug.vim

@@ -45,6 +45,9 @@ nnoremap - "+p
 nnoremap _ "+P
 nnoremap <silent> <C-n> gt
 nnoremap <silent> <C-p> gT
+nnoremap <silent> [ %
+nnoremap <silent> F <C-d>
+nnoremap <silent> B <C-u>
 nnoremap <expr> <C-w>T ":vsplit " . tempname() . "\<CR>"
 nnoremap <silent> <C-w>x <C-w>q
 nnoremap <silent> <C-w><C-n> gt
@@ -126,6 +129,16 @@ call s:change_tab_spaces("l",2)
 call s:change_tab_spaces("g",2)
 nnoremap <silent> <C-k><C-t> :call <SID>get_and_change_local_tab_spaces()<CR>
 nnoremap command! -nargs=2 ChangeTabSpaces :call <SID>change_tab_spaces(<f-args>)
+
+" 謎のバッファ殺しマシン
+function! s:delete_hidden_buffers()
+    let tpbl=[]
+    call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
+    for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
+        silent execute 'bwipeout' buf
+    endfor
+endfunction
+nnoremap <silent> <C-k><C-f> :call <SID>delete_hidden_buffers()<CR>
 
 " autocmd!
 augroup vimrc_loading

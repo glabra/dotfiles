@@ -1,5 +1,0 @@
-#!/usr/bin/perl
-
-$pdflatex = 'lualatex %O -synctex=1 -interaction=nonstopmode %S';
-$pdf_mode = 1;
-$pdf_previewer = '/usr/bin/mupdf';

@@ -14,22 +14,24 @@ unset HISTSIZE
 
 ### set PS1 {
 # print branch name
-__git_ps1() {
-  if type 'git' > /dev/null 2>&1
-  then
-    local branch=$(git branch 2>/dev/null|grep '* ' -|tail -c +3)
-  else
-    local branch=""
-  fi
+if type 'git' > /dev/null 2>&1; then
+  b() {
+    printf '%s' "$(git branch 2>/dev/null|grep '* ' -|tail -c +3)"
+  }
 
-  if test -n "${branch}"
-  then
-    tput sgr0
-    tput dim
-    printf '(%s)' "${branch}"
-    tput sgr0
-  fi
-}
+  __git_ps1() {
+    if test -n "`b`"; then
+      tput sgr0
+      tput dim
+      printf '(%s)' "`b`"
+      tput sgr0
+    fi
+  }
+else
+  __git_ps1() {
+    printf ''
+  }
+fi
 PS1='$(tput bold)$(basename "${PWD}")$(__git_ps1)$(tput bold)\$$(tput sgr0) '
 ### } set PS1
 
@@ -46,6 +48,7 @@ alias c='cd'
 alias d='cd'
 alias vf='cd'
 alias scd='cd'
+alias cd..='cd ..'
 alias sl='ls'
 alias ks='ls'
 alias l='ls'
@@ -86,6 +89,7 @@ then
   alias sb='stack build'
   alias si='stack install'
   alias sg='stack ghci'
+  alias sgi='stack exec ghci'
   alias sx='stack exec --'
   alias sr='stack runhaskell'
 fi
@@ -114,9 +118,12 @@ then
     AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
     riofs'
   alias box='\
-    mkdir /run/user/${USER_ID}/dropbox 2> /dev/null && \
-    riofs "${AWS_S3_BUCKET_DROPBOX}" /run/user/${USER_ID}/dropbox && \
-    cd /run/user/${USER_ID}/dropbox'
+    if test -d "/run/user/${USER_ID}/dropbox"
+    then cd "/run/user/${USER_ID}/dropbox"
+    else mkdir /run/user/${USER_ID}/dropbox 2> /dev/null && \
+      riofs "${AWS_S3_BUCKET_DROPBOX}" /run/user/${USER_ID}/dropbox && \
+      cd /run/user/${USER_ID}/dropbox
+    fi'
   alias unbox='\
     if test "`pwd`" == /run/user/${USER_ID}/dropbox; then cd "${HOME}";fi && \
     fusermount -u /run/user/${USER_ID}/dropbox && \
@@ -208,4 +215,6 @@ unset android_studio_path
 
 # initialization finished
 printf '%s\n' "`LANG=C date`"
+
+[[ -e "${HOME}/Documents/TODO" ]] && cat "${HOME}/Documents/TODO"
 

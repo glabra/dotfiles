@@ -14,13 +14,13 @@ export XMODIFIERS='@im=fcitx'
 export GTK_IM_MODULE='fcitx'
 export QT_IM_MODULE='fcitx'
 export _JAVA_AWT_WM_NONREPARENTING=1
-pulseaudio --start &
 /usr/bin/fcitx &
+(xset s 600 && xss-lock /usr/bin/slock) &
 (${HOME}/.local/bin/switch-wallpaper && /usr/bin/xcompmgr) > /dev/null &
 ${HOME}/.local/bin/dwm-updateinfo &
 setxkbmap \
   -option ctrl:nocaps \
   -option compose:prsc \
-  -option shift:both_capslock \
   -option terminate:ctrl_alt_bksp &
+#  -option shift:both_capslock \
 exec ${HOME}/.local/bin/dwm

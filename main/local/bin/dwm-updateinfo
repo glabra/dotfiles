@@ -17,11 +17,10 @@ _get_battery () {
 }
 
 battery () {
-  local BAT_TRESHOLD=5
   local charge_status='x'
-  local bat_full=1
+  local bat_full=0
   local bat_now=0
-  local bat_persent=0
+  local bat_ratio='?'
 
   if test "`cat /sys/class/power_supply/AC/online`" -eq 1; then
     charge_status='o'
@@ -30,11 +29,12 @@ battery () {
   bat_full=$(( `_get_battery BAT0 full` + `_get_battery BAT1 full` ))
   bat_now=$(( `_get_battery BAT0 now` + `_get_battery BAT1 now` ))
 
-  if test "${bat_full}" -gt 0; then
-    bat_percent=$(( bat_now * 100 / bat_full ))
+  if test "${bat_full}" -gt 0 && \
+     test "${bat_now}" -le "${bat_full}"; then
+    bat_ratio=$(( bat_now * 100 / bat_full ))
   fi
 
-  printf '%s' "${charge_status}${bat_percent}%"
+  printf '%s' "${charge_status}${bat_ratio}%"
 }
 
 dwm_update_status () {
@@ -54,7 +54,7 @@ dwm_update_status () {
   battery_status=`battery`
   str="${str} r:${battery_status}"
 
-  date=`date +%H:%M:%S`
+  date=`date +'%H:%M:%S'`
   str="${str} ${date}"
 
   xsetroot -name "${str}"
