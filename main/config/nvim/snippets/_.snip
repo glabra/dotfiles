@@ -1,13 +1,18 @@
 # Global snippets
 
-snippet filenamefull
-alias fnf
+snippet now
 options word
-abbr filename with full path
+    `strftime("%Y%m%dT%H:%M:%S%z")`
+
+snippet today
+options word
+    `strftime("%Y%m%dT00:00:00%z")`
+
+snippet filepath
+options word
     `bufname('%')`
 
 snippet filename
-alias fn
 options word
 abbr filename without extension
     `bufname('%') =='[command line]' ? expand('#:t:r:r:r') : expand('%:t:r:r:r')`

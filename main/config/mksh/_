@@ -1,0 +1,58 @@
+# no persistence history
+unset HISTFILE
+unset HISTSIZE
+
+# disable ^S
+stty stop undef
+
+# for delete key in st
+tput smkx
+
+# set PS1
+if test `type __git_ps1 > /dev/null 2>&1; echo $?` -ne 0
+then
+  __git_ps1() {
+    printf ''
+  }
+fi
+PS1='$(tput bold)$(basename "${PWD}")$(__git_ps1)$(tput bold)\$$(tput sgr0) '
+
+# alias
+## foolproof
+alias rm='rm -i'
+
+## typosafe
+alias q='exit'
+alias x='exit'
+alias lx='exit'
+alias ':q'='exit'
+alias c='cd'
+alias d='cd'
+alias vf='cd'
+alias scd='cd'
+alias cd..='cd ..'
+alias sl='ls'
+alias ks='ls'
+alias l='ls'
+alias s='ls'
+alias als='ls'
+alias dls='ls'
+alias rf='rm'
+alias vp='cp'
+alias mc='mv'
+
+## obenri on linux
+alias ls='ls --color=auto'
+alias less='less -R'
+alias bmount='udisksctl mount -b'
+alias bumount='udisksctl unmount -b'
+alias fuserumount='fusermount -u'
+alias alsa-reload='alsactl nrestore'
+alias poweroff='systemctl poweroff'
+alias reboot='systemctl reboot'
+alias keychange='setxkbmap \
+  -option ctrl:nocaps \
+  -option compose:prsc \
+  -option shift:both_capslock \
+  -option terminate:ctrl_alt_bksp'
+

@@ -1,0 +1,6 @@
+alias sb='stack build'
+alias si='stack install'
+alias sg='stack ghci'
+alias sgi='stack exec ghci'
+alias sx='stack exec --'
+alias sr='stack runhaskell'

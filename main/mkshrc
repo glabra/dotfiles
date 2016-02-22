@@ -1,220 +1,45 @@
-### terminal settings {
-# disable ^S
-stty stop undef
-
-# for delete key in st
-tput smkx
-### } terminal settings
-
 [[ $- != *i* ]] && return
 
-# no persistence history
-unset HISTFILE
-unset HISTSIZE
+### load settings {
+secrets_path="${HOME}/.local/secrets.sh"
+settings_dir="${HOME}/.config/mksh"
 
-### set PS1 {
-# print branch name
-if type 'git' > /dev/null 2>&1; then
-  b() {
-    printf '%s' "$(git branch 2>/dev/null|grep '* ' -|tail -c +3)"
-  }
+if test -f "${secrets_path}"
+then
+  . "${secrets_path}"
+  aws=true
+  __secrets_loaded=true
+fi
 
-  __git_ps1() {
-    if test -n "`b`"; then
-      tput sgr0
-      tput dim
-      printf '(%s)' "`b`"
-      tput sgr0
-    fi
-  }
-else
-  __git_ps1() {
-    printf ''
-  }
-fi
-PS1='$(tput bold)$(basename "${PWD}")$(__git_ps1)$(tput bold)\$$(tput sgr0) '
-### } set PS1
+# enable rbenv?
+[[ -d "${HOME}/.rbenv" ]] && rbenv="${HOME}/.rbenv"
 
-### aliases {
-### general {{
-# foolproof
-alias rm='rm -i'
-# typosafe
-alias q='exit'
-alias x='exit'
-alias lx='exit'
-alias ':q'='exit'
-alias c='cd'
-alias d='cd'
-alias vf='cd'
-alias scd='cd'
-alias cd..='cd ..'
-alias sl='ls'
-alias ks='ls'
-alias l='ls'
-alias s='ls'
-alias als='ls'
-alias dls='ls'
-alias rf='rm'
-alias vp='cp'
-alias mc='mv'
-# obenri on linux
-alias ls='ls --color=auto'
-alias less='less -R'
-alias bmount='udisksctl mount -b'
-alias bumount='udisksctl unmount -b'
-alias fuserumount='fusermount -u'
-alias alsa-reload='alsactl nrestore'
-alias poweroff='systemctl poweroff'
-alias reboot='systemctl reboot'
-alias keychange='setxkbmap \
-  -option ctrl:nocaps \
-  -option compose:prsc \
-  -option shift:both_capslock \
-  -option terminate:ctrl_alt_bksp'
-### }} general
-
-### applications {{
-# nvim
-if type 'nvim' > /dev/null 2>&1
-then
-  alias vi='nvim'
-  alias vim='nvim'
-  alias svi='nvim'
-  alias iv='nvim'
-fi
-# stack
-if type 'stack' > /dev/null 2>&1
-then
-  alias sb='stack build'
-  alias si='stack install'
-  alias sg='stack ghci'
-  alias sgi='stack exec ghci'
-  alias sx='stack exec --'
-  alias sr='stack runhaskell'
-fi
-# git
-if type 'git' > /dev/null 2>&1
-then
-  alias g='git'
-  alias gti='git'
-  alias gits='git s'
-fi
-# bluez-utils
-if type 'bluetoothctl' > /dev/null 2>&1
-then
-  alias bctl='sudo bluetoothctl'
-fi
-### }} applications
-### } aliases
-
-### secrets {
-if test -f "${HOME}/.local/secrets.sh"
-then
-  . "${HOME}/.local/secrets.sh"
-  ### AWS {{
-  alias riofs='\
-    AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
-    AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
-    riofs'
-  alias box='\
-    if test -d "/run/user/${USER_ID}/dropbox"
-    then cd "/run/user/${USER_ID}/dropbox"
-    else mkdir /run/user/${USER_ID}/dropbox 2> /dev/null && \
-      riofs "${AWS_S3_BUCKET_DROPBOX}" /run/user/${USER_ID}/dropbox && \
-      cd /run/user/${USER_ID}/dropbox
-    fi'
-  alias unbox='\
-    if test "`pwd`" == /run/user/${USER_ID}/dropbox; then cd "${HOME}";fi && \
-    fusermount -u /run/user/${USER_ID}/dropbox && \
-    rmdir /run/user/${USER_ID}/dropbox'
-  # ampache on Amazon EC2 control command
-  ampache () {
-    local __ampache_api=" \
-      curl --silent \
-      --header x-api-key:${AWS_AMPACHE_API_KEY} \
-      ${AWS_AMPACHE_API_ENDPOINT}/ -X"
-    case "$1" in
-      'start')
-        ${__ampache_api} PUT
-        printf '\n'
-        ;;
-      'stop')
-        ${__ampache_api} DELETE
-        printf '\n'
-        ;;
-      'status' | 'get-host' | 'open')
-        local host=`\
-          ${__ampache_api} GET \
-          | sed -ne 's/^"\(ec2[0-9-]\+\.compute-[0-9]\+\.amazonaws\.com\)"$/\1/p'`
-        if test -z "${host}"
-        then
-          printf '%s\n' 'ampache is stopped.'
-        elif test "$1" = 'open'
-        then
-          xdg-open "http://${host}/ampache"
-        elif test "$1" = 'get-host'
-        then
-          printf '%s\n' "${host}"
-        else
-          printf '%s\n' "ampache is running. (Host: ${host})"
-        fi
-        ;;
-      *)
-        printf '%s\n' 'ampache (start|stop|status|open|get-host)'
-        ;;
-    esac
-  }
-  ### }} AWS
-  ### git {{
-  if type 'git' > /dev/null 2>&1
+# load config
+for i in `ls -1 "${settings_dir}"`
+do
+  if test "${i}" == '_'
   then
-    __gitconf () {
-      git config user.name "$1"
-      git config user.email "$2"
-    }
-
-    alias 'git-conf'="__gitconf '${GITCONF_DEFAULT_USERNAME}' '${GITCONF_DEFAULT_EMAIL}'"
-    alias 'git-conf-decapoda'="__gitconf '${GITCONF_DECAPODA_USERNAME}' '${GITCONF_DECAPODA_EMAIL}'"
-    alias 'git-conf-dog'="__gitconf '${GITCONF_DOG_USERNAME}' '${GITCONF_DOG_EMAIL}'"
+    . "${settings_dir}/_"
+  elif [[ -n "$(eval echo '${'${i}'}')" ]] || type "${i}" > /dev/null 2>&1
+  then
+    . "${settings_dir}/${i}"
   fi
-  ### }} git
-fi
-### } secrets
+done
 
-### apps initialize {
-# rbenv
-rbenv_path="${HOME}/.rbenv"
-if test -d "${rbenv_path}"
-then
-  # lazy loading
-  rbenv() {
-    export PATH="${rbenv_path}/bin:${PATH}"
-    unset rbenv_path
-    unset -f rbenv
-    eval "$(rbenv init -)"
-    alias rx='rbenv exec'
-    rbenv "$@"
-  }
-fi
-# android
-android_sdk_path="${HOME}/.local/android/sdk"
-android_studio_path="${HOME}/.local/android/android-studio"
-if test -d "${android_sdk_path}"
-then
-  export PATH="${android_sdk_path}/platform-tools:${PATH}"
-  export ANDROID_HOME="${HOME}/.local/android/sdk"
-fi
-if test -d "${android_studio_path}"
-then
-  export PATH="${android_studio_path}/bin:${PATH}"
-fi
-unset android_sdk_path
-unset android_studio_path
-### } apps initialize
+# cleanup
+unset aws
+unset __secrets_loaded
+unset secrets_path
+unset settings_dir
+### } load settings
 
 # initialization finished
 printf '%s\n' "`LANG=C date`"
 
-[[ -e "${HOME}/Documents/TODO" ]] && cat "${HOME}/Documents/TODO"
+### misc {
+[[ -f "${HOME}/Documents/TODO" ]] && alias todo="vi \"${HOME}/Documents/TODO\""
+type 'haiboku' > /dev/null 2>&1 \
+  && [[ -e "${HOME}/Documents/TODO" ]] \
+  && haiboku "${HOME}/Documents/TODO"
+### } misc
 
