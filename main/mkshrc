@@ -1,14 +1,35 @@
 [[ $- != *i* ]] && return
 
+### initialize callback system {
+execute_callback () {
+  for cb in $(eval echo '${__'${1}':-}')
+  do
+    ${cb}
+    unset -f ${cb}
+  done
+
+  eval unset '__'${1}
+}
+
+register_callback () {
+  eval '__'${1}=${2} '${__'${1}':-}'
+}
+
+after_initialize () {
+  register_callback after_initialize ${1}
+}
+### } initialize callback system
+
 ### load settings {
 secrets_path="${HOME}/.local/secrets.sh"
 settings_dir="${HOME}/.config/mksh"
+alias require_secrets='return'
 
 if test -f "${secrets_path}"
 then
   . "${secrets_path}"
   aws=true
-  __secrets_loaded=true
+  alias require_secrets=':'
 fi
 
 # enable rbenv?
@@ -28,18 +49,13 @@ done
 
 # cleanup
 unset aws
-unset __secrets_loaded
 unset secrets_path
 unset settings_dir
+unalias require_secrets
 ### } load settings
+
+execute_callback after_initialize
 
 # initialization finished
 printf '%s\n' "`LANG=C date`"
-
-### misc {
-[[ -f "${HOME}/Documents/TODO" ]] && alias todo="vi \"${HOME}/Documents/TODO\""
-type 'haiboku' > /dev/null 2>&1 \
-  && [[ -e "${HOME}/Documents/TODO" ]] \
-  && haiboku "${HOME}/Documents/TODO"
-### } misc
 

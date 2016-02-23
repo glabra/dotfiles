@@ -1,5 +1,4 @@
-# when secrets are not loaded, return
-[[ -z "${__secrets_loaded}" ]] && return
+require_secrets
 
 alias riofs='\
   AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \

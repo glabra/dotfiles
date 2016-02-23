@@ -12,8 +12,7 @@ __git_ps1() {
   fi
 }
 
-# when secrets are not loaded, return
-[[ -z "${__secrets_loaded}" ]] && return
+require_secrets
 
 __gitconf () {
   git config user.name "$1"

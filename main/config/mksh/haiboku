@@ -1,0 +1,10 @@
+if test -f "${HOME}/Documents/TODO"
+then
+  alias todo="vi \"${HOME}/Documents/TODO\""
+
+  display_todo () {
+    haiboku "${HOME}/Documents/TODO"
+  }
+
+  after_initialize display_todo
+fi
