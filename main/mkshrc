@@ -1,5 +1,11 @@
 [[ $- != *i* ]] && return
 
+# consts
+MKSH_CONFIG="${HOME}/.config/mksh"
+
+# trap logout script
+test -f "${MKSH_CONFIG}/logout" && trap ". ${MKSH_CONFIG}/logout; exit" EXIT
+
 ### initialize callback system {
 execute_callback () {
   for cb in $(eval echo '${__'${1}':-}')
@@ -22,7 +28,7 @@ after_initialize () {
 
 ### load settings {
 secrets_path="${HOME}/.local/secrets.sh"
-settings_dir="${HOME}/.config/mksh"
+initializer_dir="${MKSH_CONFIG}/initialize"
 alias require_secrets='return'
 
 if test -f "${secrets_path}"
@@ -36,21 +42,21 @@ fi
 [[ -d "${HOME}/.rbenv" ]] && rbenv="${HOME}/.rbenv"
 
 # load config
-for i in `ls -1 "${settings_dir}"`
+for i in `ls -1 "${initializer_dir}"`
 do
   if test "${i}" == '_'
   then
-    . "${settings_dir}/_"
+    . "${initializer_dir}/_"
   elif [[ -n "$(eval echo '${'${i}'}')" ]] || type "${i}" > /dev/null 2>&1
   then
-    . "${settings_dir}/${i}"
+    . "${initializer_dir}/${i}"
   fi
 done
 
 # cleanup
 unset aws
 unset secrets_path
-unset settings_dir
+unset initializer_dir
 unalias require_secrets
 ### } load settings
 
