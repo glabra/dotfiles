@@ -1,9 +1,11 @@
 # lazy loading
 rbenv() {
   export PATH="${rbenv}/bin:${PATH}"
-  unset rbenv_path
+  unset rbenv
   unset -f rbenv
   eval "$(rbenv init -)"
-  alias rx='rbenv exec'
   rbenv "$@"
 }
+
+# aliases
+alias rx='rbenv exec'

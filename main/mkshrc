@@ -28,7 +28,7 @@ after_initialize () {
 
 ### load settings {
 secrets_path="${HOME}/.local/secrets.sh"
-initializer_dir="${MKSH_CONFIG}/initialize"
+conf_dir="${MKSH_CONFIG}/conf.d"
 alias require_secrets='return'
 
 if test -f "${secrets_path}"
@@ -42,21 +42,21 @@ fi
 [[ -d "${HOME}/.rbenv" ]] && rbenv="${HOME}/.rbenv"
 
 # load config
-for i in `ls -1 "${initializer_dir}"`
+for i in `ls -1 "${conf_dir}"`
 do
   if test "${i}" == '_'
   then
-    . "${initializer_dir}/_"
+    . "${conf_dir}/_"
   elif [[ -n "$(eval echo '${'${i}'}')" ]] || type "${i}" > /dev/null 2>&1
   then
-    . "${initializer_dir}/${i}"
+    . "${conf_dir}/${i}"
   fi
 done
 
 # cleanup
 unset aws
 unset secrets_path
-unset initializer_dir
+unset conf_dir
 unalias require_secrets
 ### } load settings
 

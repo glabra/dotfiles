@@ -32,6 +32,7 @@ install:
 ifneq "$(shell test -f $(vimplug_dest); echo $$?)" "0"
 	$(CURL) -fLo '$(vimplug_dest)' --create-dirs '$(vimplug_url)'
 	$(NVIM) +PlugInstall +qall
+	$(NVIM) +UpdateRemotePlugins +qall
 endif
 
 uninstall:
