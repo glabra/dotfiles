@@ -1,3 +1,31 @@
-ffplays () {
-  find . -type f -exec ffplay -autoexit $@ {} \;
+__ffplays () {
+  local waitsec=0.2
+  local sigint_callback="
+    printf '\n%s\n' 'Ctrl-C again to exit.'
+    trap - SIGINT
+    read -t ${waitsec} > /dev/null 2>&1
+  "
+
+  local ffplay_params=$1
+  shift 1
+
+  for f in $@
+  do
+    trap "${sigint_callback}" SIGINT
+    printf '%s' "|> ${f}"
+    ffplay -loglevel fatal -autoexit ${ffplay_params} "${f}"
+
+    # ビデオ画面が閉じるのを待つ
+    echo "${ffplay_params}" | grep -q -- '-nodisp' \
+      || read -t ${waitsec} > /dev/null 2>&1
+  done
 }
+
+ffplays () {
+  (IFS=$'\n'; __ffplays "$*" $(find . -type f -print))
+}
+
+ffplays_shuf () {
+  (IFS=$'\n'; __ffplays "$*" $(find . -type f -print | shuf))
+}
+
