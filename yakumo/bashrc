@@ -1,0 +1,25 @@
+[[ $- != *i* ]] && return
+
+<< __EOF__
+if test -z "${TMUX}"; then
+	if `tmux has-session 2> /dev/null`; then
+		exec tmux attach
+	else
+		exec tmux new-session
+	fi
+fi
+__EOF__
+
+export LANG="en_US.UTF-8"
+export EDITOR="nvi"
+unset HISTFILE
+unset HISTSIZE
+unset HISTFILESIZE
+alias rm='rm -i'
+alias ls='ls -G'
+alias x='exit'
+alias q='exit'
+alias vi='nvi'
+PS1='\W\$ '
+
+echo `LANG=C date`
