@@ -19,6 +19,7 @@ endfunction
 call s:change_tab_spaces("l",2)
 call s:change_tab_spaces("g",2)
 nnoremap <silent> <C-k><C-t> :call <SID>get_and_change_local_tab_spaces()<CR>
+command! -nargs=1 ChangeTabSpaces call <SID>change_tab_spaces("l",<args>)
 
 " 謎のバッファ殺しマシン
 function! s:delete_hidden_buffers()

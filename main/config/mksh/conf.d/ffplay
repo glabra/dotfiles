@@ -9,10 +9,20 @@ __ffplays () {
   local ffplay_params=$1
   shift 1
 
+  local album
+  local title
+
   for f in $@
   do
+    echo "${f}" | egrep -q '^.*\.(jpg|png)$' && continue
+
     trap "${sigint_callback}" SIGINT
-    printf '%s' "|> ${f}"
+
+    album=$(ffprobe "${f}" 2>&1 | grep -oi '\s\+album\s\+: .*' | grep -o ': .*' | tail -c +3)
+    title=$(ffprobe "${f}" 2>&1 | grep -oi '\s\+TITLE\s\+: .*' | grep -o ': .*' | tail -c +3)
+
+    printf '%s' "|> ${album:-?} — ${title:-${f}}"
+
     ffplay -loglevel fatal -autoexit ${ffplay_params} "${f}"
 
     # ビデオ画面が閉じるのを待つ

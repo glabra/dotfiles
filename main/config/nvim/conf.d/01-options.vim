@@ -5,9 +5,11 @@ set autoindent
 set autoread
 set breakindent
 set completeopt& completeopt-=preview
-set cursorline
+" set cursorline
+set nocursorline
 set expandtab
-set fileencodings=utf-8,ucs-bom,iso-2022-jp,cp932,euc-jp,default,latin
+set fileencodings=utf-8,ucs-bom,iso-2022-jp,euc-jp,cp932,default,latin
+set foldmethod=manual
 set laststatus=2
 set list
 set listchars=tab:>.,trail:~,nbsp:%
