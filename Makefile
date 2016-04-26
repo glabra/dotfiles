@@ -1,6 +1,7 @@
 SHELL = /bin/sh
 FIND := find
-srcdir ?= ${PWD}
+#srcdir ?= ${PWD}
+srcdir ?= $(shell pwd)
 export destdir ?= ${HOME}
 src_types := $(shell $(FIND) * -maxdepth 0 -type d)
 SRC_TYPE ?= $(shell if test -e '.src_type'; then cat .src_type; fi)

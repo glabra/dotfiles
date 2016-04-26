@@ -73,5 +73,8 @@ options head
 snippet scriptdir
     "\`dirname \"\${0}\"\`"
 
+snippet absolutedir
+    "$(cd $(dirname \"${0}\"); pwd)"
+
 snippet echo
   printf '%s\n'

@@ -48,8 +48,6 @@ alias bmount='udisksctl mount -b'
 alias bumount='udisksctl unmount -b'
 alias fuserumount='fusermount -u'
 alias alsa-reload='alsactl nrestore'
-alias poweroff='systemctl poweroff'
-alias reboot='systemctl reboot'
 alias keychange='setxkbmap \
   -option ctrl:nocaps \
   -option compose:prsc \

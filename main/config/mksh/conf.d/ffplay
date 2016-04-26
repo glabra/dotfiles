@@ -39,3 +39,7 @@ ffplays_shuf () {
   (IFS=$'\n'; __ffplays "$*" $(find . -type f -print | shuf))
 }
 
+playchinachu () {
+  local url=$(cat "$1" | awk '/<location>/{gsub("</?location>",""); print $0;}' | head -n 1)
+  curl -su akari:bakuhatsu "$url" | ffplay -
+}

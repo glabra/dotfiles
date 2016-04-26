@@ -1,0 +1,11 @@
+jdkenv () {
+  local tag='jdkenv'
+
+  if test -z "${1:-}"; then
+    printf 'jdkenv [dir]\n'
+  else
+    local dir=$(cd $(dirname "$1"); pwd)
+    docker run --rm -v $dir:/mnt -ti $tag /mnt
+  fi
+}
+

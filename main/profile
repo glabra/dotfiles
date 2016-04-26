@@ -9,7 +9,8 @@ then
   rm "${HOME}/.disableX"
 elif test -z "${DISPLAY}"
 then
-  exec startx
+  startx
+  exit
 fi
 
 # source mkshrc when running under mksh

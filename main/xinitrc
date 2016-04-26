@@ -10,17 +10,17 @@ then
 fi
 
 export LANG='ja_JP.UTF-8'
-export XMODIFIERS='@im=fcitx'
-export GTK_IM_MODULE='fcitx'
-export QT_IM_MODULE='fcitx'
+export XMODIFIERS='@im=uim'
+export GTK_IM_MODULE='uim'
+export QT_IM_MODULE='uim'
 export _JAVA_AWT_WM_NONREPARENTING=1
-/usr/bin/fcitx &
-(xset s 600 && xss-lock /usr/bin/slock) &
-(${HOME}/.local/bin/switch-wallpaper && /usr/bin/xcompmgr) > /dev/null &
+uim-xim &
 ${HOME}/.local/bin/dwm-updateinfo &
 setxkbmap \
   -option ctrl:nocaps \
   -option compose:prsc \
   -option terminate:ctrl_alt_bksp &
 #  -option shift:both_capslock \
-exec ${HOME}/.local/bin/dwm
+xbacklight -set 20 &
+amixer set Master 0 &
+exec dwm
