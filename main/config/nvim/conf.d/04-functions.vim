@@ -16,8 +16,8 @@ function! s:get_and_change_local_tab_spaces() abort
     echo '<Tab> is still' &l:tabstop 'spaces.'
   endif
 endfunction
-call s:change_tab_spaces("l",2)
-call s:change_tab_spaces("g",2)
+call s:change_tab_spaces("g",4)
+call s:change_tab_spaces("l",4)
 nnoremap <silent> <C-k><C-t> :call <SID>get_and_change_local_tab_spaces()<CR>
 command! -nargs=1 ChangeTabSpaces call <SID>change_tab_spaces("l",<args>)
 

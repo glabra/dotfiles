@@ -6,6 +6,6 @@ augroup vimrc_loading
   autocmd BufRead,BufNewFile *.ll setlocal filetype=llvm
   autocmd FileType c setlocal noexpandtab
   autocmd FileType c ChangeTabSpaces 8
-  autocmd FileType java ChangeTabSpaces 4
+  autocmd FileType ruby ChangeTabSpaces 2
 augroup END
 

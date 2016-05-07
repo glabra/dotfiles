@@ -9,3 +9,32 @@ jdkenv () {
   fi
 }
 
+latexmk () {
+  local tag='latex'
+
+  docker run --rm -it \
+    --env="USER=$(id -un)" \
+    --user="$(id -u):$(id -g)" \
+    --net=none \
+    -v $(pwd):/latex \
+    $tag "$@"
+}
+
+gimp () {
+  local tag='gimp'
+  local hostname=$(docker inspect --format='{{ .Config.Hostname }}' $tag)
+
+  test -d "${1:-}" && \
+    local opts="-v $(cd $1; pwd):/mnt"
+
+  xhost +local:$hostname
+  docker run --rm \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    --env="DISPLAY=unix$DISPLAY" \
+    --env="HOME=/tmp" \
+    --user="$(id -u):$(id -g)" \
+    --net=none \
+    ${opts:-} gimp
+  xhost -local:$hostname
+}
+
