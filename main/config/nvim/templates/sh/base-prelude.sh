@@ -1,9 +1,7 @@
 #!/bin/sh
-set -u
-set -e
-umask 0750
+set -ue
+umask 0027
 export PATH='/bin:/usr/bin'
 export LANG='C'
-IFS='	 
-'
+IFS=$' \t\n'
 

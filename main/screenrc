@@ -1,0 +1,17 @@
+defutf8 on
+defencoding utf8
+encoding utf-8 utf-8
+
+startup_message off
+autodetach on
+vbell off
+maptimeout 0
+term screen-256color
+
+escape ^Tt
+bind ^k kill
+bind s split
+bind r eval 'echo "Resize window"' 'command -c resize'
+bind -c resize j eval 'resize +1' 'command -c resize'
+bind -c resize k eval 'resize -1' 'command -c resize'
+

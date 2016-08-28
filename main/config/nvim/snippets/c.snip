@@ -1,4 +1,6 @@
 snippet if
+options head
+abbr if () {}
     if (${1:#:condition}) {
         ${0:TARGET}
     }
@@ -60,14 +62,6 @@ snippet     enum
         ${0:TARGET}
     };
 
-# hard-tab is necessary; C indent doesn't support this.
-snippet main
-	int main(int argc, char const* argv[])
-	{
-		${0:TARGET}
-		return 0;
-	}
-
 snippet include
 alias   inc, #inc, #include
     #include <${0}>
@@ -115,3 +109,12 @@ abbr    fprintf(..., "...\n", ...);
 snippet sizeof
     sizeof(${0:TARGET})
 
+snippet prelude
+options head
+	#include <stdio.h>
+
+	int
+	main(int argc, const char * argv[])
+	{
+		${0}
+	}

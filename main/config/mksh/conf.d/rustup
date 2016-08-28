@@ -1,0 +1,7 @@
+# lazy loading
+rustup() {
+    . ${rustup}/env
+    unset rustup
+    unset -f rustup
+    rustup "$@"
+}

@@ -1,0 +1,99 @@
+snippet print
+options head
+    Serial.print(${0});
+
+snippet println
+options head
+    Serial.println(${0});
+
+snippet if
+options head
+    if (${1}) {
+        ${0:TARGET}
+    }
+
+snippet else
+options head
+    else {
+        ${0:TARGET}
+    }
+
+snippet elseif
+alias elif
+options head
+    else if (${1}) {
+        ${0:TARGET}
+    }
+
+snippet for
+options head
+    for (${1}) {
+        ${0:#:TARGET}
+    }
+
+snippet while
+options head
+    while (${1}) {
+        ${0:TARGET}
+    }
+
+snippet switch
+options head
+abbr switch () {}
+    switch (${1}) {
+    case ${2}:
+        ${0:TARGET}
+        break;
+    }
+
+snippet case
+options head
+    case ${1}:
+        ${0:TARGET}
+        break;
+
+snippet struct
+options head
+    struct ${1:name} {
+        ${0:TARGET}
+    };
+
+snippet enum
+options head
+    enum ${1:name} {
+        ${0:TARGET}
+    };
+
+snippet include
+alias   #include
+options head
+    #include <${0}>
+
+# #include "..."
+snippet linclude
+alias   #include2
+options head
+    #include "${0}"
+
+snippet define
+options head
+    #define 
+
+# Ternary conditional operator
+snippet conditional
+alias ?
+options word
+    (${1:#:condition}) ? ${2:#:true} : ${3:#:false}
+
+snippet sizeof
+options word
+    sizeof(${0:TARGET})
+
+snippet prelude
+options head
+    void setup() {
+        Serial.begin(9600);
+    }
+
+    void loop() {
+    }

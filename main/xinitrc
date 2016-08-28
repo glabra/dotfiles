@@ -13,7 +13,11 @@ export LANG='ja_JP.UTF-8'
 export XMODIFIERS='@im=uim'
 export GTK_IM_MODULE='uim'
 export QT_IM_MODULE='uim'
+
+# hack for various Java AWT bugs
 export _JAVA_AWT_WM_NONREPARENTING=1
+wmname LG3D
+
 uim-xim &
 ${HOME}/.local/bin/dwm-updateinfo &
 setxkbmap \
@@ -23,4 +27,8 @@ setxkbmap \
 #  -option shift:both_capslock \
 xbacklight -set 20 &
 amixer set Master 0 &
+autocutsel -selection PRIMARY -fork &
+autocutsel -selection SECONDARY -fork &
+autocutsel -selection CLIPBOARD -fork &
+feh --bg-center --no-fehbg ${HOME}/.local/wallpaper.png
 exec dwm

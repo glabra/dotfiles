@@ -12,7 +12,7 @@ jdkenv () {
 latexmk () {
   local tag='latex'
 
-  docker run --rm -it \
+  docker run --rm -t \
     --env="USER=$(id -un)" \
     --user="$(id -u):$(id -g)" \
     --net=none \
@@ -20,21 +20,70 @@ latexmk () {
     $tag "$@"
 }
 
-gimp () {
-  local tag='gimp'
-  local hostname=$(docker inspect --format='{{ .Config.Hostname }}' $tag)
+__rainbow () {
+    local tokendir="${HOME}/.cache/rainbowstream"
+    local tokenfile="${tokendir}/$1"
+    local key='yT577ApRtZw51q4NPMPPOQ'
+    local secret='3neq3XqN5fO3obqwZoajavGFCUrC42ZfbrLXy5sCv8'
 
-  test -d "${1:-}" && \
-    local opts="-v $(cd $1; pwd):/mnt"
+    test ! -d "${tokendir}" && mkdir -p "${tokendir}"
 
-  xhost +local:$hostname
-  docker run --rm \
-    -v /tmp/.X11-unix:/tmp/.X11-unix \
-    --env="DISPLAY=unix$DISPLAY" \
-    --env="HOME=/tmp" \
-    --user="$(id -u):$(id -g)" \
-    --net=none \
-    ${opts:-} gimp
-  xhost -local:$hostname
+    docker run --rm -ti \
+        --env="USER=$(id -un)" \
+        --env="CONSUMER_KEY=${key}" \
+        --env="CONSUMER_SECRET=${secret}" \
+        --user="$(id -u):$(id -g)" \
+        -v ${tokenfile}:/tmp/.rainbow_oauth:ro \
+        rainbowstream ${2:-}
 }
 
+rainbow_azuma962 () {
+    __rainbow azuma962 ${1:-}
+}
+
+rainbow_burassica () {
+    __rainbow burassica ${1:-}
+}
+
+__graphic_container () {
+    local tag=$1
+    local opts=$2
+    local entrypoint=$3
+
+    local hostname=$(docker inspect --format='{{ .Config.Hostname }}' $tag)
+
+    xhost +local:$hostname
+
+    docker run --rm \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+        --env="DISPLAY=unix$DISPLAY" \
+        --env="HOME=/tmp" \
+        --user="$(id -u):$(id -g)" \
+    ${opts:-} ${tag} ${entrypoint:-}
+
+    xhost -local:$hostname
+}
+
+gimp () {
+    test -d "${1:-}" && \
+        local shared="-v $(cd $1; pwd):/mnt"
+
+    __graphic_container gimp "--net=none ${shared:-}" ''
+}
+
+jpm () {
+    __graphic_container jpm "-ti -v $(pwd):/mnt" "${@:-}"
+}
+
+shared_container () {
+    local shared=$(pwd)
+    local tag=$(shift 1)
+    local entrypoint=$(shift 1)
+    local opts=$@
+
+    docker run --rm -ti \
+        -v $(cd "$shared"; pwd):/mnt \
+    ${opts:-} ${tag} ${entrypoint:-/bin/ash}
+}
+
+alias dockviz="docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz"

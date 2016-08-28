@@ -23,11 +23,15 @@ command! -nargs=1 ChangeTabSpaces call <SID>change_tab_spaces("l",<args>)
 
 " 謎のバッファ殺しマシン
 function! s:delete_hidden_buffers()
+    let killed_cnt = 0
     let tpbl=[]
     call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
     for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
         silent execute 'bwipeout' buf
+        let killed_cnt += 1
     endfor
+
+    echo 'killed' killed_cnt 'buffer(s)'
 endfunction
 nnoremap <silent> <C-k><C-f> :call <SID>delete_hidden_buffers()<CR>
 

@@ -38,8 +38,11 @@ then
   alias require_secrets=':'
 fi
 
-# enable rbenv?
+# path
 [[ -d "${HOME}/.rbenv" ]] && rbenv="${HOME}/.rbenv"
+[[ -d "${HOME}/.pyenv" ]] && pyenv="${HOME}/.pyenv"
+[[ -d "${HOME}/.nvm" ]] && nvm="${HOME}/.nvm"
+[[ -d "$HOME/.cargo/" ]] && rustup="${HOME}/.cargo"
 
 # load config
 for i in `ls -1 "${conf_dir}"`

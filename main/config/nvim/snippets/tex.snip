@@ -43,14 +43,17 @@ options head
 snippet dl
 options head
   \begin{description}
-    ${0}
+  ${0}
   \end{description}
 
 snippet dt
-alias dd
 options head
   \item[${1}] \mbox{} \\
   ${0}
+
+snippet dd
+options head
+  \item[${1}] ${0}
 
 snippet table
 options head
@@ -83,4 +86,19 @@ options head
   \WordCount{%
   $0
   }
+
+snippet lstset
+options head
+    \lstset{%
+        language={$0},%
+        frame={tb},
+        breaklines=true,
+        columns=[l]{fullflexible},%
+        numbers=left,%
+        xleftmargin=3\zw,%
+        numberstyle={\scriptsize},%
+        stepnumber=1,
+        numbersep=1\zw,%
+        lineskip=-0.5ex%
+    }
 
