@@ -15,16 +15,20 @@ else # if $(SRC_TYPE) is valid
 
 sourcedir := $(srcdir)/$(SRC_TYPE)
 destfiles := $(addprefix $(destdir)/., $(shell cd $(sourcedir) && $(FIND) * -type f \! -name 'Makefile'))
+destdirs := $(sort $(dir $(destfiles)))
 submakefiles := $(addprefix $(sourcedir)/, $(shell cd $(sourcedir) && $(FIND) * -type f -name 'Makefile'))
 
 install: .src_type $(destfiles) module-install
 
 uninstall: module-uninstall
 	@$(RM) -- $(foreach d,$(destfiles),'$(d)')
-	@rmdir -p  $(foreach d,$(dir $(destfiles)),$(d)) >/dev/null 2>&1 || true
+	@rmdir -p $(destdirs) >/dev/null 2>&1 || true
 
-sync:
-	@echo "WIP"
+sync: $(destdirs) | install
+	@(IFS=' '; for i in $^; do \
+		find "$$i" -maxdepth 1 -type l ! -exec test -e {} \; -delete; \
+	done)
+	@rmdir -p $^ >/dev/null 2>&1 || true
 
 module-install: $(submakefiles)
 	@(IFS=' '; for i in $^; do \

@@ -1,7 +1,5 @@
 scriptencoding utf-8
 
-imap <silent> <F1> <Esc>
-nmap <silent> <F1> <Esc>
 nnoremap <silent> <F5> :tabedit $MYVIMRC<CR>
 nnoremap <silent> <F6> :source $MYVIMRC<CR>
 nnoremap x "_x

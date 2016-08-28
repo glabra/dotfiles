@@ -1,59 +1,77 @@
 if !1 | finish | endif
 
-set nocompatible
-syntax on
+scriptencoding utf-8
 
+" !!! taken from 01-options.vim !!!
 set autoindent
 set autoread
-set cursorline
-set encoding=utf-8
+set autowriteall
+set breakindent
+set completeopt& completeopt-=preview
 set expandtab
-set fileencodings=utf-8,ucs-bom,iso-2022-jp,cp932,euc-jp,default,latin
+set fileencodings=utf-8,ucs-bom,iso-2022-jp,euc-jp,cp932,default,latin
+set foldmethod=manual
 set laststatus=2
 set list
-set listchars=tab:>\ ,trail:~,eol:\ ,nbsp:%
+set listchars=tab:>.,trail:~,nbsp:%
+set magic
 set modeline
+set mouse-=a
+set nocursorline
 set nocursorcolumn
+set nofoldenable
 set number
 set numberwidth=5
-set shiftwidth=2 "cindentや>><<で入力されるインデントの幅
 set showmatch
 set smartindent
-set softtabstop=2 "<TAB>を入力した際に入力されるインデントの幅
 set splitbelow
-set statusline=%f%(\ %M%R%)%=\ \ %{(&ft!=''?&ft:'plain').':'.(&fenc!=''?&fenc:&enc).':'.&ff}\ [%2B]\ %v:%l/%L
-set tabstop=2 "<TAB>の見た目の幅数
+set updatetime=1000
 set wrap
+set statusline=%f%(\ %M%R%)
+set statusline+=%=\ \ 
+set statusline+=%{(&ft!=''?&ft:'plain').':'.(&fenc!=''?&fenc:&enc).':'.&ff}\ [%2B]\ %v:%l/%L
 
-set nobackup
-set noswapfile
-"set noundofile
-
+" color scheme
 colorscheme desert
 highlight CursorLineNR cterm=bold
 
-imap <expr> <C-n> pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>"
-nnoremap <C-b> <C-u>
-nnoremap <C-f> <C-d>
-nnoremap <C-u> <C-y>
-nnoremap <C-d> <C-e>
-nnoremap <expr> <C-k><C-p> ( &paste == 1 ) ? ":set nopaste\<CR>" : ":set paste\<CR>"
-nnoremap <expr> <C-k><C-n> ( &number == 1 ) ? ":set nonumber\<CR>" : ":set number\<CR>"
-nnoremap <expr> <C-k><C-r> ( &readonly == 1 ) ? ":set readonly!\<CR>" : ":set readonly\<CR>"
-nnoremap <expr> <C-k><C-e> ( &expandtab == 1 ) ? ":set expandtab!\<CR>" : ":set expandtab\<CR>"
+" rubyなファイルがストレスレスに開くようになる魔法の呪文
+" 代償として、補完が少し弱くなる
+let g:ruby_path = ""
+
+
+" !!! taken from 02-keybinds.vim !!!
+nnoremap <silent> <F5> :tabedit $MYVIMRC<CR>
+nnoremap <silent> <F6> :source $MYVIMRC<CR>
 nnoremap x "_x
 nnoremap X "_X
 nnoremap Y "+y
 nnoremap YY "+yy
 nnoremap - "+p
 nnoremap _ "+P
-vnoremap Y "+y
+nnoremap t ge
+nnoremap T gE
 nnoremap <silent> <C-n> gt
 nnoremap <silent> <C-p> gT
+nnoremap <silent> [ %
+nnoremap <expr> <C-w>T ":vsplit " . tempname() . "\<CR>"
+nnoremap <silent> <C-w>x <C-w>q
 nnoremap <silent> <C-w><C-n> gt
 nnoremap <silent> <C-w><C-p> gT
-nnoremap <silent> <C-w>x <C-w>q
-nnoremap <silent> <C-w>t :tabnew<CR>
+nnoremap <silent> <C-k><C-n> :setlocal number!<CR>
+nnoremap <silent> <C-k><C-r> :setlocal readonly!<CR>
+nnoremap <silent> <C-k><C-p> :setlocal paste!<CR>:echo 'paste='.&paste<CR>
+nnoremap <silent> <C-k><C-e> :setlocal expandtab!<CR>:echo 'expandtab='.&expandtab<CR>
 inoremap <silent> <C-w><C-n> <Esc>gt
 inoremap <silent> <C-w><C-p> <Esc>gT
 inoremap <silent> <C-w><C-w> <Esc>
+vnoremap Y "+y
+
+
+" !!! univ vimrc specific !!!
+syntax on
+set nobackup
+set noswapfile
+"set noundofile
+imap <expr> <C-n> pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>"
+

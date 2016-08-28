@@ -6,8 +6,6 @@ set autoread
 set autowriteall
 set breakindent
 set completeopt& completeopt-=preview
-" set cursorline
-set nocursorline
 set expandtab
 set fileencodings=utf-8,ucs-bom,iso-2022-jp,euc-jp,cp932,default,latin
 set foldmethod=manual
@@ -17,6 +15,7 @@ set listchars=tab:>.,trail:~,nbsp:%
 set magic
 set modeline
 set mouse-=a
+set nocursorline
 set nocursorcolumn
 set nofoldenable
 set number
