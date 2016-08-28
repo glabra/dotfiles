@@ -6,7 +6,6 @@ scriptencoding utf-8
 set autoindent
 set autoread
 set autowriteall
-set breakindent
 set completeopt& completeopt-=preview
 set expandtab
 set fileencodings=utf-8,ucs-bom,iso-2022-jp,euc-jp,cp932,default,latin
@@ -30,6 +29,10 @@ set wrap
 set statusline=%f%(\ %M%R%)
 set statusline+=%=\ \ 
 set statusline+=%{(&ft!=''?&ft:'plain').':'.(&fenc!=''?&fenc:&enc).':'.&ff}\ [%2B]\ %v:%l/%L
+
+if (v:version >= 704) && has('patch338')
+    set breakindent
+endif
 
 " color scheme
 colorscheme desert
