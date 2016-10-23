@@ -1,0 +1,15 @@
+disright () {
+    local out=$(echo "$1" | tr '[a-z]' '[A-Z]')
+    xrandr --output ${out:-DP2} --auto --right-of eDP1
+}
+
+dismirror () {
+    local out=$(echo "$1" | tr '[a-z]' '[A-Z]')
+    xrandr --output ${out:-DP2} --auto --same-as eDP1
+}
+
+disoff () {
+    local out=$(echo "$1" | tr '[a-z]' '[A-Z]')
+    xrandr --output ${out:-DP2} --off
+}
+

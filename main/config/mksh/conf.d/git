@@ -11,6 +11,7 @@ __git_ps1() {
     tput sgr0
   fi
 }
+ps1_after_path __git_ps1
 
 require_secrets
 
@@ -21,4 +22,3 @@ __gitconf () {
 
 alias 'git-conf'="__gitconf '${GITCONF_DEFAULT_USERNAME}' '${GITCONF_DEFAULT_EMAIL}'"
 alias 'git-conf-decapoda'="__gitconf '${GITCONF_DECAPODA_USERNAME}' '${GITCONF_DECAPODA_EMAIL}'"
-alias 'git-conf-dog'="__gitconf '${GITCONF_DOG_USERNAME}' '${GITCONF_DOG_EMAIL}'"

@@ -8,7 +8,7 @@ vbell off
 maptimeout 0
 term screen-256color
 
-escape ^Tt
+escape ^Bb
 bind ^k kill
 bind s split
 bind r eval 'echo "Resize window"' 'command -c resize'

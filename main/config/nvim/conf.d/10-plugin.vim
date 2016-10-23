@@ -2,13 +2,20 @@ scriptencoding utf-8
 
 call plug#begin(expand(g:myvim . '/bundle'))
 Plug 'mattn/sonictemplate-vim'
-Plug 'travitch/hasksyn', {'for': 'haskell'}
 Plug 'justinmk/vim-dirvish'
-Plug 'rust-lang/rust.vim'
 Plug 'Shougo/neosnippet'
+Plug 'scrooloose/syntastic'
+Plug 'thinca/vim-quickrun'
+
+" rust
+Plug 'rust-lang/rust.vim'
+Plug 'racer-rust/vim-racer', { 'for': 'rust' }
+
+" haskell
+Plug 'travitch/hasksyn', {'for': 'haskell'}
 
 if has('nvim')
-    Plug 'Shougo/deoplete.nvim'
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
         \ | Plug 'Shougo/neco-syntax'
 endif
 

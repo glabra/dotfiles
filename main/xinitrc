@@ -26,7 +26,6 @@ setxkbmap \
   -option terminate:ctrl_alt_bksp &
 #  -option shift:both_capslock \
 xbacklight -set 20 &
-amixer set Master 0 &
 autocutsel -selection PRIMARY -fork &
 autocutsel -selection SECONDARY -fork &
 autocutsel -selection CLIPBOARD -fork &

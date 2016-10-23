@@ -4,22 +4,10 @@ export LANG="en_US.UTF-8"
 export PATH="${HOME}/.local/bin:${PATH}"
 
 # automatically startx
-if test -e "${HOME}/.disableX"
-then
-  rm "${HOME}/.disableX"
-elif test -z "${DISPLAY}"
-then
-  startx
-  exit
-fi
+[ -z "${DISPLAY}" ] && startx && exit
 
 # source mkshrc when running under mksh
-if test -n "${KSH_VERSION}"
-then
-  test -f "${HOME}/.mkshrc" && . ${HOME}/.mkshrc
+if [ -n "${KSH_VERSION}" ]; then
+  [ -f "${HOME}/.mkshrc" ] && . ${HOME}/.mkshrc
 fi
 
-export NVM_DIR="/home/meu/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-
-export PATH="$HOME/.cargo/bin:$PATH"

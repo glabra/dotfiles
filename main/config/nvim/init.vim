@@ -1,5 +1,5 @@
-" only for vim compability
 if !1 | finish | endif
+" ^ only for vim compability
 
 scriptencoding utf-8
 

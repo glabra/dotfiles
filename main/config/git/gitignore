@@ -3,7 +3,7 @@
 *~
 *.swp
 
-# Mac OS Fuckin' X
+# Mac Fuckin' OS X
 .DS_Store
 __MACOSX
 
@@ -40,3 +40,6 @@ cabal-dev
 .rbenv-gemsets
 .yardoc
 doc/
+
+# python
+__pycache__

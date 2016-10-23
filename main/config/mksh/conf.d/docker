@@ -71,6 +71,13 @@ gimp () {
     __graphic_container gimp "--net=none ${shared:-}" ''
 }
 
+inkscape () {
+    test -d "${1:-}" && \
+        local shared="-v $(cd $1; pwd):/mnt"
+
+    __graphic_container inkscape "--net=none ${shared:-}" ''
+}
+
 jpm () {
     __graphic_container jpm "-ti -v $(pwd):/mnt" "${@:-}"
 }

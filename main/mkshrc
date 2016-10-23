@@ -1,20 +1,23 @@
 [[ $- != *i* ]] && return
 
 # consts
-MKSH_CONFIG="${HOME}/.config/mksh"
+CONFIG_DIR="${HOME}/.config/mksh"
+SECRETS_PATH="${HOME}/.local/secrets.sh"
 
 # trap logout script
-test -f "${MKSH_CONFIG}/logout" && trap ". ${MKSH_CONFIG}/logout; exit" EXIT
+test -f "${CONFIG_DIR}/logout.sh" && \
+    trap ". ${CONFIG_DIR}/logout.sh; exit" EXIT
 
 ### initialize callback system {
+# execute_callback <callback name> [unset function after executed]
 execute_callback () {
   for cb in $(eval echo '${__'${1}':-}')
   do
     ${cb}
-    unset -f ${cb}
+    test "${2:-}" = 'true' && unset -f ${cb}
   done
 
-  eval unset '__'${1}
+  test "${2:-}" = 'true' && eval unset '__'${1}
 }
 
 register_callback () {
@@ -27,44 +30,39 @@ after_initialize () {
 ### } initialize callback system
 
 ### load settings {
-secrets_path="${HOME}/.local/secrets.sh"
-conf_dir="${MKSH_CONFIG}/conf.d"
+# require_secrets
 alias require_secrets='return'
 
-if test -f "${secrets_path}"
+if test -f "${SECRETS_PATH}"
 then
-  . "${secrets_path}"
-  aws=true
+  . "${SECRETS_PATH}"
   alias require_secrets=':'
 fi
 
-# path
-[[ -d "${HOME}/.rbenv" ]] && rbenv="${HOME}/.rbenv"
-[[ -d "${HOME}/.pyenv" ]] && pyenv="${HOME}/.pyenv"
-[[ -d "${HOME}/.nvm" ]] && nvm="${HOME}/.nvm"
-[[ -d "$HOME/.cargo/" ]] && rustup="${HOME}/.cargo"
+# load configs
+CONF_D="${CONFIG_DIR}/conf.d"
+CONF_D_OBJECTIVE=''
+. "${CONFIG_DIR}/conf.d.sh"
 
-# load config
-for i in `ls -1 "${conf_dir}"`
+for i in ${CONF_D_OBJECTIVE}
 do
-  if test "${i}" == '_'
-  then
-    . "${conf_dir}/_"
-  elif [[ -n "$(eval echo '${'${i}'}')" ]] || type "${i}" > /dev/null 2>&1
-  then
-    . "${conf_dir}/${i}"
-  fi
+    . "${CONF_D}/${i}"
 done
 
 # cleanup
-unset aws
-unset secrets_path
-unset conf_dir
+unset CONF_D_OBJECTIVE
+unset CONF_D
 unalias require_secrets
 ### } load settings
 
-execute_callback after_initialize
+# cleanup consts
+unset SECRETS_PATH
+unset CONFIG_DIR
 
-# initialization finished
-printf '%s\n' "`LANG=C date`"
+print_initialized_date () {
+    printf '%s\n' "`LANG=C date`"
+}
+after_initialize print_initialized_date
+
+execute_callback after_initialize true
 

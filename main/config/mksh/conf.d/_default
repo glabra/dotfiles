@@ -9,13 +9,11 @@ stty stop undef
 tput smkx
 
 # set PS1
-if test `type __git_ps1 > /dev/null 2>&1; echo $?` -ne 0
-then
-  __git_ps1() {
-    printf ''
-  }
-fi
-PS1='$(tput bold)$(basename "${PWD}")$(__git_ps1)$(tput bold)\$$(tput sgr0) '
+ps1_after_path () {
+    register_callback ps1_after_path ${1}
+}
+
+PS1='$(tput bold)$(basename "${PWD}")$(tput sgr0)$(execute_callback ps1_after_path)$(tput bold)\$$(tput sgr0) '
 
 # alias
 ## foolproof

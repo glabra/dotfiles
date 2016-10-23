@@ -1,7 +1,4 @@
-# lazy loading
-rustup() {
-    . ${rustup}/env
-    unset rustup
-    unset -f rustup
-    rustup "$@"
-}
+. ${rustup}/env
+
+[[ -d "${HOME}/.local/src/rustc-nightly/" ]] && \
+    export RUST_SRC_PATH="${HOME}/.local/src/rustc-nightly/src/"
