@@ -1,6 +1,5 @@
 #!/bin/sh
-set -u
-set -e
+set -ue
 umask 0750
 export PATH="/bin:/usr/bin"
 export LANG="C"
@@ -40,7 +39,7 @@ battery () {
 dwm_update_status () {
   local str=''
   local audio_status=`amixer get Master | tail -n 1`
-  local audio_level=`echo "${audio_status}" | grep -oG '[0-9]\+%'`
+  local audio_level=`echo "${audio_status}" | egrep -o '[0-9]+%'`
   local mute_indicator='-'
 
   if echo "${audio_status}" | grep -q '\[on\]$'; then
@@ -48,7 +47,7 @@ dwm_update_status () {
   fi
   str="v:${mute_indicator}${audio_level}"
 
-  light_level=`xbacklight -get | grep -oG '^[0-9]\+'`
+  light_level=`xbacklight -get | egrep -o '^[0-9]+'`
   str="${str} l:${light_level}%"
 
   battery_status=`battery`

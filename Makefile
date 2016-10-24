@@ -24,7 +24,8 @@ uninstall: module-uninstall
 	@$(RM) -- $(foreach d,$(destfiles),'$(d)')
 	@rmdir -p $(destdirs) >/dev/null 2>&1 || true
 
-sync: $(destdirs) | install
+#sync: $(destdirs) | install
+sync: $(destdirs)
 	@echo 'removing nonexistent symlink...'
 	@(IFS=' '; for i in $^; do \
 		find "$$i" -maxdepth 1 -type l ! -exec test -e {} \; -print -delete; \

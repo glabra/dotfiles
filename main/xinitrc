@@ -20,14 +20,10 @@ wmname LG3D
 
 uim-xim &
 ${HOME}/.local/bin/dwm-updateinfo &
-setxkbmap \
-  -option ctrl:nocaps \
-  -option compose:prsc \
-  -option terminate:ctrl_alt_bksp &
-#  -option shift:both_capslock \
+/usr/bin/xmodmap ${HOME}/.config/Xmodmap
 xbacklight -set 20 &
 autocutsel -selection PRIMARY -fork &
 autocutsel -selection SECONDARY -fork &
 autocutsel -selection CLIPBOARD -fork &
 feh --bg-center --no-fehbg ${HOME}/.local/wallpaper.png
-exec dwm
+exec ${HOME}/.local/bin/dwm

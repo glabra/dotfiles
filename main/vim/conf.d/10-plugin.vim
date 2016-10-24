@@ -17,6 +17,9 @@ Plug 'travitch/hasksyn', {'for': 'haskell'}
 if has('nvim')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
         \ | Plug 'Shougo/neco-syntax'
+else
+    Plug 'Shougo/neocomplete.vim'
+        \ | Plug 'Shougo/neco-syntax'
 endif
 
 if executable('ctags')

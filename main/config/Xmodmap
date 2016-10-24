@@ -1,0 +1,7 @@
+! CapsLock to Control_L
+remove lock = Caps_Lock
+keycode 66 = Control_L NoSymbol Control_L
+add control = Control_L
+! PtrSc to Mode_switch
+keycode 107 = Mode_switch NoSymbol Mode_switch
+add mod5 = Mode_switch

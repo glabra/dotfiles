@@ -10,4 +10,3 @@ export PATH="${HOME}/.local/bin:${PATH}"
 if [ -n "${KSH_VERSION}" ]; then
   [ -f "${HOME}/.mkshrc" ] && . ${HOME}/.mkshrc
 fi
-

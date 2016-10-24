@@ -1,5 +1,8 @@
 [[ $- != *i* ]] && return
 
+# dirty hack for tput
+alias tput=:
+
 # consts
 CONFIG_DIR="${HOME}/.config/mksh"
 SECRETS_PATH="${HOME}/.local/secrets.sh"

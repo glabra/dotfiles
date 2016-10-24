@@ -39,6 +39,9 @@ alias rf='rm'
 alias vp='cp'
 alias mc='mv'
 
+## clear env when su
+alias su='su -'
+
 ## obenri on linux
 alias ls='ls --color=auto'
 alias less='less -R'
