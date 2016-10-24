@@ -39,19 +39,9 @@ alias rf='rm'
 alias vp='cp'
 alias mc='mv'
 
-## clear env when su
+## safer su
 alias su='su -'
 
-## obenri on linux
+## system specific
 alias ls='ls --color=auto'
-alias less='less -R'
-alias bmount='udisksctl mount -b'
-alias bumount='udisksctl unmount -b'
-alias fuserumount='fusermount -u'
-alias alsa-reload='alsactl nrestore'
-alias keychange='setxkbmap \
-  -option ctrl:nocaps \
-  -option compose:prsc \
-  -option shift:both_capslock \
-  -option terminate:ctrl_alt_bksp'
-
+#alias less='less -R' <- not available in busybox

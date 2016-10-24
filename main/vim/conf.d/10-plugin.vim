@@ -9,10 +9,7 @@ Plug 'thinca/vim-quickrun'
 
 " rust
 Plug 'rust-lang/rust.vim'
-Plug 'racer-rust/vim-racer', { 'for': 'rust' }
-
-" haskell
-Plug 'travitch/hasksyn', {'for': 'haskell'}
+"Plug 'racer-rust/vim-racer', { 'for': 'rust' }
 
 if has('nvim')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }

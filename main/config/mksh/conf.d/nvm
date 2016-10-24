@@ -1,8 +1,0 @@
-# lazy loading
-nvm() {
-    local nvmpath="${nvm}"
-    unset nvm
-    unset -f nvm
-    . "${nvmpath}/nvm.sh"
-    nvm "$@"
-}

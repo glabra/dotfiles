@@ -1,15 +1,12 @@
 [core]
-  excludesfile = ~/.config/git/gitignore
+	excludesfile = ~/.config/git/gitignore
 [push]
-  default = nothing
+	default = nothing
 [alias]
-  b = branch
-  d = diff
-  g = grep
-  l = log --graph --date=iso --stat
-  s = status --branch --short
-  dm = diff master
-  lo = log --graph --date=iso --pretty=format:'%C(auto)%h: by %aN%n%s%n'
-  smup = submodule foreach git pull origin master
-  commir = commit
-  vommit = commit
+	b = branch
+	l = log --graph --date=iso --stat
+	s = status --branch --short
+	lo = log --graph --date=iso --pretty=format:'%C(auto)%h: by %aN%n%s%n'
+	smup = submodule foreach git pull origin master
+	commir = commit
+	vommit = commit

@@ -14,14 +14,12 @@ do
     fi
 done
 
+<< _COMMENT_
 lazy_load () {
     [[ -d "$2" ]] && eval $1=\"$2\" && append "$1"
 }
-
-lazy_load rbenv "${HOME}/.rbenv"
-lazy_load pyenv "${HOME}/.pyenv"
-lazy_load nvm "${HOME}/.nvm"
-lazy_load rustup "${HOME}/.cargo"
+# do something here
+unset lazy_load
+_COMMENT_
 
 unset append
-unset lazy_load
