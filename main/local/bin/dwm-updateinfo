@@ -7,12 +7,9 @@ IFS="
 "
 
 _get_battery () {
-  local value=`cat /sys/class/power_supply/${1}/energy_${2} 2> /dev/null`
-  if test -z "${value}"; then
-    printf '%s' '0'
-  else
-    printf '%s' "${value}"
-  fi
+    local pow=$(upower -i /org/freedesktop/UPower/devices/battery_${1} | grep percent | egrep -o '[0-9]+')
+
+    printf '%s' "$pow"
 }
 
 battery () {
@@ -21,17 +18,13 @@ battery () {
   local bat_now=0
   local bat_ratio='?'
 
-  if test "`cat /sys/class/power_supply/AC/online`" -eq 1; then
+
+  local isCharged="$(upower -i /org/freedesktop/UPower/devices/line_power_AC | grep online | egrep -o '[a-z]+$')"
+  if [[ "$isCharged" = 'yes' ]]; then
     charge_status='o'
   fi
 
-  bat_full=$(( `_get_battery BAT0 full` + `_get_battery BAT1 full` ))
-  bat_now=$(( `_get_battery BAT0 now` + `_get_battery BAT1 now` ))
-
-  if test "${bat_full}" -gt 0 && \
-     test "${bat_now}" -le "${bat_full}"; then
-    bat_ratio=$(( bat_now * 100 / bat_full ))
-  fi
+  bat_ratio=$(( ( $(_get_battery BAT0) + $(_get_battery BAT1) ) / 2 ))
 
   printf '%s' "${charge_status}${bat_ratio}%"
 }

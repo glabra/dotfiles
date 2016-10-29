@@ -2,11 +2,14 @@
 	excludesfile = ~/.config/git/gitignore
 [push]
 	default = nothing
+[color]
+	ui = false
 [alias]
 	b = branch
 	l = log --graph --date=iso --stat
 	s = status --branch --short
 	lo = log --graph --date=iso --pretty=format:'%C(auto)%h: by %aN%n%s%n'
+	si = submodule update --init
 	smup = submodule foreach git pull origin master
 	commir = commit
 	vommit = commit

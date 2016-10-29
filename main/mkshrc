@@ -1,8 +1,5 @@
 [[ $- != *i* ]] && return
 
-# dirty hack for tput
-alias tput=:
-
 # consts
 CONFIG_DIR="${HOME}/.config/mksh"
 SECRETS_PATH="${HOME}/.local/secrets.sh"
@@ -10,6 +7,9 @@ SECRETS_PATH="${HOME}/.local/secrets.sh"
 # trap logout script
 test -f "${CONFIG_DIR}/logout.sh" && \
     trap ". ${CONFIG_DIR}/logout.sh; exit" EXIT
+
+# alias tput to true when not available
+type tput > /dev/null 2>&1 || alias tput=:
 
 ### initialize callback system {
 # execute_callback <callback name> [unset function after executed]

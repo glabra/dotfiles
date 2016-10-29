@@ -1,0 +1,40 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+export LANG='C'
+IFS=' 	
+'
+
+print_usage () {
+    local status=${1}
+    printf 'Usage: %s [-o opts] [-d sharedir] tag entrypoint\n' "$0"
+    exit $status
+}
+
+print_info () {
+    printf 'Running %s\n' "${tag}"
+    printf '%s -> /mnt\n' "${share_dir}"
+    printf '\n'
+}
+
+share_dir=`pwd`
+
+while getopts d:o:h opt; do
+    case "${opt}" in
+      d) share_dir="${OPTARG}" ;;
+      o) opts="${opts} ${OPTARG}" ;;
+      h) print_usage 0 ;;
+    [?]) print_usage 1 ;;
+    esac
+done
+shift `expr ${OPTIND} - 1`
+
+tag="${1:-alpine:edge}"
+shift 1
+entrypoint="${@:-/bin/ash}"
+
+print_info
+
+docker run --rm -ti \
+    --volume=${share_dir}:/mnt ${opts:-} ${tag} ${entrypoint}
