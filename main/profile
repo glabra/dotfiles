@@ -4,9 +4,7 @@ export LANG="en_US.UTF-8"
 export PATH="${HOME}/.local/bin:${PATH}"
 
 # automatically startx
-[ -z "${DISPLAY}" ] && startx && exit
+[ -z "${DISPLAY}" ] && exec startx
 
-# source mkshrc when running under mksh
-if [ -n "${KSH_VERSION}" ]; then
-  [ -f "${HOME}/.mkshrc" ] && . ${HOME}/.mkshrc
-fi
+# source init.sh if startx not execed
+. ${HOME}/.config/sh/init.sh

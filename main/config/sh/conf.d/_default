@@ -13,7 +13,7 @@ ps1_after_path () {
     register_callback ps1_after_path ${1}
 }
 
-PS1='$(tput bold)$(basename "${PWD}")$(tput sgr0)$(execute_callback ps1_after_path)$(tput bold)\$$(tput sgr0) '
+PS1='`tput bold``basename "${PWD}"``tput sgr0``execute_callback ps1_after_path``tput bold`\$`tput sgr0` '
 
 # alias
 ## foolproof

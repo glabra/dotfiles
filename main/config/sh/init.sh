@@ -1,7 +1,8 @@
-[[ $- != *i* ]] && return
+# if not interactive, return
+echo $- | grep -q 'i' - || return
 
 # consts
-CONFIG_DIR="${HOME}/.config/mksh"
+CONFIG_DIR="${HOME}/.config/sh"
 SECRETS_PATH="${HOME}/.local/secrets.sh"
 
 # trap logout script
@@ -14,7 +15,7 @@ type tput > /dev/null 2>&1 || alias tput=:
 ### initialize callback system {
 # execute_callback <callback name> [unset function after executed]
 execute_callback () {
-  for cb in $(eval echo '${__'${1}':-}')
+  for cb in `eval echo '${__'${1}':-}'`
   do
     ${cb}
     test "${2:-}" = 'true' && unset -f ${cb}
