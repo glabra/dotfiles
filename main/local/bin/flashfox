@@ -13,35 +13,6 @@ print_usage () {
     exit $status
 }
 
-initialize_profile () {
-    local veilbase=$1
-    local profile=$2
-
-    # mount dirs
-    for d in 'up' 'work' 'merged'; do
-        mkdir "${veilbase}/${d}"
-    done
-
-    # construct opts
-    local opts='rw,noatime'
-    opts="${opts},lowerdir=${profile}"
-    opts="${opts},upperdir=${veilbase}/up"
-    opts="${opts},workdir=${veilbase}/work"
-
-    local target="${veilbase}/merged"
-    sudo mount -t overlay overlay -o "${opts}" "${target}"
-
-    printf '%s' "$target"
-}
-
-finalize_profile () {
-    local veilbase=$1
-    local merged=$2
-
-    sudo umount "${merged}"
-    rm -rf "${veilbase}"
-}
-
 profile="${HOME}/.mozilla"
 
 while getopts p:h opt; do
@@ -53,14 +24,9 @@ while getopts p:h opt; do
 done
 shift `expr ${OPTIND} - 1`
 
-veilbase=`mktemp -d`
 target_url=${1:-about:blank}
 
-mirror=`initialize_profile "${veilbase}" "${profile}"`
-
 docker-run-gui -d'/tmp' \
-    -o"--volume=${mirror}:/tmp/.mozilla" \
+    -o"--volume=${profile}:/profile:ro" \
     ${IMAGE} --private-window ${target_url}
-
-finalize_profile "${veilbase}" "${mirror}"
 
