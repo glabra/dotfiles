@@ -1,6 +1,5 @@
 # no persistence history
 unset HISTFILE
-unset HISTSIZE
 
 # disable ^S
 stty stop undef

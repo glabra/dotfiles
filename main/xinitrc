@@ -24,14 +24,11 @@ xbacklight -set 20 &
 /usr/bin/xmodmap ${HOME}/.config/Xmodmap &
 uim-xim &
 ${HOME}/.local/bin/dwm-updateinfo &
-feh --bg-center --no-fehbg ${HOME}/.local/wallpaper.png &
+feh --bg-center --no-fehbg ${HOME}/.local/wallpaper.jpg &
 
 # initialize jackd
-/usr/bin/jackd -r -d alsa -P hw:1 &
-sleep 0.1
-/usr/bin/alsa_in -j alsa_in -d to_jack -r 48000 &
-sleep 0.1
-/usr/bin/jack_connect alsa_in:capture_1 system:playback_1 &
-/usr/bin/jack_connect alsa_in:capture_2 system:playback_2 &
+/usr/bin/jackd -r -d alsa -P hw:1 > /dev/null &
+(sleep 0.1 && /usr/bin/alsa_in -j alsa_in -d to_jack -r 48000 > /dev/null) &
+(sleep 1 && ${HOME}/.local/bin/jack_alsa_connect) &
 
 exec ${HOME}/.local/bin/dwm

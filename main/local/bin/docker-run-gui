@@ -8,9 +8,9 @@ IFS='
 
 CONTAINER_KEY_DICTKEY='domestic.graphic.container_key'
 
-print_usage () {
+die () {
     local status=${1}
-    printf 'Usage: %s [-d $HOME dir] [-o opts] tag entrypoint\n' "$0"
+    printf 'Usage: %s [-d $HOME dir] [-o opts] [-ph] tag entrypoint\n' "$0"
     exit $status
 }
 
@@ -22,17 +22,15 @@ get_container_ip () {
     printf '%s' `docker inspect --format='{{ .NetworkSettings.IPAddress }}' ${1}`
 }
 
-initialize_host () {
+initialize_jack () {
     local key=${1}
-    local pid_fifo=${2}
+    local info_fifo=${2}
+
+    local container_id=`get_container_id ${key}`
+    test -z "${container_id}" && return
 
     local jack_cli="netjack-${key}"
-    local container_id=`get_container_id ${key}`
-
-    test -z "${container_id}" && return
     local container_ip=`get_container_ip ${container_id}`
-
-    xhost "+local:${container_ip}"
 
     jack_netsource -N ${jack_cli} -H ${container_ip} -I0 -O0 -i2 -o0 &
 
@@ -41,57 +39,57 @@ initialize_host () {
     jack_connect ${jack_cli}:capture_1 system:playback_1
     jack_connect ${jack_cli}:capture_2 system:playback_2
 
-    echo $! >> "${pid_fifo}"
+    echo $! >> "jack_pid:${pid_fifo}"
 }
 
-finalize_host () {
+finalize_jack () {
     local fifo_netsrc_pid="${1}"
-
     local netsrc_pid=`cat "${fifo_netsrc_pid}"`
 
-    test -n "${netsrc_pid}" && \
-        kill "${netsrc_pid}"
-
+    test -n "${netsrc_pid}" && kill "${netsrc_pid}"
     rm -f "${fifo_netsrc_pid}"
 }
 
-while getopts o:d:h opt; do
+while getopts npho:d: opt; do
     case "${opt}" in
       o) opts="${opts:-} ${OPTARG}" ;;
       d) home="${OPTARG}" ;;
-      h) print_usage 0 ;;
-    [?]) print_usage 1 ;;
+      p) privileged='true' ;;
+      n) no_jack='true' ;;
+      h) die 0 ;;
+    [?]) die 1 ;;
     esac
 done
 shift `expr ${OPTIND} - 1`
 
-if test -z "${1:-}"; then
-    print_usage 1
-else
-    tag=${1:-}
-    shift 1
-fi
+test -z "${1:-}" && die 1
 
+tag=${1:-}
+shift 1
 entrypoint="${@:-}"
 
 container_key=`cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 16`
-jack_client_name="netjack-${container_key}"
 
-fifo_netsrc_pid=`mktemp -u`
-mkfifo -m 600 "${fifo_netsrc_pid}"
+if test -z "${no_jack:-}"; then
+    fifo_netsrc_pid=`mktemp -u`
 
-(
-sleep 0.1 # wait for docker container initialized
-initialize_host ${container_key} "${fifo_netsrc_pid}"
-) &
+    (
+    sleep 0.1 # wait for docker container initialized
+    mkfifo -m 600 "${fifo_netsrc_pid}"
+    initialize_jack ${container_key} "${fifo_netsrc_pid}"
+    ) &
 
+    trap "finalize_jack '${fifo_netsrc_pid}'" EXIT
+fi
+
+test -z "${privileged:-}" && \
+    opts="${opts:-} --user='`id -u`:`id -g`'"
+
+xhost local: # bypass MIT-COOKIE authentication
 docker run --rm \
     --volume='/tmp/.X11-unix:/tmp/.X11-unix' \
-    --user="`id -u`:`id -g`" \
-    --env="DISPLAY=unix$DISPLAY" \
+    --env="DISPLAY" \
     --env="HOME=${home:-/tmp}" \
     --label="${CONTAINER_KEY_DICTKEY}=${container_key}" \
     ${opts:-} ${tag} ${entrypoint}
-
-finalize_host "${fifo_netsrc_pid}"
 

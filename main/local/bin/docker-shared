@@ -8,7 +8,7 @@ IFS='
 
 print_usage () {
     local status=${1}
-    printf 'Usage: %s [-o opts] [-d sharedir] tag entrypoint\n' "$0"
+    printf 'Usage: %s [-o opts] [-d sharedir] [-D homedir] [-ph] tag entrypoint\n' "$0"
     exit $status
 }
 
@@ -20,10 +20,12 @@ print_info () {
 
 share_dir=`pwd`
 
-while getopts d:o:h opt; do
+while getopts hpd:D:o: opt; do
     case "${opt}" in
       d) share_dir="${OPTARG}" ;;
+      D) home_dir="${OPTARG}" ;;
       o) opts="${opts} ${OPTARG}" ;;
+      p) privileged='true' ;;
       h) print_usage 0 ;;
     [?]) print_usage 1 ;;
     esac
@@ -34,7 +36,12 @@ tag="${1:-alpine:edge}"
 shift 1
 entrypoint="${@:-/bin/ash}"
 
+test -z "${privileged:-}" && \
+    opts="${opts:-} --user='`id -u`:`id -g`'"
+
 print_info
 
 docker run --rm -ti \
-    --volume=${share_dir}:/mnt ${opts:-} ${tag} ${entrypoint}
+    --env="HOME=${home:-/tmp}" \
+    --volume=${share_dir}:/mnt \
+    ${opts:-} ${tag} ${entrypoint}

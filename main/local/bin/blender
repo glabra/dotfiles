@@ -1,0 +1,31 @@
+#!/bin/sh
+set -ue
+export LANG='C'
+IFS=' 	
+'
+
+IMAGE='blender'
+
+die () {
+    local status=${1}
+    printf 'Usage: %s [-d share dir]\n' "$0"
+    exit $status
+}
+
+shared="${HOME}/workspace"
+
+while getopts p:h opt; do
+    case "${opt}" in
+      d) shared="${OPTARG}" ;;
+      h) die 0 ;;
+    [?]) die 1 ;;
+    esac
+done
+shift `expr ${OPTIND} - 1`
+
+opts="--group-add=`getent group video | cut -d: -f3`"
+opts="${opts} --device=/dev/dri/"
+opts="${opts} --volume=${shared}:/mnt"
+
+docker-run-gui -n -d'/tmp' -o"${opts}" ${IMAGE}
+

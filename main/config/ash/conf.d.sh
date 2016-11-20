@@ -13,6 +13,7 @@ do
         append "${i}"
     fi
 done
+unset i
 
 << _COMMENT_
 lazy_load () {

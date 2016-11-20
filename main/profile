@@ -7,4 +7,4 @@ export PATH="${HOME}/.local/bin:${PATH}"
 [ -z "${DISPLAY}" ] && exec startx
 
 # source init.sh if startx not execed
-. ${HOME}/.config/sh/init.sh
+. "${HOME}/.config/ash/init.sh"

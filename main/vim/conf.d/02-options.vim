@@ -4,6 +4,7 @@ scriptencoding utf-8
 set autoindent
 set autoread
 set autowriteall
+set backspace=indent
 set completeopt& completeopt-=preview
 set expandtab
 set fileencodings=utf-8,ucs-bom,iso-2022-jp,euc-jp,cp932,default,latin

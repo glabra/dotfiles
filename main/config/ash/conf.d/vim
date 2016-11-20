@@ -1,4 +1,4 @@
+alias vim='vim -u "${HOME}/.vimrc"'
 alias vi='vim'
-alias vim='vim'
 alias svi='vim'
 alias iv='vim'

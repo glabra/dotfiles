@@ -38,3 +38,11 @@ ffplays () {
 ffplays_shuf () {
   (IFS=$'\n'; __ffplays "$*" $(find . -type f -print | shuf))
 }
+
+playchinachu () {
+    local xspf=${1}
+
+    url=`cat ${xspf} | awk '/<location>/{gsub("</?location>",""); print $0;}' | head -n 1`
+
+    wget -O - "${url}" | ffplay -vf yadif -
+}

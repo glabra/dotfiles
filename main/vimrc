@@ -1,7 +1,14 @@
 if !1 | finish | endif
-" ^ only for vim compability
+" ^ only for vim-tiny compability
 
 scriptencoding utf-8
+
+" for evim compability
+if v:progname =~? "evim"
+    finish
+endif
+
+set nocompatible
 
 " vim-plug do this
 "filetype off

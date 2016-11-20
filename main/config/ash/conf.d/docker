@@ -1,1 +1,4 @@
+alias tor='docker run --rm --env="TZ=Japan" tor'
+alias hugo='docker-shared hugo'
+
 alias dockviz="docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz"

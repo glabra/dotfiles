@@ -6,6 +6,7 @@ Plug 'justinmk/vim-dirvish'
 Plug 'Shougo/neosnippet'
 Plug 'scrooloose/syntastic'
 Plug 'thinca/vim-quickrun'
+Plug 'tpope/vim-markdown'
 
 " rust
 Plug 'rust-lang/rust.vim'

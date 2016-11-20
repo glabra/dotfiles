@@ -2,15 +2,15 @@
 echo $- | grep -q 'i' - || return
 
 # consts
-CONFIG_DIR="${HOME}/.config/sh"
+CONFIG_DIR="${HOME}/.config/ash"
 SECRETS_PATH="${HOME}/.local/secrets.sh"
+
+# shell base tput when tpus is not available
+type tput > /dev/null 2>&1 || . "${CONFIG_DIR}/tput.sh"
 
 # trap logout script
 test -f "${CONFIG_DIR}/logout.sh" && \
     trap ". ${CONFIG_DIR}/logout.sh; exit" EXIT
-
-# alias tput to true when not available
-type tput > /dev/null 2>&1 || alias tput=:
 
 ### initialize callback system {
 # execute_callback <callback name> [unset function after executed]
@@ -20,6 +20,7 @@ execute_callback () {
     ${cb}
     test "${2:-}" = 'true' && unset -f ${cb}
   done
+  unset cb
 
   test "${2:-}" = 'true' && eval unset '__'${1}
 }
@@ -52,6 +53,7 @@ for i in ${CONF_D_OBJECTIVE}
 do
     . "${CONF_D}/${i}"
 done
+unset i
 
 # cleanup
 unset CONF_D_OBJECTIVE
