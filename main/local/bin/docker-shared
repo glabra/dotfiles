@@ -37,7 +37,7 @@ shift 1
 entrypoint="${@:-/bin/ash}"
 
 test -z "${privileged:-}" && \
-    opts="${opts:-} --user='`id -u`:`id -g`'"
+    opts="${opts:-} --user=`id -u`:`id -g` --env USER=`id -un`"
 
 print_info
 

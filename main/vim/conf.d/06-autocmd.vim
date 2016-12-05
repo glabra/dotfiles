@@ -8,5 +8,6 @@ augroup vimrc_loading
   autocmd FileType c setlocal noexpandtab
   autocmd FileType c ChangeTabSpaces 8
   autocmd FileType ruby ChangeTabSpaces 2
+  autocmd FileType verilog ChangeTabSpaces 3
 augroup END
 

@@ -1,8 +1,9 @@
+alias gi='git'
 alias gti='git'
 alias gits='git s'
 
 __git_ps1() {
-  local branch="`git branch 2>/dev/null | grep '* ' - | tail -c +3`"
+  local branch="`git branch 2>/dev/null | fgrep '* ' | tail -c +3`"
   if test -n "${branch}"; then
     tput sgr0
     tput dim
@@ -10,7 +11,7 @@ __git_ps1() {
     tput sgr0
   fi
 }
-ps1_after_path __git_ps1
+register_callback ps1_after_path __git_ps1
 
 require_secrets
 

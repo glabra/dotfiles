@@ -10,7 +10,7 @@ CONTAINER_KEY_DICTKEY='domestic.graphic.container_key'
 
 die () {
     local status=${1}
-    printf 'Usage: %s [-d $HOME dir] [-o opts] [-ph] tag entrypoint\n' "$0"
+    printf 'Usage: %s [-d $HOME dir] [-o opts] [-pnh] tag entrypoint\n' "$0"
     exit $status
 }
 
@@ -83,7 +83,7 @@ if test -z "${no_jack:-}"; then
 fi
 
 test -z "${privileged:-}" && \
-    opts="${opts:-} --user='`id -u`:`id -g`'"
+    opts="${opts:-} --user=`id -u`:`id -g` --env USER=`id -un`"
 
 xhost local: # bypass MIT-COOKIE authentication
 docker run --rm \

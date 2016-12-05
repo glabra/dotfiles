@@ -1,2 +1,7 @@
 tput sgr0
-rm -f "${HOME}/.ash_history"
+
+# delete dirty files
+printf '%s' "
+${HOME}/.bash_history
+${HOME}/.wpa_cli_history
+" | xargs rm

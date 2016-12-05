@@ -9,26 +9,26 @@ then
    unset file
 fi
 
-export LANG='ja_JP.UTF-8'
-export XMODIFIERS='@im=uim'
-export GTK_IM_MODULE_FILE='/usr/local/etc/gtk-2.0/gtk.immodules'
-export GTK_IM_MODULE='uim'
+export LANG=ja_JP.UTF-8
+export XMODIFIERS='@im=fcitx'
+export GTK_IM_MODULE='fcitx'
 
 # hack for various Java AWT bugs
 export _JAVA_AWT_WM_NONREPARENTING=1
 wmname LG3D &
 
 # tweaks
+fcitx-autostart &
+xmodmap "${HOME}/.config/Xmodmap" &
+xset r rate 200 30 &
 synclient HorizTwoFingerScroll=1 &
 xbacklight -set 20 &
-/usr/bin/xmodmap ${HOME}/.config/Xmodmap &
-uim-xim &
 ${HOME}/.local/bin/dwm-updateinfo &
 feh --bg-center --no-fehbg ${HOME}/.local/wallpaper.jpg &
 
 # initialize jackd
-/usr/bin/jackd -r -d alsa -P hw:1 > /dev/null &
+/usr/bin/jackd -r -d alsa -P hw:2 > /dev/null &
 (sleep 0.1 && /usr/bin/alsa_in -j alsa_in -d to_jack -r 48000 > /dev/null) &
 (sleep 1 && ${HOME}/.local/bin/jack_alsa_connect) &
 
-exec ${HOME}/.local/bin/dwm
+exec dwm

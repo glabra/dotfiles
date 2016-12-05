@@ -3,7 +3,7 @@
 [push]
 	default = nothing
 [color]
-	ui = false
+	ui = true
 [alias]
 	b = branch
 	l = log --graph --date=iso --stat

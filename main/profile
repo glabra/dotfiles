@@ -3,8 +3,19 @@
 export LANG="en_US.UTF-8"
 export PATH="${HOME}/.local/bin:${PATH}"
 
+# PATH for android-studio
+append_path_if_exists () {
+    [ -d "$1" ] && export PATH="$1:${PATH}"
+}
+append_path_if_exists "${HOME}/.local/android-studio/bin"
+append_path_if_exists "${HOME}/Android/Sdk/build-tools/25.0.1"
+append_path_if_exists "${HOME}/Android/Sdk/platform-tools"
+unset -f append_path_if_exists
+
 # automatically startx
 [ -z "${DISPLAY}" ] && exec startx
 
 # source init.sh if startx not execed
 . "${HOME}/.config/ash/init.sh"
+
+export PATH="$HOME/.cargo/bin:$PATH"
