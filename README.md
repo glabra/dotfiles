@@ -2,12 +2,13 @@
 
 Category: Productivity
 
-## Dependencies
-- [git](https://git-scm.com/)
-- [GNU Make](https://www.gnu.org/software/make/)
+## Install Dependencies
+- POSIX compliant shell
 
 ### type: `main` only
-- [wget](https://busybox.net/)
+- [git](https://git-scm.com/)
+- [wget](https://busybox.net/) or [curl](https://curl.haxx.se/)
+- [openssl](https://www.openssl.org/) for https access
 - [vim](http://www.vim.org/)
 
 ## Installation
@@ -17,22 +18,15 @@ Use at your own risk.
 ```shell
 git clone 'https://github.com/glabra/dotfiles.git' "${HOME}/.dotfiles"
 cd "${HOME}/.dotfiles"
-SRC_TYPE='main' make install
+./bootstrap.sh install main
 ```
 
 ## Update
 ```shell
 cd "${HOME}/.dotfiles"
 git pull origin master
-make install
+./bootstrap.sh
 ```
-
-## Tips
-`make usage` shows usage of the `/Makefile`.
-
-## Bugs
-- dotfiles that contains `'` in filename breaks `/Makefile` function.
-- files that name is `Makefile` are always considered as `Makefile` regardless its content.
 
 ## License
 These dotfiles are avaliable under the terms of the [Unlicense](http://unlicense.org/).
