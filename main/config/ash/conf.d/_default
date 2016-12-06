@@ -14,6 +14,6 @@ tput smkx
 export PS1='\w$(execute_callback ps1_after_path)\$ $(execute_callback ps1_after_prompt)'
 
 __after_prompt_showdate () {
-    printf '(%s)' "$(date +%H:%M)"
+    printf '(%s)' "$(date +%H:%M:%S)"
 }
 register_callback ps1_after_prompt __after_prompt_showdate
