@@ -1,0 +1,59 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+IFS=' 	
+'
+
+FORTUNE_FILE="${HOME}/.local/fortune"
+
+__fetch () {
+    if which curl 2>&1 >/dev/null; then
+        curl "${1}"
+    elif which wget 2>&1 >/dev/null; then
+        wget -O - "${1}"
+    else
+        printf 'wget or curl not found.\n'
+        exit 1
+    fi
+}
+
+die () {
+    cat << _EOF_
+usage: $0 COMMAND
+
+The following commands are available:
+  pick:
+    pickup 1 fortune
+  update:
+    update fortune database
+  help:
+    show this text.
+
+Default command is [pick].
+_EOF_
+    exit $1
+}
+
+update () {
+    local url='https://raw.githubusercontent.com/sasairc/yasuna/master/quotes/yasuna-quotes'
+    __fetch "${url}" | \
+        tail -n +2 | \
+        cut -d':' -f3 > "${FORTUNE_FILE}"
+}
+
+pick () {
+    if [ -f "${FORTUNE_FILE}" ]; then
+        cat "${FORTUNE_FILE}" | shuf -n 1
+    else
+        printf 'Dictionary file not found.\n'
+    fi
+}
+
+case "${1:-}" in
+    'pick' | '') pick ;;
+    'update') update ;;
+    'help') die 0;;
+    *) die 1;;
+esac
+

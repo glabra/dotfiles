@@ -8,5 +8,12 @@ stty stop undef
 tput smkx
 
 # set PS1
-# callback: ps1_after_path
-PS1='$(tput bold)$(basename "${PWD}")$(tput sgr0)$(execute_callback ps1_after_path)$(tput bold)\$$(tput sgr0) '
+# callbacks: do not print escape sequence
+#   ps1_after_path
+#   ps1_after_prompt
+export PS1='\w$(execute_callback ps1_after_path)\$ $(execute_callback ps1_after_prompt)'
+
+__after_prompt_showdate () {
+    printf '(%s)' "$(date +%H:%M)"
+}
+register_callback ps1_after_prompt __after_prompt_showdate

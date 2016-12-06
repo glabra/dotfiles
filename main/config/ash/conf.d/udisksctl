@@ -1,0 +1,2 @@
+alias bmount='udisksctl mount -b'
+alias bumount='udisksctl unmount -b'

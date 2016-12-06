@@ -1,0 +1,7 @@
+__fortune_display () {
+    printf '『'
+    fortune | tr -d '\n'
+    printf '』'
+    printf '\n> '
+}
+register_callback ps1_after_prompt __fortune_display

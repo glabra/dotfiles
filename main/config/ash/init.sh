@@ -11,19 +11,20 @@ type tput > /dev/null 2>&1 || . "${CONFIG_DIR}/tput.sh"
 # callback system
 ## execute_callback <callback name> [unset function after executed]
 execute_callback () {
-  for cb in `eval printf '%s' '${__'${1}':-}'`
+  local cbs=$(eval 'printf "${__cbsys_'${1}':-}"')
+  for cb in ${cbs:-}
   do
     ${cb}
     test "${2:-}" = 'true' && unset -f ${cb}
   done
   unset cb
 
-  test "${2:-}" = 'true' && eval unset '__'${1}
+  test "${2:-}" = 'true' && eval unset '__cbsys_'${1}
 }
 
 ## register_callback <callback name> <function name>
 register_callback () {
-  eval '__'${1}=${2} '${__'${1}':-}'
+  eval '__cbsys_'${1}=\"'${__cbsys_'${1}':-}' ${2}\"
 }
 
 # load configs

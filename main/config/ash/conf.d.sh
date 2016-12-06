@@ -9,6 +9,10 @@ is_busybox_binary () {
     return $?
 }
 
+source_if_exists () {
+    [ -f "${1}" ] && . "${1}"
+}
+
 ## require_secrets: is ${SECRETS_PATH} exist?
 alias require_secrets='return'
 test -f "${SECRETS_PATH}" && \
@@ -28,6 +32,7 @@ unset i
 # cleanup
 unalias require_secrets
 unset -f is_busybox_binary
+unset -f source_if_exists
 unset conf_d
 unset files
 

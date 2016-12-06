@@ -18,4 +18,3 @@ unset -f append_path_if_exists
 # source init.sh if startx not execed
 . "${HOME}/.config/ash/init.sh"
 
-export PATH="$HOME/.cargo/bin:$PATH"
