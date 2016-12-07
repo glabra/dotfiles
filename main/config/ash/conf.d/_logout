@@ -1,0 +1,26 @@
+# trap logout script
+# or symlinking logout file.
+
+logoutsh="${CONFIG_DIR}/logout.sh"
+
+symlink_logoutfile () {
+    [ -f "${1}" -a ! -L "${1}" ] && \
+        printf 'logout file already exist.\n' && \
+        rm -i "${1}"
+
+    [ ! -L "${1}" ] && \
+        ln -s "${2}" "${1}"
+}
+
+if [ -n "${BASH_VERSION}" ]; then
+    symlink_logoutfile "${HOME}/.bash_logout" "${logoutsh}"
+elif [ -n "${ZSH_VERSION}" ]; then
+    symlink_logoutfile "${HOME}/.zlogout" "${logoutsh}"
+else
+    # else (logout file is not supported.)
+    test -f "${logoutsh}" && \
+        trap ". '${logoutsh}'; exit" EXIT
+fi
+
+unset -f symlink_logout
+unset logoutsh

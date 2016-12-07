@@ -9,7 +9,7 @@ then
    unset file
 fi
 
-export LANG=ja_JP.UTF-8
+export LANG='ja_JP.UTF-8'
 export XMODIFIERS='@im=fcitx'
 export GTK_IM_MODULE='fcitx'
 

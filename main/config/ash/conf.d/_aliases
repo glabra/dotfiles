@@ -24,4 +24,3 @@ alias touxh='touch'
 
 ## safer su
 alias su='su -'
-

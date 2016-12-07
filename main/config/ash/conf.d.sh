@@ -9,6 +9,10 @@ is_busybox_binary () {
     return $?
 }
 
+append_path_if_exists () {
+    [ -d "${1}" ] && export PATH="${1}:${PATH}"
+}
+
 source_if_exists () {
     [ -f "${1}" ] && . "${1}"
 }
@@ -33,13 +37,6 @@ unset i
 unalias require_secrets
 unset -f is_busybox_binary
 unset -f source_if_exists
+unset -f append_path_if_exists
 unset conf_d
 unset files
-
-<< _COMMENT_
-lazy_load () {
-    [[ -d "$2" ]] && eval $1=\"$2\" && append "$1"
-}
-# do something here
-unset lazy_load
-_COMMENT_

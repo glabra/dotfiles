@@ -3,7 +3,7 @@ alias gti='git'
 alias gits='git s'
 
 __git_ps1() {
-  local branch="`git branch 2>/dev/null | fgrep '* ' | tail -c +3`"
+  local branch="$(git branch 2>/dev/null | fgrep '* ' | tail -c +3)"
   test -n "${branch}" && \
     printf ":%s" "${branch}"
 }

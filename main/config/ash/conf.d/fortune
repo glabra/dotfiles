@@ -1,7 +1,4 @@
 __fortune_display () {
-    printf '『'
-    fortune | tr -d '\n'
-    printf '』'
-    printf '\n~> '
+    printf '『%s』' "$(fortune | tr -d '\n')"
 }
-register_callback ps1_after_prompt __fortune_display
+register_callback ps1_after_prompt __fortune_display 50

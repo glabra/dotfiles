@@ -1,20 +1,10 @@
 #!/bin/sh
+# automatically startx when startx available
+# and no X instance is running.
+[ -z "${DISPLAY}" ] && \
+    which startx 2>&1 >/dev/null && \
+    startx && \
+    exit # for .bash_logout running
 
-export LANG="en_US.UTF-8"
-export PATH="${HOME}/.local/bin:${PATH}"
-
-# PATH for android-studio
-append_path_if_exists () {
-    [ -d "$1" ] && export PATH="$1:${PATH}"
-}
-append_path_if_exists "${HOME}/.local/android-studio/bin"
-append_path_if_exists "${HOME}/Android/Sdk/build-tools/25.0.1"
-append_path_if_exists "${HOME}/Android/Sdk/platform-tools"
-unset -f append_path_if_exists
-
-# automatically startx
-[ -z "${DISPLAY}" ] && exec startx
-
-# source init.sh if startx not execed
+# source init.sh if startx is not started
 . "${HOME}/.config/ash/init.sh"
-
