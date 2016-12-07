@@ -20,7 +20,7 @@ wmname LG3D &
 # tweaks
 fcitx-autostart &
 xmodmap "${HOME}/.config/Xmodmap" &
-xset r rate 200 30 &
+xset r rate 200 45 &
 synclient HorizTwoFingerScroll=1 &
 xbacklight -set 20 &
 ${HOME}/.local/bin/dwm-updateinfo &
