@@ -29,6 +29,6 @@ feh --bg-center --no-fehbg ${HOME}/.local/wallpaper.jpg &
 # initialize jackd
 /usr/bin/jackd -r -d alsa -P hw:2 > /dev/null &
 (sleep 0.1 && /usr/bin/alsa_in -j alsa_in -d to_jack -r 48000 > /dev/null) &
-(sleep 1 && ${HOME}/.local/bin/jack_alsa_connect) &
+(sleep 1 && ${HOME}/.local/bin/jack-alsa-connect) &
 
 exec dwm

@@ -39,7 +39,7 @@ create_symlinks () {
     local files=$(find "${srcdir}" -type f)
     for file in ${files}; do
         dest="${destdir}/.${file#${srcdir}/}"
-        [ ! -L "${dest}" ] && ln -s "${file}" "${dest}"
+        [ ! -L "${dest}" ] && ln -s -- "${file}" "${dest}"
     done
     unset dest
     unset file
@@ -68,9 +68,12 @@ remove_dangling_symlinks () {
 
     local files=$(find "${destdir}" -type l)
     for file in ${files}; do
-        readlink "${file}" | fgrep -q ${srcdir} && \
-            rm -f "${file}"
+        realfile=$(readlink "${file}") && \
+            printf '%s' "${realfile}" | fgrep -q "${srcdir}" && \
+            [ ! -e "${realfile}" ] && \
+            rm -f -- "${file}"
     done
+    unset realfile
     unset file
 
     find "${srcdir}" -type d | \
