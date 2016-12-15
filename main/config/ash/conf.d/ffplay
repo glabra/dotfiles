@@ -1,16 +1,13 @@
 __ffplays () {
-  local waitsec=0.2
-  local sigint_callback="
+  (waitsec=0.2
+  sigint_callback="
     printf '\n%s\n' 'Ctrl-C again to exit.'
     trap - SIGINT
     read -t ${waitsec} > /dev/null 2>&1
   "
 
-  local ffplay_params=$1
+  ffplay_params=$1
   shift 1
-
-  local album
-  local title
 
   for f in $@
   do
@@ -29,6 +26,7 @@ __ffplays () {
     echo "${ffplay_params}" | grep -q -- '-nodisp' \
       || read -t ${waitsec} > /dev/null 2>&1
   done
+  )
 }
 
 ffplays () {
@@ -40,10 +38,11 @@ ffplays_shuf () {
 }
 
 playchinachu () {
-    local xspf=${1}
+    (xspf=${1}
 
     url=`cat ${xspf} | awk '/<location>/{gsub("</?location>",""); print $0;}' | head -n 1`
 
     #wget -O - "${url}" | ffplay -vf yadif -
     curl "${url}" | ffplay -vf yadif -
+    )
 }

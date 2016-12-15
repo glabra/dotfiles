@@ -31,11 +31,33 @@ __vim_uninstall () {
     rm -rf -- "${VIM_CONFDIR}"
 }
 
+SOURCE_LINE='. "${HOME}/.profile"'
+__shellrc_install () {
+    if [ -f "${HOME}/.zshrc" ]; then
+        fgrep -q "${SOURCE_LINE}" "${HOME}/.zshrc" || \
+            printf '%s\n' "${SOURCE_LINE}" >> "${HOME}/.zshrc"
+    elif [ -f "${HOME}/.bashrc" ]; then
+        fgrep -q "${SOURCE_LINE}" "${HOME}/.bashrc" || \
+            printf '%s\n' "${SOURCE_LINE}" >> "${HOME}/.bashrc"
+    fi
+}
+
+__shellrc_warn () {
+    [ -f "${HOME}/.zshrc" ] && \
+        fgrep -q "${SOURCE_LINE}" "${HOME}/.zshrc" && \
+        printf 'Please remove source procedure from .zshrc.'
+    [ -f "${HOME}/.bashrc" ] && \
+        fgrep -q "${SOURCE_LINE}" "${HOME}/.bashrc" && \
+        printf 'Please remove source procedure from .bashrc.'
+}
+
 module_install () {
     __vim_install
+    __shellrc_install
 }
 
 module_uninstall () {
     __vim_uninstall
+    __shellrc_warn
 }
 

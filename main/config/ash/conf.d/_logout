@@ -5,7 +5,7 @@ logoutsh="${CONFIG_DIR}/logout.sh"
 
 symlink_logoutfile () {
     [ -f "${1}" -a ! -L "${1}" ] && \
-        printf 'logout file already exist.\n' && \
+        printf 'logoutrc is already exist.\n' && \
         rm -i "${1}"
 
     [ ! -L "${1}" ] && \

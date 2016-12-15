@@ -1,5 +1,5 @@
 tput () {
-    local cmd="${1:-}"
+    (cmd="${1:-}"
 
     case "${cmd}" in
         sgr0) printf '\033[0m' ;;
@@ -8,4 +8,5 @@ tput () {
         smkx) printf '\033[?1h\033=' ;;
            *) ;;
     esac
+    )
 }

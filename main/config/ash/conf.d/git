@@ -2,12 +2,22 @@ alias gi='git'
 alias gti='git'
 alias gits='git s'
 
-__git_ps1() {
-  local branch="$(git branch 2>/dev/null | fgrep '* ' | tail -c +3)"
-  test -n "${branch}" && \
-    printf ":%s" "${branch}"
-}
-register_callback ps1_after_path __git_ps1
+# git_ps1
+source_if_exists "/usr/share/git/completion/git-prompt.sh"
+if ! type __git_ps1 2>&1 >/dev/null; then
+    __git_ps1() {
+      local branch="$(git branch 2>/dev/null | fgrep '* ' | tail -c +3)"
+      test -n "${branch}" && \
+        printf "$1" "${branch}"
+    }
+fi
+
+# source completion file
+if [ -n "${BASH_VERSION}" ]; then
+    source_if_exists "/usr/share/git/completion/git-completion.bash"
+elif [ -n "${ZSH_VERSION}" ]; then
+    source_if_exists "/usr/share/git/completion/git-completion.zsh"
+fi
 
 require_secrets
 

@@ -1,14 +1,14 @@
 pass_take () {
     test -z "${1}" && return
 
-    local PASSWORD_STORE_DIR="${HOME}/.password-store"
-    local path
+    (PASSWORD_STORE_DIR="${HOME}/.password-store"
 
     path=`find "${PASSWORD_STORE_DIR}" -wholename "*${1}*.gpg" | head -n 1`
     path=${path##${PASSWORD_STORE_DIR}/}
     path=${path%%.gpg}
 
     printf '%s' "${path}"
+    )
 }
 
 pass_show () {
@@ -17,7 +17,7 @@ pass_show () {
         return
     fi
 
-    local path=`pass_take "${1}"`
+    (path=`pass_take "${1}"`
 
     if [[ -z "${path}" ]]; then
         printf 'no match.\n'
@@ -26,4 +26,5 @@ pass_show () {
         printf 'user: %s\n' "`printf "${path}" | rev | cut -d/ -f1 | rev`"
         printf 'pass: %s\n' "`pass show "${path}" 2> /dev/null`"
     fi
+    )
 }

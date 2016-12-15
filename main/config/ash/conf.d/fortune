@@ -1,4 +1,0 @@
-__fortune_display () {
-    printf '『%s』' "$(fortune | tr -d '\n')"
-}
-register_callback ps1_after_prompt __fortune_display 50

@@ -7,6 +7,7 @@ Plug 'Shougo/neosnippet'
 Plug 'scrooloose/syntastic'
 Plug 'thinca/vim-quickrun'
 Plug 'tpope/vim-markdown'
+Plug 'cespare/vim-toml'
 
 " rust
 Plug 'rust-lang/rust.vim'

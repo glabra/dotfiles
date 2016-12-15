@@ -14,13 +14,17 @@ append_path_if_exists () {
 }
 
 source_if_exists () {
-    [ -f "${1}" ] && . "${1}"
+    if [ -f "${1}" ]; then
+        . "${1}"
+        return 0
+    else
+        return 1
+    fi
 }
 
 ## require_secrets: is ${SECRETS_PATH} exist?
 alias require_secrets='return'
-test -f "${SECRETS_PATH}" && \
-    . "${SECRETS_PATH}" && \
+source_if_exists "${SECRETS_PATH}" && \
     alias require_secrets=':'
 
 # read config

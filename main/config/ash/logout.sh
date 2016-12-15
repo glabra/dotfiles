@@ -1,5 +1,4 @@
 #!/bin/sh
-
 tput sgr0
 
 # delete dirty files
