@@ -24,6 +24,6 @@ alias ls='ls -G'
 alias x='exit'
 alias q='exit'
 alias vi='vim'
-PS1='\W\$ '
+PS1='\h:\W\$ '
 
 echo `LANG=C date`
