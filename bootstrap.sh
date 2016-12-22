@@ -83,7 +83,7 @@ remove_dangling_symlinks () {
 
 get_srctype () {
     [ -n "${1:-}" ] && \
-        printf -- '%s' "${src_type}" > "${SRCTYPE_FILE}"
+        printf -- '%s' "${1}" > "${SRCTYPE_FILE}"
 
     [ -e "${SRCTYPE_FILE}" ] && \
         src_type=$(cat "${SRCTYPE_FILE}")
