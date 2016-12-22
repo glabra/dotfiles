@@ -67,6 +67,9 @@ inoremap <silent> <C-w><C-w> <Esc>
 nnoremap <silent> <C-k><C-l> :Explore<CR>
 
 " univ specific
+set shiftwidth=4
+set softtabstop=4
+set tabstop=4
 syntax on
 set nobackup
 set noswapfile
