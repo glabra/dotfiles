@@ -1,5 +1,7 @@
 alias gi='git'
+alias gt='git'
 alias gti='git'
+alias sgit='git'
 alias gits='git s'
 
 # git_ps1

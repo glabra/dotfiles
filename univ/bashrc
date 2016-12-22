@@ -4,26 +4,21 @@ fi
 
 [[ $- != *i* ]] && return
 
-if echo `uname -n` | egrep -q "^(abelia|borage|crocus)[0-9]{2}\.coins\.tsukuba\.ac\.jp$" - && test `uname -s` = "Darwin" && test -z ${TMUX}
-then
-    if `tmux has-session 2> /dev/null`
-    then
-        exec tmux attach
-    else
-        exec tmux new-session
-    fi
-fi
-
 export LANG="en_US.UTF-8"
-export EDITOR="vim"
+export EDITOR="vim -u \"${HOME}/.vimrc\""
 unset HISTFILE
 unset HISTSIZE
 unset HISTFILESIZE
+
 alias rm='rm -i'
 alias ls='ls -G'
 alias x='exit'
 alias q='exit'
+alias ':q'='exit'
+
+alias vim='vim -u "${HOME}/.vimrc"'
 alias vi='vim'
-PS1='\h:\W\$ '
+
+export PS1='\h:\W\$ '
 
 echo `LANG=C date`

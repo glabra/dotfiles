@@ -1,0 +1,2 @@
+/usr/bin/jack_disconnect alsa_in:capture_1 system:playback_1
+/usr/bin/jack_disconnect alsa_in:capture_2 system:playback_2

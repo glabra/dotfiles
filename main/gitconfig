@@ -6,6 +6,7 @@
 	ui = true
 [alias]
 	b = branch
+	d = diff
 	l = log --graph --date=iso --stat
 	s = status --branch --short
 	lo = log --graph --date=iso --pretty=format:'%C(auto)%h: by %aN%n%s%n'

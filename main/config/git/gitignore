@@ -19,7 +19,6 @@ __MACOSX
 *.nav
 *.snm
 *.out
-*.pdf
 
 # haskell
 dist
