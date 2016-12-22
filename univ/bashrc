@@ -19,6 +19,6 @@ alias ':q'='exit'
 alias vim='vim -u "${HOME}/.vimrc"'
 alias vi='vim'
 
-export PS1='\h:\W\$ '
+export PS1='\h:\[$(tput bold)\]\W\$\[$(tput sgr0)\] '
 
 echo `LANG=C date`
