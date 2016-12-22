@@ -5,7 +5,6 @@ scriptencoding utf-8
 " mask unused plugins
 let g:loaded_getscriptPlugin = 1
 let g:loaded_logiPat = 1
-let g:loaded_netrwPlugin = 1
 let g:loaded_spellfile_plugin = 1
 let g:loaded_2html_plugin = 1
 let g:loaded_vimballPlugin = 1
@@ -64,6 +63,8 @@ nnoremap <silent> <C-k><C-p> :setlocal paste!<CR>:echo 'paste='.&paste<CR>
 nnoremap <silent> <C-k><C-e> :setlocal expandtab!<CR>:echo 'expandtab='.&expandtab<CR>
 
 inoremap <silent> <C-w><C-w> <Esc>
+
+nnoremap <silent> <C-k><C-l> :Explore<CR>
 
 " univ specific
 syntax on
