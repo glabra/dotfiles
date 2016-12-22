@@ -4,8 +4,8 @@ fi
 
 [[ $- != *i* ]] && return
 
-export LANG="en_US.UTF-8"
-export EDITOR="vim -u \"${HOME}/.vimrc\""
+export LANG='en_US.UTF-8'
+export EDITOR='vim'
 unset HISTFILE
 unset HISTSIZE
 unset HISTFILESIZE
@@ -16,7 +16,6 @@ alias x='exit'
 alias q='exit'
 alias ':q'='exit'
 
-alias vim='vim -u "${HOME}/.vimrc"'
 alias vi='vim'
 
 export PS1='\h:\[$(tput bold)\]\W\$\[$(tput sgr0)\] '
