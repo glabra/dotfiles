@@ -1,0 +1,23 @@
+# if not interactive, return
+case "$-" in
+    *i*) ;; # pass
+      *) return ;;
+esac
+
+# alias
+alias rm='rm -i'
+
+# disable ^S
+stty stop undef
+
+# print smkx
+printf -- '\033[?1h\033='
+
+# warn if tmux session is running
+which tmux &> /dev/null && \
+    test -z "$TMUX" && \
+    tmux list-sessions &> /dev/null && \
+    printf -- '\033[1m!! tmux session is running !!\033[0m\n'
+
+# initialized
+printf -- '%s\n' "$(LANG=C date)"
