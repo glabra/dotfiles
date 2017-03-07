@@ -1,0 +1,13 @@
+#!/bin/sh
+set -ue
+export PATH='/bin:/usr/bin'
+export LANG='C'
+IFS='	 
+'
+
+if type xclip >&/dev/null; then
+	xclip -out -selection clipboard | xclip -in -selection primary
+else
+	printf -- '%s\n' "xclip not found." >&2
+	exit 1
+fi

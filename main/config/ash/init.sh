@@ -1,12 +1,14 @@
 # if not interactive, return
 case "$-" in
-    *i*) ;; # pass
-      *) return ;;
+	*i*) ;; # pass
+	*) return ;;
 esac
 
 # mandatory environment variables
-export LANG="en_US.UTF-8"
-export PATH="${HOME}/.local/bin:${PATH}"
+[ "${LANG}" != 'en_US.UTF-8' ] \
+	&& export LANG="en_US.UTF-8"
+printf "${PATH}" | fgrep -q "${HOME}/.local/bin" \
+	|| export PATH="${HOME}/.local/bin:${PATH}"
 
 # consts
 CONFIG_DIR="${HOME}/.config/ash"

@@ -9,7 +9,7 @@ IFS="
 _get_battery () {
     local pow=$(upower -i /org/freedesktop/UPower/devices/battery_${1} | grep percent | egrep -o '[0-9]+')
 
-    printf '%s' "$pow"
+    printf '%s' "${pow:-0}"
 }
 
 battery () {
@@ -52,8 +52,11 @@ dwm_update_status () {
   xsetroot -name "${str}"
 }
 
-while true
-do
-  dwm_update_status
-  sleep 1
-done
+if [ "${1:-}" = 'eternal' ]; then
+	while true; do
+		dwm_update_status
+		sleep 0.2
+	done
+else
+	dwm_update_status
+fi

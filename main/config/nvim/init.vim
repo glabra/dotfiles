@@ -23,8 +23,8 @@ else
   let g:myvim = expand('$HOME/.vim')
 endif
 
-runtime! conf.d/*.vim
 runtime! conf.d/plugins/*.vim
+runtime! conf.d/*.vim
 
 unlet g:myvim
 

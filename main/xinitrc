@@ -16,19 +16,29 @@ export GTK_IM_MODULE='fcitx'
 # hack for various Java AWT bugs
 export _JAVA_AWT_WM_NONREPARENTING=1
 wmname LG3D &
+# hack for beautiful looking in Java
+export _JAVA_OPTIONS='-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dawt.useSystemAAFontSettings=gasp'
 
 # tweaks
+which ssh-agent 2>&1 >/dev/null && eval $(ssh-agent)
 fcitx-autostart &
 xmodmap "${HOME}/.config/Xmodmap" &
 xset r rate 200 45 &
 synclient HorizTwoFingerScroll=1 &
 xbacklight -set 20 &
-${HOME}/.local/bin/dwm-updateinfo &
-feh --bg-center --no-fehbg ${HOME}/.local/wallpaper.jpg &
 
-# initialize jackd
-/usr/bin/jackd -r -d alsa -P hw:2 > /dev/null &
-(sleep 0.1 && /usr/bin/alsa_in -j alsa_in -d to_jack -r 48000 > /dev/null) &
-(sleep 1 && ${HOME}/.local/bin/jack-alsa-connect) &
+which jack-alsa-interpolate >&/dev/null && (
+	# initialize jack
+	sleep 1 # wait for x11 initialize
+	jack-alsa-interpolate
+) &
+
+which dwm-updateinfo >&/dev/null && \
+	dwm-updateinfo eternal &
+
+which feh >&/dev/null && (
+	# Setup wallpaper
+	feh --bg-fill --no-fehbg --randomize "${HOME}/.local/wallpapers"
+) &
 
 exec dwm

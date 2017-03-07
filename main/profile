@@ -1,10 +1,14 @@
 #!/bin/sh
+
+export LANG="en_US.UTF-8"
+export PATH="${HOME}/.local/bin:${PATH}"
+
 # automatically startx when startx available
 # and no X instance is running.
 [ -z "${DISPLAY}" ] && \
-    which startx 2>&1 >/dev/null && \
-    startx && \
-    exit # for .bash_logout running
+	which startx 2>&1 >/dev/null && \
+	startx && \
+	exit # for .bash_logout running
 
 # source init.sh if startx is not started
 . "${HOME}/.config/ash/init.sh"

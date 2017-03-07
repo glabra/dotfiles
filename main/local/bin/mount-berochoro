@@ -1,5 +1,0 @@
-if [[ -n "$1" ]]; then
-    printf "remote is now %s:%s\n" "$1" "${2:-445}"
-fi
-
-sudo mount.cifs //${1:-samba}/berochoro /mnt/ -o user=berochoro,uid=1000,gid=1000,file_mode=0640,dir_mode=0750,vers=3.0,port=${2:-445}

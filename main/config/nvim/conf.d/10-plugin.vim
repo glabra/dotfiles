@@ -9,9 +9,8 @@ Plug 'thinca/vim-quickrun'
 Plug 'tpope/vim-markdown'
 Plug 'cespare/vim-toml'
 
-" rust
 Plug 'rust-lang/rust.vim'
-"Plug 'racer-rust/vim-racer', { 'for': 'rust' }
+Plug 'fatih/vim-go'
 
 if has('nvim')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
