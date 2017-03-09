@@ -21,24 +21,9 @@ export _JAVA_OPTIONS='-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndF
 
 # tweaks
 which ssh-agent 2>&1 >/dev/null && eval $(ssh-agent)
+which cbatticon 2>&1 >/dev/null && cbatticon -l 15 -r 10 &
 fcitx-autostart &
-xmodmap "${HOME}/.config/Xmodmap" &
+cmst &
 xset r rate 200 45 &
-synclient HorizTwoFingerScroll=1 &
-xbacklight -set 20 &
 
-which jack-alsa-interpolate >&/dev/null && (
-	# initialize jack
-	sleep 1 # wait for x11 initialize
-	jack-alsa-interpolate
-) &
-
-which dwm-updateinfo >&/dev/null && \
-	dwm-updateinfo eternal &
-
-which feh >&/dev/null && (
-	# Setup wallpaper
-	feh --bg-fill --no-fehbg --randomize "${HOME}/.local/wallpapers"
-) &
-
-exec dwm
+exec awesome

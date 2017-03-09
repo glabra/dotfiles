@@ -29,4 +29,3 @@ __gitconf () {
 }
 
 alias 'git-conf'="__gitconf '${GITCONF_DEFAULT_USERNAME}' '${GITCONF_DEFAULT_EMAIL}'"
-alias 'git-conf-decapoda'="__gitconf '${GITCONF_DECAPODA_USERNAME}' '${GITCONF_DECAPODA_EMAIL}'"

@@ -1,25 +1,17 @@
-__update_wallpaper () {
-    which feh 2>&1 >/dev/null &&
-        feh --bg-fill --no-fehbg --randomize "${HOME}/.local/wallpapers"
-}
-
 disright () {
     (out=$(printf "${1}" | tr '[a-z]' '[A-Z]')
     xrandr --output ${out:-DP2} --auto --right-of eDP1
-    __update_wallpaper
     )
 }
 
 dismirror () {
     (out=$(printf "${1}" | tr '[a-z]' '[A-Z]')
     xrandr --output ${out:-DP2} --auto --same-as eDP1
-    __update_wallpaper
     )
 }
 
 disoff () {
     (out=$(printf "${1}" | tr '[a-z]' '[A-Z]')
     xrandr --output ${out:-DP2} --off
-    __update_wallpaper
     )
 }
