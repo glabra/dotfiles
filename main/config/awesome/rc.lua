@@ -33,17 +33,22 @@ end
 
 -- global variables
 modkey = "Mod4"
+wallpaper = "/home/meu/.local/wallpaper.jpg"
 terminal = "lilyterm"
+locker= "slock"
 awful.layout.layouts = {
     awful.layout.suit.tile,
     awful.layout.suit.max,
-    awful.layout.suit.magnifier,
 }
+
 
 -- Themes, wallpapers {{{
 beautiful.init(awful.util.get_themes_dir() .. "default/theme.lua")
--- sitty wallpaper rewrite
-beautiful.wallpaper = "/home/meu/.local/wallpaper.jpg"
+-- sitty beautiful rewrite
+beautiful.font = "Ricty Diminished 10"
+if awful.util.file_readable(wallpaper) then
+    beautiful.wallpaper = wallpaper
+end
 
 local function set_wallpaper(s)
     -- Wallpaper
@@ -62,9 +67,6 @@ screen.connect_signal("property::geometry", set_wallpaper)
 -- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock("%H:%M:%S", 1)
-
--- Create Keyboard map indicator and switcher
-mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- taglist / taglist callbacks
 local taglist_buttons = awful.util.table.join(
@@ -121,10 +123,16 @@ awful.screen.connect_for_each_screen(function(s)
                            awful.button({ }, 4, function () awful.layout.inc( 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
     -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
+    s.mytaglist = awful.widget.taglist(
+        s, awful.widget.taglist.filter.all, taglist_buttons,
+        {font = beautiful.font}
+    )
 
     -- Create a tasklist widget
-    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
+    s.mytasklist = awful.widget.tasklist(
+        s, awful.widget.tasklist.filter.currenttags, tasklist_buttons,
+        {tasklist_disable_icon = true, font = beautiful.font}
+    )
 
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s })
@@ -141,7 +149,6 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             mytextclock,
-            mykeyboardlayout,
             wibox.widget.systray(),
             s.mylayoutbox,
         },
@@ -187,6 +194,7 @@ globalkeys = awful.util.table.join(
         function () awful.screen.focused().mypromptbox:run() end),
 
     awful.key({modkey}, "c", function () awful.spawn(terminal) end),
+    awful.key({modkey}, "q", function () awful.spawn(locker) end),
     awful.key({}, "XF86AudioRaiseVolume",
         function() awful.spawn("amixer sset Master 5%+") end),
     awful.key({}, "XF86AudioLowerVolume",
@@ -196,7 +204,14 @@ globalkeys = awful.util.table.join(
     awful.key({}, "XF86MonBrightnessUp",
         function() awful.spawn("xbacklight -inc 10") end),
     awful.key({}, "XF86MonBrightnessDown",
-        function() awful.spawn("xbacklight -dec 10") end)
+        function() awful.spawn("xbacklight -dec 10") end),
+
+    -- Super_L(binded to modkey) + P is assigned at F6 in Mi Notebook
+    awful.key({modkey}, "P",
+        function() awful.spawn("xset dpms force off") end),
+    -- Super_L(binded to modkey) + Tab is assigned at F8 in Mi Notebook
+    awful.key({modkey}, "Tab",
+        function() awful.spawn("xrandr --auto") end)
 )
 
 -- Bind all key numbers to tags.

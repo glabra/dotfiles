@@ -9,21 +9,27 @@ then
    unset file
 fi
 
+# lang change
 export LANG='ja_JP.UTF-8'
-export XMODIFIERS='@im=fcitx'
-export GTK_IM_MODULE='fcitx'
+
+# hack for beautiful looking in Java
+export _JAVA_OPTIONS='-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dawt.useSystemAAFontSettings=gasp'
 
 # hack for various Java AWT bugs
 export _JAVA_AWT_WM_NONREPARENTING=1
 wmname LG3D &
-# hack for beautiful looking in Java
-export _JAVA_OPTIONS='-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dawt.useSystemAAFontSettings=gasp'
+
+# ime
+export XMODIFIERS='@im=fcitx'
+export GTK_IM_MODULE='fcitx'
+fcitx-autostart &
 
 # tweaks
-which ssh-agent 2>&1 >/dev/null && eval $(ssh-agent)
-which cbatticon 2>&1 >/dev/null && cbatticon -l 15 -r 10 &
-fcitx-autostart &
-cmst &
 xset r rate 200 45 &
+
+# 
+which cbatticon 2>&1 >/dev/null && cbatticon -l 15 -r 10 &
+which redshift 2>&1 >/dev/null && redshift &
+which cmst 2>&1 >/dev/null && (sleep 1 && cmst -m) &
 
 exec awesome
