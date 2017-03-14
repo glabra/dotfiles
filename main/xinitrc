@@ -26,8 +26,9 @@ fcitx-autostart &
 
 # tweaks
 xset r rate 200 45 &
+setxkbmap -option ctrl:swapcaps &
 
-# 
+# ui
 which cbatticon 2>&1 >/dev/null && cbatticon -l 15 -r 10 &
 which redshift 2>&1 >/dev/null && redshift &
 which cmst 2>&1 >/dev/null && (sleep 1 && cmst -m) &

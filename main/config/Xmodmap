@@ -1,7 +1,0 @@
-clear lock
-clear control
-clear mod4
-keycode 66 = Control_L NoSymbol Control_L
-keycode 107 = Super_R NoSymbol Super_R
-add control = Caps_Lock Control_L Control_R
-add mod4 = Super_L Super_R Hyper_L
