@@ -33,7 +33,7 @@ end
 
 -- global variables
 modkey = "Mod4"
-wallpaper = "/home/meu/.local/wallpaper.jpg"
+wallpaper = os.getenv("HOME") .. "/.local/wallpaper.jpg"
 terminal = "lilyterm"
 locker= "slock"
 awful.layout.layouts = {
@@ -66,7 +66,7 @@ screen.connect_signal("property::geometry", set_wallpaper)
 
 -- {{{ Wibar
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock("%H:%M:%S", 1)
+mytextclock = wibox.widget.textclock("%m/%d %H:%M:%S", 1)
 
 -- taglist / taglist callbacks
 local taglist_buttons = awful.util.table.join(
@@ -156,8 +156,46 @@ awful.screen.connect_for_each_screen(function(s)
 end)
 -- }}}
 
--- {{{ Key bindings
+-- Key bindings {{{
 -- root
+-- helper functions <<<
+local managed_notifications = {}
+function managed_notify(idstr, message)
+     if managed_notifications[idstr] then
+         local notif = naughty.getById(managed_notifications[idstr])
+         if notif ~= nil then
+             naughty.replace_text(notif, idstr, message)
+             return
+         end
+     end
+     local notif = naughty.notify({
+         preset = naughty.config.presets.low,
+         title = idstr,
+         text = message,
+         font = beautiful.font,
+         timeout = 1
+     })
+     managed_notifications[idstr] = notif.id
+end
+notify_status_helper = {
+    brightness = function ()
+        awful.spawn.easy_async({"xbacklight", "-get"},
+            function(stdout, _, _, _)
+                managed_notify("brightness", string.gsub(stdout, "\n", "") .. "%")
+            end
+        )
+    end,
+    volume = function ()
+        awful.spawn.easy_async({"amixer", "sget", "Master"},
+            function(stdout, _, _, _)
+                local info = string.match(stdout, "%b[] %b[] %b[]")
+                managed_notify("Master volume", info)
+            end
+        )
+    end
+}
+-- >>>
+
 globalkeys = awful.util.table.join(
     -- focusing
     awful.key({modkey}, "j", function () awful.client.focus.byidx( 1) end),
@@ -174,6 +212,10 @@ globalkeys = awful.util.table.join(
         function () awful.tag.incmwfact( 0.05) end),
     awful.key({modkey, "Shift"}, "h",
         function () awful.tag.incmwfact(-0.05) end),
+    awful.key({modkey, "Shift"}, "k",
+        function () awful.tag.incnmaster( 1, nil, true) end),
+    awful.key({modkey, "Shift"}, "j",
+        function () awful.tag.incnmaster(-1, nil, true) end),
 
     -- Layout switching
     awful.key({modkey}, "Return", function () awful.layout.inc( 1) end),
@@ -195,23 +237,31 @@ globalkeys = awful.util.table.join(
 
     awful.key({modkey}, "c", function () awful.spawn(terminal) end),
     awful.key({modkey}, "q", function () awful.spawn(locker) end),
+    awful.key({}, "XF86AudioMute", nil,
+        function()
+            awful.spawn({"amixer", "sset", "Master", "toggle"})
+            notify_status_helper.volume()
+        end),
     awful.key({}, "XF86AudioRaiseVolume",
-        function() awful.spawn("amixer sset Master 5%+") end),
+        function()
+            awful.spawn({"amixer", "sset", "Master", "5%+"})
+            notify_status_helper.volume()
+        end),
     awful.key({}, "XF86AudioLowerVolume",
-        function() awful.spawn("amixer sset Master 5%-") end),
-    awful.key({}, "XF86AudioMute",
-        function() awful.spawn("amixer sset Master toggle") end),
+        function()
+            awful.spawn({"amixer", "sset", "Master", "5%-"})
+            notify_status_helper.volume()
+        end),
     awful.key({}, "XF86MonBrightnessUp",
-        function() awful.spawn("xbacklight -inc 10") end),
+        function()
+            awful.spawn("xbacklight -time 0 -inc 10");
+            notify_status_helper.brightness()
+        end),
     awful.key({}, "XF86MonBrightnessDown",
-        function() awful.spawn("xbacklight -dec 10") end),
-
-    -- Super_L(binded to modkey) + P is assigned at F6 in Mi Notebook
-    awful.key({modkey}, "P",
-        function() awful.spawn("xset dpms force off") end),
-    -- Super_L(binded to modkey) + Tab is assigned at F8 in Mi Notebook
-    awful.key({modkey}, "Tab",
-        function() awful.spawn("xrandr --auto") end)
+        function()
+            awful.spawn("xbacklight -time 0 -dec 10");
+            notify_status_helper.brightness()
+        end)
 )
 
 -- Bind all key numbers to tags.
@@ -289,6 +339,18 @@ clientkeys = awful.util.table.join(
             c.maximized = not c.maximized;
             c:raise()
         end
+    ),
+    awful.key(
+        {modkey, "Shift"}, ".",
+        function (c)
+            c:move_to_screen(c.screen.index - 1)
+        end
+    ),
+    awful.key(
+        {modkey, "Shift"}, ",",
+        function (c)
+            c:move_to_screen()
+        end
     )
 )
 
@@ -348,6 +410,7 @@ awful.rules.rules = {
       }, properties = { floating = true }},
 }
 -- }}}
+
 
 -- {{{ Signals
 -- Signal function to execute when a new client appears.

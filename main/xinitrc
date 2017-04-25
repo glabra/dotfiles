@@ -9,28 +9,25 @@ then
    unset file
 fi
 
-# lang change
 export LANG='ja_JP.UTF-8'
 
-# hack for beautiful looking in Java
-export _JAVA_OPTIONS='-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dawt.useSystemAAFontSettings=gasp'
-
-# hack for various Java AWT bugs
-export _JAVA_AWT_WM_NONREPARENTING=1
-wmname LG3D &
+xset r rate 200 45 &
+setxkbmap -option ctrl:swapcaps &
+[ -f "${HOME}/.config/Xresources" ] && xrdb -merge "${HOME}/.config/Xresources"
 
 # ime
 export XMODIFIERS='@im=fcitx'
+export QT_IM_MODULE=fcitx
 export GTK_IM_MODULE='fcitx'
 fcitx-autostart &
 
-# tweaks
-xset r rate 200 45 &
-setxkbmap -option ctrl:swapcaps &
+# hack for beautiful looking in Java, avoid Java AWT bugs
+export _JAVA_OPTIONS='-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dawt.useSystemAAFontSettings=gasp'
+export _JAVA_AWT_WM_NONREPARENTING=1
+wmname LG3D &
 
 # ui
 which cbatticon 2>&1 >/dev/null && cbatticon -l 15 -r 10 &
-which redshift 2>&1 >/dev/null && redshift &
 which cmst 2>&1 >/dev/null && (sleep 1 && cmst -m) &
 
 exec awesome
