@@ -10,24 +10,57 @@ then
 fi
 
 export LANG='ja_JP.UTF-8'
+printf '%s' "${PATH}" | fgrep -q "${HOME}/.local/bin" \
+	|| export PATH="${HOME}/.local/bin:${PATH}"
 
-xset r rate 200 45 &
-setxkbmap -option ctrl:swapcaps &
-[ -f "${HOME}/.config/Xresources" ] && xrdb -merge "${HOME}/.config/Xresources"
+# keyboard settings
+xset r rate 200 45
+setxkbmap -option ctrl:swapcaps
 
 # ime
-export XMODIFIERS='@im=fcitx'
-export QT_IM_MODULE=fcitx
-export GTK_IM_MODULE='fcitx'
-fcitx-autostart &
+if type fcitx-autostart >/dev/null 2>&1; then
+	export XMODIFIERS=@im=fcitx
+	export QT_IM_MODULE=fcitx
+	export GTK_IM_MODULE=fcitx
+	fcitx-autostart &
+fi
 
 # hack for beautiful looking in Java, avoid Java AWT bugs
 export _JAVA_OPTIONS='-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dawt.useSystemAAFontSettings=gasp'
 export _JAVA_AWT_WM_NONREPARENTING=1
-wmname LG3D &
+export AWT_TOOLKIT=MToolkit
+type wmname >/dev/null 2>&1 && wmname LG3D
 
-# ui
-which cbatticon 2>&1 >/dev/null && cbatticon -l 15 -r 10 &
-which cmst 2>&1 >/dev/null && (sleep 1 && cmst -m) &
+# mute HDMI2 sound
+amixer sset 'IEC958,1' mute
 
-exec awesome
+# display calibration
+## for xiaomi mi notebook air 13, sharp:
+##   https://github.com/tlvince/xiaomi-mi-notebook-air-13
+calibration_profile="${HOME}/.config/6500k.icm"
+[ -f "${calibration_profile}" ] \
+	&& type dispwin >/dev/null 2>&1 \
+	&& dispwin -d1 "${calibration_profile}"
+unset calibration_profile
+
+__run_singleton () {
+	local pids=$(ps ax | fgrep "$*" | cut -d' ' -f1)
+	[ -n "${pids}" ] && kill ${pids}
+	"$@" &
+}
+
+# compositor
+type compton >/dev/null 2>&1 \
+	&& [ -f "${HOME}/.config/compton.conf" ] \
+	&& compton --config "${HOME}/.config/compton.conf" --daemon
+
+# dwm statusbar
+type dwm-updatename >/dev/null 2>&1 && \
+	__run_singleton dwm-updatename forever
+
+# wallpaper
+type feh >/dev/null 2>&1 \
+	&& [ -f "${HOME}/.local/wallpaper.jpg" ] \
+	&& feh --bg-fill "${HOME}/.local/wallpaper.jpg"
+
+exec dwm

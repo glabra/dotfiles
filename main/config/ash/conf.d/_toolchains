@@ -1,3 +1,13 @@
+# fzf
+[ -n "${BASH_VERSION}" ] && source_if_exists "${HOME}/.fzf.bash"
+
+# golang-1.8 with apt
+append_path_if_exists '/usr/lib/go-1.8/bin/'
+[ -d '/usr/lib/go-1.8/bin/' ] && \
+	export GOPATH="${HOME}/workspace/golang"
+append_path_if_exists "${GOPATH:-}"
+append_path_if_exists "${GOPATH:-}/bin"
+
 # rust
 source_if_exists_lazy "${HOME}/.cargo/env" \
     rustc rustdoc rust-gdb rust-lldb rustup cargo

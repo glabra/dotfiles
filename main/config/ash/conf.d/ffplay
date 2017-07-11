@@ -29,20 +29,14 @@ __ffplays () {
   )
 }
 
+ffplayy () {
+  ffplay -vf yadif=1:-1:1 "$*"
+}
+
 ffplays () {
   (IFS=$'\n'; __ffplays "$*" $(find . -type f -print))
 }
 
 ffplays_shuf () {
   (IFS=$'\n'; __ffplays "$*" $(find . -type f -print | shuf))
-}
-
-playchinachu () {
-    (xspf=${1}
-
-    url=`cat ${xspf} | awk '/<location>/{gsub("</?location>",""); print $0;}' | head -n 1`
-
-    #wget -O - "${url}" | ffplay -vf yadif -
-    curl "${url}" | ffplay -vf yadif -
-    )
 }

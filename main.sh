@@ -5,6 +5,7 @@ export LANG='C'
 IFS=' 	
 '
 
+FZF_DIR="${HOME}/.fzf"
 VIM_VARIENT='nvim'
 
 if [ "${VIM_VARIENT}" = 'nvim' ]; then
@@ -14,7 +15,7 @@ else
 fi
 
 __vim_install () {
-	if ! which ${VIM_VARIENT} git openssl 2>&1 >/dev/null; then
+	if ! which ${VIM_VARIENT} git openssl >/dev/null 2>&1; then
 		printf 'vim, git or openssl not found. aborting vim initialize.\n'
 		return 1
 	fi
@@ -27,9 +28,9 @@ __vim_install () {
 
 	mkdir -p -- "$(dirname "${vimplug_dest}")"
 
-	if which curl 2>&1 >/dev/null; then
+	if which curl >/dev/null 2>&1; then
 		curl -o "${vimplug_dest}" -- "${vimplug_url}"
-	elif which wget 2>&1 >/dev/null; then
+	elif which wget >/dev/null 2>&1; then
 		wget -O "${vimplug_dest}" -- "${vimplug_url}"
 	else
 		printf 'wget or curl not found. aborting.\n'
@@ -69,13 +70,34 @@ __shellrc_warn () {
 		printf 'Please remove source procedure from .bashrc.'
 }
 
+__fzf_install () {
+	if ! which ${VIM_VARIENT} git openssl >/dev/null 2>&1; then
+		printf 'vim, git or openssl not found. aborting vim initialize.\n'
+		return 1
+	fi
+
+	[ -d "${FZF_DIR}" ] && return 0
+
+	git clone --depth 1 https://github.com/junegunn/fzf.git "${FZF_DIR}"
+	"${FZF_DIR}/install" --key-bindings --completion --no-update-rc --64
+}
+
+__fzf_uninstall () {
+	rm -rf "${FZF_DIR}"
+}
+
 module_install () {
-	__vim_install
-	__shellrc_install
+	local errs=''
+	__shellrc_install || errmods="${errs} shellrc"
+	__vim_install || errmods="${errs} vimrc"
+	__fzf_install || errmods="${errs} fzf"
+
+	[ -n "${errs}" ] && printf '\n> error: %s\n'  "${errs}"
 }
 
 module_uninstall () {
 	__vim_uninstall
 	__shellrc_warn
+	__fzf_uninstall
 }
 

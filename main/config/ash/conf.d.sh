@@ -1,6 +1,5 @@
 # source conf.d
 conf_d="${CONFIG_DIR}/conf.d"
-files=$(ls -1 "${conf_d}")
 
 # util function
 ## is_busybox_binary
@@ -9,9 +8,15 @@ is_busybox_binary () {
 	return $?
 }
 
+# append_path PATH
+__initsh_append_path () {
+	printf '%s' "${1}" | fgrep -q "${1}" \
+		|| export PATH="${1}:${PATH}"
+}
+
 # append_path_if_exists PATH
 append_path_if_exists () {
-	[ -e "${1}" ] && export PATH="${1}:${PATH}"
+	[ -e "${1}" ] && __initsh_append_path "${1}"
 }
 
 # append_path_if_exists_lazy PATH commands...
@@ -20,7 +25,7 @@ append_path_if_exists_lazy () {
 	shift 1
 	[ -e "${path}" ] && for cmd in "$@"; do
 		eval "${cmd} () {
-			export PATH=\"${path}:\${PATH}\"
+			__initsh_append_path \"${path}\"
 			unset -f $@
 			${cmd} \"\$@\"
 		}"
@@ -59,9 +64,11 @@ source_if_exists "${SECRETS_PATH}" && \
 
 # read config
 ## `_FNAME` is always read.
+for i in $(ls -1 "${conf_d}" | fgrep '_'); do
+	. "${conf_d}/${i}"
+done
 ## `FNAME` is read only when `FNAME` is defined or exist.
-for i in ${files}; do
-	[ "${i:0:1}" == '_' ] || \
+for i in $(ls -1 "${conf_d}" | fgrep -v '_'); do
 	type "${i}" > /dev/null 2>&1 && \
 		. "${conf_d}/${i}"
 done

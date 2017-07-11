@@ -24,3 +24,11 @@ alias touxh='touch'
 
 ## safer su
 alias su='su -'
+
+## smoother cd dir
+alias '..'='cd ../'
+alias '....'='cd ../../'
+alias '......'='cd ../../../'
+alias '........'='cd ../../../../'
+alias '..........'='cd ../../../../../'
+

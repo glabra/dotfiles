@@ -1,27 +1,23 @@
 scriptencoding utf-8
 
 call plug#begin(expand(g:myvim . '/bundle'))
-Plug 'mattn/sonictemplate-vim'
 Plug 'justinmk/vim-dirvish'
+Plug 'mattn/sonictemplate-vim'
+Plug 'simeji/winresizer'
+Plug 'w0rp/ale'
+
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'Shougo/neco-syntax'
 Plug 'Shougo/neosnippet'
-Plug 'scrooloose/syntastic'
-Plug 'thinca/vim-quickrun'
-Plug 'tpope/vim-markdown'
-Plug 'cespare/vim-toml'
 
-Plug 'rust-lang/rust.vim'
-Plug 'fatih/vim-go'
+Plug 'majutsushi/tagbar',
+     \ executable('ctags')
+     \ ? {'for': 'TagbarToggle'}
+     \ : {'on': []}
 
-if has('nvim')
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-        \ | Plug 'Shougo/neco-syntax'
-else
-    Plug 'Shougo/neocomplete.vim'
-        \ | Plug 'Shougo/neco-syntax'
+if isdirectory(expand('~/.fzf/'))
+    Plug 'junegunn/fzf', { 'dir': '~/.fzf' }
 endif
 
-if executable('ctags')
-    Plug 'majutsushi/tagbar', {'on': 'TagbarToggle'}
-endif
 call plug#end()
 

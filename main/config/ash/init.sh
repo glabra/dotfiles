@@ -7,7 +7,7 @@ esac
 # mandatory environment variables
 [ "${LANG}" != 'en_US.UTF-8' ] \
 	&& export LANG="en_US.UTF-8"
-printf "${PATH}" | fgrep -q "${HOME}/.local/bin" \
+printf '%s' "${PATH}" | fgrep -q "${HOME}/.local/bin" \
 	|| export PATH="${HOME}/.local/bin:${PATH}"
 
 # consts

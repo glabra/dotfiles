@@ -3,11 +3,8 @@ scriptencoding utf-8
 " options
 set autoindent
 set autoread
-set autowriteall
 set backspace=indent
-set completeopt& completeopt-=preview
 set expandtab
-set fileencodings=utf-8,ucs-bom,iso-2022-jp,euc-jp,cp932,default,latin
 set foldmethod=manual
 set laststatus=2
 set list
@@ -20,10 +17,9 @@ set nocursorcolumn
 set nofoldenable
 set number
 set numberwidth=5
-set showmatch
+set noshowmatch
 set smartindent
 set splitbelow
-set updatetime=1000
 set wrap
 set statusline=%f%(\ %M%R%)
 set statusline+=%=\ \ 
@@ -33,11 +29,17 @@ if (v:version >= 704) && has('patch338')
     set breakindent
 endif
 
-" color scheme
-colorscheme desert
-highlight CursorLineNR cterm=bold
-
 " rubyなファイルがストレスレスに開くようになる魔法の呪文
 " 代償として、補完が少し弱くなる
 let g:ruby_path = ""
+
+" allow directory-specific vimrc
+set exrc
+set secure
+
+" enable files
+set swapfile
+set undofile
+set backup
+set backupdir-=.
 

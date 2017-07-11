@@ -6,7 +6,7 @@ alias gits='git s'
 
 # git_ps1
 source_if_exists "/usr/share/git/completion/git-prompt.sh"
-if ! type __git_ps1 2>&1 >/dev/null; then
+if ! type __git_ps1 >/dev/null 2>&1; then
     __git_ps1() {
       local branch="$(git branch 2>/dev/null | fgrep '* ' | tail -c +3)"
       test -n "${branch}" && \

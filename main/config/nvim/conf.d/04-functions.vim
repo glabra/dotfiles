@@ -16,8 +16,8 @@ function! s:get_and_change_local_tab_spaces() abort
     echo '<Tab> is still' &l:tabstop 'spaces.'
   endif
 endfunction
-call s:change_tab_spaces("g",4)
-call s:change_tab_spaces("l",4)
+"call s:change_tab_spaces("g",4)
+"call s:change_tab_spaces("l",4)
 nnoremap <silent> <C-k><C-t> :call <SID>get_and_change_local_tab_spaces()<CR>
 command! -nargs=1 ChangeTabSpaces call <SID>change_tab_spaces("l",<args>)
 
@@ -33,5 +33,5 @@ function! s:delete_hidden_buffers()
 
     echo 'killed' killed_cnt 'buffer(s)'
 endfunction
-nnoremap <silent> <C-k><C-f> :call <SID>delete_hidden_buffers()<CR>
+nnoremap <silent> <C-k><C-d> :call <SID>delete_hidden_buffers()<CR>
 

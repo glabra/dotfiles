@@ -1,5 +1,9 @@
 alias vim='vim -u "${HOME}/.vimrc"'
-alias vi='vim'
-alias svi='vi'
-alias iv='vi'
-alias ci='vi'
+
+# nvim を優先する
+if ! type nvim >/dev/null 2>&1; then
+    alias vi='vim'
+    alias svi='vi'
+    alias iv='vi'
+    alias ci='vi'
+fi

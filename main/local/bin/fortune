@@ -5,12 +5,12 @@ export PATH='/bin:/usr/bin'
 IFS=' 	
 '
 
-FORTUNE_FILE="${HOME}/.local/fortune.txt"
+FORTUNE_FILE="${HOME}/.local/share/fortune.txt"
 
 __fetch () {
-    if which curl 2>&1 >/dev/null; then
+    if which curl >/dev/null 2>&1; then
         curl "${1}"
-    elif which wget 2>&1 >/dev/null; then
+    elif which wget >/dev/null 2>&1; then
         wget -O - "${1}"
     else
         printf 'wget or curl not found.\n'

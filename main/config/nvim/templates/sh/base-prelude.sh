@@ -3,6 +3,6 @@ set -ue
 umask 0027
 export PATH='/bin:/usr/bin'
 export LANG='C'
-IFS=' {{_cursor_}}
+IFS=' 	
 '
-
+{{_cursor_}}

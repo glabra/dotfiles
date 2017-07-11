@@ -1,0 +1,76 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+export LANG='C'
+IFS=' 	
+'
+
+get_datetime () {
+	date +'%m/%d.%H:%M:%S'
+}
+
+is_monitor_active () {
+	xrandr --listactivemonitors | fgrep -q "$1"
+}
+
+is_audio_mute () {
+	amixer sget "$1" | fgrep -q '[off]'
+	return $?
+}
+
+get_audio_volume () {
+	amixer sget "$1" -M | egrep -o '\[[0-9]+%\]' | tr -d '[]%'
+}
+
+is_charging_battery () {
+	fgrep -q 'Charging' /sys/class/power_supply/BAT0/status
+}
+
+get_current_battery () {
+	(cd /sys/class/power_supply/BAT0
+	printf '%d' $(( $(cat charge_now) * 100 / $(cat charge_full) ))
+	)
+}
+
+generate_statusline () {
+	local l=''
+
+	is_monitor_active 'HDMI2' \
+		&& l="${l}d " \
+		|| l="${l}s "
+
+	is_charging_battery \
+		&& l="${l}o" \
+		|| l="${l}x"
+
+	l="${l}$(get_current_battery)% "
+
+	is_audio_mute 'IEC958,1' \
+		&& l="${l}h" \
+		|| l="${l}H"
+
+	is_audio_mute 'Master' \
+		&& l="${l}m" \
+		|| l="${l}M"
+
+	l="${l}$(get_audio_volume 'Master')%"
+	l="${l} $(get_datetime)"
+
+	printf '%s' "${l}"
+}
+
+case "${1:-}" in
+	'oneshot')
+		xsetroot -name "$(generate_statusline)"
+		;;
+	'forever')
+		while :; do
+			xsetroot -name "$(generate_statusline)"
+			sleep 1
+		done
+		;;
+	*)
+		printf 'Usage: dwm-updatename (oneshot|forever)\n'
+		;;
+esac
