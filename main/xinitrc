@@ -55,8 +55,8 @@ type compton >/dev/null 2>&1 \
 	&& compton --config "${HOME}/.config/compton.conf" --daemon
 
 # dwm statusbar
-type dwm-updatename >/dev/null 2>&1 && \
-	__run_singleton dwm-updatename forever
+type dwm-statusline >/dev/null 2>&1 && \
+	__run_singleton dwm-statusline
 
 # wallpaper
 type feh >/dev/null 2>&1 \

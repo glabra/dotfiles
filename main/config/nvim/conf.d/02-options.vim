@@ -42,4 +42,3 @@ set swapfile
 set undofile
 set backup
 set backupdir-=.
-

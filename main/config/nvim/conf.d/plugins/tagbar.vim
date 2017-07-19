@@ -17,4 +17,3 @@ let g:tagbar_type_tex = {
       \ 'deffile': expand(g:myvim . '/ctags/latex')
       \ }
 nnoremap <silent> <C-k><C-m> :TagbarToggle<CR>
-

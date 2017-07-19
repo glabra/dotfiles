@@ -19,7 +19,6 @@ inoremap <silent> <C-w><C-w> <Esc>
 vnoremap Y "+y
 
 if has('nvim')
-    nnoremap <silent> <C-w>c :tabnew<CR>:terminal<CR>
+    nnoremap <silent> <C-w>m :tabnew<CR>:terminal<CR>
     tnoremap <silent> <C-w><C-w> <C-\><C-n>
 endif
-

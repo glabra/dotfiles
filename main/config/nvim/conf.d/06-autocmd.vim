@@ -9,4 +9,3 @@ augroup vimrc_loading
   autocmd FileType sh setlocal noexpandtab
   autocmd FileType ruby ChangeTabSpaces 2
 augroup END
-

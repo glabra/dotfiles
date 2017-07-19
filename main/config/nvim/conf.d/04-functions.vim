@@ -34,4 +34,3 @@ function! s:delete_hidden_buffers()
     echo 'killed' killed_cnt 'buffer(s)'
 endfunction
 nnoremap <silent> <C-k><C-d> :call <SID>delete_hidden_buffers()<CR>
-

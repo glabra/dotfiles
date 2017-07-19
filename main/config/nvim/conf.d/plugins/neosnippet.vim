@@ -14,4 +14,3 @@ imap <expr> <TAB> neosnippet#expandable() ?
 
 smap <expr> <TAB> neosnippet#expandable_or_jumpable() ?
             \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-

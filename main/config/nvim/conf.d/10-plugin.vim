@@ -12,7 +12,7 @@ Plug 'Shougo/neosnippet'
 
 Plug 'majutsushi/tagbar',
      \ executable('ctags')
-     \ ? {'for': 'TagbarToggle'}
+     \ ? {'on': 'TagbarToggle'}
      \ : {'on': []}
 
 if isdirectory(expand('~/.fzf/'))
@@ -20,4 +20,3 @@ if isdirectory(expand('~/.fzf/'))
 endif
 
 call plug#end()
-
