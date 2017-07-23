@@ -50,17 +50,19 @@ __run_singleton () {
 }
 
 # compositor
-type compton >/dev/null 2>&1 \
-	&& [ -f "${HOME}/.config/compton.conf" ] \
+[ "$(command -v compton)" -a -f "${HOME}/.config/compton.conf" ] \
 	&& compton --config "${HOME}/.config/compton.conf" --daemon
 
+# pee display
+[ "$(command -v redshift)" ] \
+	&& __run_singleton redshift
+
 # dwm statusbar
-type dwm-statusline >/dev/null 2>&1 && \
-	__run_singleton dwm-statusline
+[ "$(command -v dwm-statusline)" ] \
+	&& __run_singleton dwm-statusline
 
 # wallpaper
-type feh >/dev/null 2>&1 \
-	&& [ -f "${HOME}/.local/wallpaper.jpg" ] \
+[ "$(command -v feh)" -a -f "${HOME}/.local/wallpaper.jpg" ] \
 	&& feh --bg-fill "${HOME}/.local/wallpaper.jpg"
 
 exec dwm

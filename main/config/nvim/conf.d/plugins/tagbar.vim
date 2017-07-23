@@ -16,4 +16,10 @@ let g:tagbar_type_tex = {
       \ 'sort': 0,
       \ 'deffile': expand(g:myvim . '/ctags/latex')
       \ }
+let g:tagbar_type_markdown = {
+      \ 'ctagstype': 'markdown',
+      \ 'kinds' : [ 'h:Headline' ],
+      \ 'sort': 0,
+      \ 'deffile': expand(g:myvim . '/ctags/markdown')
+      \ }
 nnoremap <silent> <C-k><C-m> :TagbarToggle<CR>

@@ -66,9 +66,15 @@ options head
 snippet table
 options head
   \begin{table}[${1:ht}]
-    \begin{tabular}{${2}}${0}
-    \end{tabular}
+  \caption{${2}}%
+  \label{table:${3}}
+    ${0}
   \end{table}
+
+snippet tabular
+options head
+    \begin{tabular}{${1}}${0}
+    \end{tabular}
 
 snippet img
 options head
