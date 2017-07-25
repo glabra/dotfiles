@@ -1,0 +1,99 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+export LANG='C'
+IFS=' 	
+'
+BATTERY_ID=BAT0
+BRIGHTNESS_ID=intel_backlight
+CPUTEMP_PATH=hwmon1/temp1_input
+
+get_current_wifi_status () {
+	(
+	station=$(connmanctl services | egrep '^[*A]*[OR]' | sed 's/ \+/ /' | cut -d' ' -f2)
+	printf '(%s)' "${station}"
+	)
+}
+
+get_cpu_temperture () {
+	head -c-4 /sys/class/hwmon/${CPUTEMP_PATH}
+}
+
+is_battery_charging () {
+	case "$(cat /sys/class/power_supply/${BATTERY_ID}/status)" in
+		'Charging') return 0;;
+		*) return 1;;
+	esac
+}
+
+get_battery_dischargingrate () {
+	(
+	vol=$(head -c-7 "/sys/class/power_supply/${BATTERY_ID}/voltage_now")
+	cur=$(head -c-7 "/sys/class/power_supply/${BATTERY_ID}/current_now")
+	printf '%d' "$((${cur} * ${vol}))"
+	)
+}
+
+get_battery_remaining () {
+	(
+	full=$(cat "/sys/class/power_supply/${BATTERY_ID}/charge_full")
+	now=$(cat "/sys/class/power_supply/${BATTERY_ID}/charge_now")
+	printf '%d' "$((${now} * 100 / ${full}))"
+	)
+}
+
+get_brightness () {
+	(
+	full=$(cat "/sys/class/backlight/${BRIGHTNESS_ID}/max_brightness")
+	now=$(cat "/sys/class/backlight/${BRIGHTNESS_ID}/actual_brightness")
+	printf '%d' "$((${now} * 100 / ${full}))"
+	)
+}
+
+generate_volume_entry () {
+	(
+	EXTERNAL_ID=hdmi-stereo-extra
+
+	sink_info=$(ponymix defaults | fgrep -A2 'sink')
+	vol=$(printf '%s' $sink_info | egrep -o '[0-9]+%')
+
+	if printf '%s' "${sink_info}" | fgrep -q "${EXTERNAL_ID}"; then
+		if printf '%s' "${sink_info}" | fgrep -q '[Muted]'; then
+			printf 'h%s' "${vol}"
+		else
+			printf 'H%s' "${vol}"
+		fi
+	else
+		if printf '%s' "${sink_info}" | fgrep -q '[Muted]'; then
+			printf 's%s' "${vol}"
+		else
+			printf 'S%s' "${vol}"
+		fi
+	fi
+	)
+}
+
+generate_line () {
+	printf '%s %dC b%d%% %s%dW/%d%% %s %s' \
+		"$(get_current_wifi_status)" \
+		"$(get_cpu_temperture)" \
+		"$(get_brightness)" \
+		"$(is_battery_charging && printf '%c' '+' || printf '%c' '-')" \
+		"$(get_battery_dischargingrate)" \
+		"$(get_battery_remaining)" \
+		"$(generate_volume_entry)" \
+		"$(date +%m/%d.%H:%M:%S)"
+}
+
+case "${1:-}" in
+	'forever')
+		while :; do
+			xsetroot -name "$(generate_line)"
+			sleep 0.5
+		done
+		;;
+	*)
+		xsetroot -name "$(generate_line)"
+esac
+

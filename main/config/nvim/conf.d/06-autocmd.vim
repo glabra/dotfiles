@@ -13,4 +13,5 @@ augroup vimrc_loading
   autocmd FileType tex ChangeTabSpaces 2
   autocmd FileType tex setlocal makeprg=latexmk\ -xelatex\ -interaction=nonstopmode
   autocmd FileType tex setlocal foldmethod=indent
+  autocmd FileType tex setlocal foldenable
 augroup END

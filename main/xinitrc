@@ -15,7 +15,7 @@ printf '%s' "${PATH}" | fgrep -q "${HOME}/.local/bin" \
 
 # keyboard settings
 xset r rate 200 45
-setxkbmap -option ctrl:swapcaps
+setxkbmap -option ctrl:nocaps
 
 # ime
 if type fcitx-autostart >/dev/null 2>&1; then
@@ -29,17 +29,13 @@ fi
 export _JAVA_OPTIONS='-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dawt.useSystemAAFontSettings=gasp'
 export _JAVA_AWT_WM_NONREPARENTING=1
 export AWT_TOOLKIT=MToolkit
-type wmname >/dev/null 2>&1 && wmname LG3D
-
-# mute HDMI2 sound
-amixer sset 'IEC958,1' mute
+[ "$(command -v wmname)" ] && wmname LG3D
 
 # display calibration
 ## for xiaomi mi notebook air 13, sharp:
 ##   https://github.com/tlvince/xiaomi-mi-notebook-air-13
 calibration_profile="${HOME}/.config/6500k.icm"
-[ -f "${calibration_profile}" ] \
-	&& type dispwin >/dev/null 2>&1 \
+[ "$(command -v dispwin)" -a -f "${calibration_profile}" ] \
 	&& dispwin -d1 "${calibration_profile}"
 unset calibration_profile
 
@@ -59,7 +55,7 @@ __run_singleton () {
 
 # dwm statusbar
 [ "$(command -v dwm-statusline)" ] \
-	&& __run_singleton dwm-statusline
+	&& __run_singleton dwm-statusline forever
 
 # wallpaper
 [ "$(command -v feh)" -a -f "${HOME}/.local/wallpaper.jpg" ] \

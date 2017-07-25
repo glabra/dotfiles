@@ -6,7 +6,6 @@ set autoread
 set autowrite
 set backspace=indent
 set expandtab
-set foldmethod=syntax
 set laststatus=2
 set list
 set listchars=tab:>.,trail:~,nbsp:%
@@ -15,6 +14,7 @@ set modeline
 set mouse=a
 set nocursorline
 set nocursorcolumn
+set nofoldenable
 set number
 set numberwidth=5
 set noshowmatch
