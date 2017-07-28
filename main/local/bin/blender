@@ -21,32 +21,39 @@ dev_bind () {
 	printf -- '--dev-bind /dev/%s /dev/%s' "$1" "$1"
 }
 
+# sharing pid namespace is required to fcitx working
 exec env -i bwrap \
-	--setenv VDPAU_DRIVER 'va_gl' \
+	--setenv DRI_PRIME 1 \
 	$(passenv DISPLAY) \
 	$(passenv HOME) \
 	$(passenv LANG) \
-	$(passenv USER) \
-	$(passenv XDG_RUNTIME_DIR) \
 	\
-	$(ro_bind /usr/bin/ffplay) \
+	$(ro_bind /usr/bin/blender) \
+	$(ro_bind /usr/share/blender) \
 	$(ro_bind /usr/lib) \
+	$(ro_bind /usr/lib64) \
 	--symlink usr/lib /lib64 \
-	$(ro_bind /etc/machine-id) \
-	$(rw_bind /run/user/${UID}) \
 	\
+	$(ro_bind /etc/ld.so.cache) \
 	$(dev_bind dri) \
 	$(dev_bind null) \
 	$(ro_bind /sys/dev/char) \
 	$(ro_bind /sys/devices/pci0000:00) \
+	$(rw_bind /run/user/${UID}) \
+	\
+	$(ro_bind /usr/share/fonts) \
+	$(ro_bind /etc/fonts) \
 	\
 	--tmpfs /tmp \
 	$(ro_bind /tmp/.X11-unix/X0) \
-	$(ro_bind $HOME) \
-	$(rw_bind $HOME/.config/pulse) \
+	--tmpfs $HOME \
+	$(ro_bind $HOME/.Xauthority) \
+	\
+	$(rw_bind "$HOME/Documents") \
+	$(ro_bind "$HOME/Downloads") \
 	\
 	--unshare-all \
 	--new-session \
 	--die-with-parent \
-	/usr/bin/ffplay "$@"
+	/usr/bin/blender "$@"
 

@@ -5,7 +5,7 @@ export PATH='/bin:/usr/bin'
 IFS=' 	
 '
 
-setenv () {
+passenv () {
 	printf -- '--setenv %s %s' "$1" $(eval "printf -- '%s' \$$1")
 }
 
@@ -24,15 +24,15 @@ dev_bind () {
 # sharing pid namespace is required to fcitx working
 exec env -i bwrap \
 	${DRI_PRIME:+--setenv DRI_PRIME ${DRI_PRIME}} \
-	$(setenv DISPLAY) \
-	$(setenv GTK_IM_MODULE) \
-	$(setenv HOME) \
-	$(setenv LANG) \
-	$(setenv MOZ_PLUGIN_PATH) \
-	$(setenv USER) \
-	$(setenv XDG_RUNTIME_DIR) \
-	$(setenv XDG_SEAT) \
-	$(setenv XDG_SESSION_ID) \
+	$(passenv DISPLAY) \
+	$(passenv GTK_IM_MODULE) \
+	$(passenv HOME) \
+	$(passenv LANG) \
+	$(passenv MOZ_PLUGIN_PATH) \
+	$(passenv USER) \
+	$(passenv XDG_RUNTIME_DIR) \
+	$(passenv XDG_SEAT) \
+	$(passenv XDG_SESSION_ID) \
 	\
 	$(ro_bind /usr/lib) \
 	--symlink usr/lib /lib64 \
@@ -72,14 +72,15 @@ exec env -i bwrap \
 	$(ro_bind $HOME/.pki) \
 	$(rw_bind "$HOME/.mozilla") \
 	\
+	$(ro_bind "$HOME/Documents") \
 	$(rw_bind "$HOME/Downloads") \
 	--bind "$HOME/Downloads" "$HOME/ダウンロード" \
-	$(ro_bind /etc) \
 	\
 	--unshare-user-try \
 	--unshare-ipc \
 	--unshare-uts \
 	--unshare-cgroup-try \
+	--new-session \
 	--die-with-parent \
 	/usr/lib/firefox/firefox "$@"
 
