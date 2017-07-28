@@ -22,40 +22,35 @@ dev_bind () {
 }
 
 exec env -i bwrap \
-	--setenv VDPAU_DRIVER 'va_gl' \
 	$(setenv DISPLAY) \
 	$(setenv HOME) \
 	$(setenv LANG) \
 	$(setenv XDG_RUNTIME_DIR) \
 	\
-	$(ro_bind /usr/bin/vlc) \
+	$(ro_bind /usr/bin/spicy) \
 	$(ro_bind /usr/lib) \
 	--symlink usr/lib /lib64 \
-	$(ro_bind /usr/share/vlc) \
-	$(ro_bind /etc/ld.so.cache) \
 	$(rw_bind /run/user/${UID}) \
-	\
-	$(dev_bind dri) \
-	$(dev_bind null) \
-	$(ro_bind /sys/dev/char) \
-	$(ro_bind /sys/devices/pci0000:00) \
+	$(ro_bind /etc/machine-id) \
 	\
 	$(ro_bind /usr/share/fonts) \
 	$(ro_bind /etc/fonts) \
 	\
-	$(ro_bind /usr/share/locale/ja/LC_MESSAGES/vlc.mo) \
+	$(dev_bind random) \
+	$(dev_bind urandom) \
+	$(ro_bind /etc/ssl) \
+	$(ro_bind /etc/ca-certificates) \
+	$(ro_bind /usr/share/ca-certificates) \
 	\
 	--tmpfs /tmp \
 	$(ro_bind /tmp/.X11-unix/X0) \
-	$(ro_bind $HOME) \
-	$(rw_bind $HOME/.config/vlc) \
+	--tmpfs $HOME \
+	$(ro_bind $HOME/.Xauthority) \
+	$(ro_bind $HOME/.config/spicy) \
 	\
-	--unshare-user-try \
-	--unshare-uts \
-	--unshare-pid \
-	--unshare-cgroup-try \
-	--unshare-net \
+	--unshare-all \
+	--share-net \
 	--new-session \
 	--die-with-parent \
-	/usr/bin/vlc "$@"
+	/usr/bin/spicy "$@"
 
