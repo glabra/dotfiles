@@ -1,0 +1,24 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+IFS=' 	
+'
+
+exec env -i bwrap \
+	--setenv DISPLAY "${DISPLAY}" \
+	--setenv HOME "${HOME}" \
+	\
+	--ro-bind /usr/bin/feh /usr/bin/feh \
+	--ro-bind /usr/lib /usr/lib \
+	--symlink usr/lib /lib64 \
+	\
+	--tmpfs /tmp \
+	--ro-bind /tmp/.X11-unix/X0 /tmp/.X11-unix/X0 \
+	--ro-bind $HOME $HOME \
+	\
+	--unshare-all \
+	--new-session \
+	--die-with-parent \
+	/usr/bin/feh "$@"
+

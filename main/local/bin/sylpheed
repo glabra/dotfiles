@@ -1,0 +1,52 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+IFS=' 	
+'
+
+# sharing pid namespace is required to fcitx working
+exec env -i bwrap \
+	--setenv DISPLAY "${DISPLAY}" \
+	--setenv GTK_IM_MODULE "${GTK_IM_MODULE}" \
+	--setenv HOME "${HOME}" \
+	--setenv LANG "${LANG}" \
+	--setenv USER "${USER}" \
+	\
+	--ro-bind /usr/bin/sylpheed /usr/bin/sylpheed \
+	--ro-bind /usr/lib /usr/lib \
+	--symlink usr/lib /lib64 \
+	--ro-bind /etc/machine-id /etc/machine-id \
+	--ro-bind /usr/bin/curl /usr/bin/curl \
+	--dev-bind /dev/null /dev/null \
+	\
+	--dev-bind /dev/random /dev/random \
+	--dev-bind /dev/urandom /dev/urandom \
+	--ro-bind /etc/ssl /etc/ssl \
+	--ro-bind /etc/ca-certificates /etc/ca-certificates \
+	--ro-bind /usr/share/ca-certificates /usr/share/ca-certificates \
+	\
+	--ro-bind /usr/share/fonts /usr/share/fonts \
+	--ro-bind /etc/fonts /etc/fonts \
+	\
+	--ro-bind /usr/share/zoneinfo /usr/share/zoneinfo \
+	--ro-bind /etc/localtime /etc/localtime \
+	\
+	--ro-bind /usr/share/locale/ja/LC_MESSAGES/sylpheed.mo /usr/share/locale/ja/LC_MESSAGES/sylpheed.mo \
+	\
+	--tmpfs /tmp \
+	--ro-bind /tmp/.X11-unix/X0 /tmp/.X11-unix/X0 \
+	--tmpfs $HOME \
+	--ro-bind $HOME/.Xauthority $HOME/.Xauthority \
+	--ro-bind $HOME/.config/fcitx/dbus $HOME/.config/fcitx/dbus \
+	\
+	--bind "$HOME/.sylpheed-2.0" "$HOME/.sylpheed-2.0" \
+	\
+	--unshare-user-try \
+	--unshare-ipc \
+	--unshare-uts \
+	--unshare-cgroup-try \
+	--new-session \
+	--die-with-parent \
+	/usr/bin/sylpheed "$@"
+

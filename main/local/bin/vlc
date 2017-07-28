@@ -1,0 +1,63 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+IFS=' 	
+'
+
+setenv () {
+	printf -- '--setenv %s %s' "$1" $(eval "printf -- '%s' \$$1")
+}
+
+ro_bind () {
+	printf -- '--ro-bind %s %s' "$1" "$1"
+}
+
+rw_bind () {
+	printf -- '--bind %s %s' "$1" "$1"
+}
+
+dev_bind () {
+	printf -- '--dev-bind /dev/%s /dev/%s' "$1" "$1"
+}
+
+exec env -i bwrap \
+	--setenv VDPAU_DRIVER 'va_gl' \
+	$(setenv DISPLAY) \
+	$(setenv HOME) \
+	$(setenv LANG) \
+	$(setenv XDG_RUNTIME_DIR) \
+	$(setenv XDG_SEAT) \
+	$(setenv XDG_SESSION_ID) \
+	\
+	$(ro_bind /usr/bin/vlc) \
+	$(ro_bind /usr/lib) \
+	--symlink usr/lib /lib64 \
+	$(ro_bind /usr/share/vlc) \
+	$(ro_bind /etc/ld.so.cache) \
+	$(rw_bind /run/user/${UID}) \
+	\
+	$(dev_bind dri) \
+	$(dev_bind null) \
+	$(ro_bind /sys/dev/char) \
+	$(ro_bind /sys/devices/pci0000:00) \
+	\
+	$(ro_bind /usr/share/fonts) \
+	$(ro_bind /etc/fonts) \
+	\
+	$(ro_bind /usr/share/locale/ja/LC_MESSAGES/vlc.mo) \
+	\
+	--tmpfs /tmp \
+	$(ro_bind /tmp/.X11-unix/X0) \
+	$(ro_bind $HOME) \
+	$(rw_bind $HOME/.config/vlc) \
+	\
+	--unshare-user-try \
+	--unshare-uts \
+	--unshare-pid \
+	--unshare-cgroup-try \
+	--unshare-net \
+	--new-session \
+	--die-with-parent \
+	/usr/bin/vlc "$@"
+

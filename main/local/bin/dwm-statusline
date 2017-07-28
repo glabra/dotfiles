@@ -9,10 +9,10 @@ BATTERY_ID=BAT0
 BRIGHTNESS_ID=intel_backlight
 CPUTEMP_PATH=hwmon1/temp1_input
 
-get_current_wifi_status () {
+generate_wifi_entry () {
 	(
 	station=$(connmanctl services | egrep '^[*A]*[OR]' | sed 's/ \+/ /' | cut -d' ' -f2)
-	printf '(%s)' "${station}"
+	printf '(%s)' "${station:-NIL}"
 	)
 }
 
@@ -31,7 +31,7 @@ get_battery_dischargingrate () {
 	(
 	vol=$(head -c-7 "/sys/class/power_supply/${BATTERY_ID}/voltage_now")
 	cur=$(head -c-7 "/sys/class/power_supply/${BATTERY_ID}/current_now")
-	printf '%d' "$((${cur} * ${vol}))"
+	printf '%d' "$((${cur:-1} * ${vol:-1}))"
 	)
 }
 
@@ -39,7 +39,7 @@ get_battery_remaining () {
 	(
 	full=$(cat "/sys/class/power_supply/${BATTERY_ID}/charge_full")
 	now=$(cat "/sys/class/power_supply/${BATTERY_ID}/charge_now")
-	printf '%d' "$((${now} * 100 / ${full}))"
+	printf '%d' "$((${now:-0} * 100 / ${full:-1}))"
 	)
 }
 
@@ -47,7 +47,7 @@ get_brightness () {
 	(
 	full=$(cat "/sys/class/backlight/${BRIGHTNESS_ID}/max_brightness")
 	now=$(cat "/sys/class/backlight/${BRIGHTNESS_ID}/actual_brightness")
-	printf '%d' "$((${now} * 100 / ${full}))"
+	printf '%d' "$((${now:-0} * 100 / ${full:-1}))"
 	)
 }
 
@@ -76,7 +76,7 @@ generate_volume_entry () {
 
 generate_line () {
 	printf '%s %dC b%d%% %s%dW/%d%% %s %s' \
-		"$(get_current_wifi_status)" \
+		"$(generate_wifi_entry)" \
 		"$(get_cpu_temperture)" \
 		"$(get_brightness)" \
 		"$(is_battery_charging && printf '%c' '+' || printf '%c' '-')" \

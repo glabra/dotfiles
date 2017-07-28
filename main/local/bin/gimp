@@ -1,0 +1,56 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+IFS=' 	
+'
+
+bind_lcmessage () {
+	printf -- '--ro-bind /usr/share/locale/ja/LC_MESSAGES/%s /usr/share/locale/ja/LC_MESSAGES/%s' $1 $1
+}
+
+# sharing pid namespace is required to fcitx working
+exec env -i bwrap \
+	--setenv DISPLAY "${DISPLAY}" \
+	--setenv GTK_IM_MODULE "${GTK_IM_MODULE}" \
+	--setenv HOME "${HOME}" \
+	--setenv LANG "${LANG}" \
+	--setenv USER "${USER}" \
+	--setenv XDG_RUNTIME_DIR "${XDG_RUNTIME_DIR}" \
+	\
+	--ro-bind /usr/bin/gimp /usr/bin/gimp \
+	--ro-bind /usr/lib /usr/lib \
+	--symlink usr/lib /lib64 \
+	--ro-bind /etc/machine-id /etc/machine-id \
+	--bind /run/user/${UID} /run/user/${UID} \
+	--dev-bind /dev/null /dev/null \
+	\
+	--ro-bind /usr/share/fonts /usr/share/fonts \
+	--ro-bind /etc/fonts /etc/fonts \
+	\
+	--ro-bind /usr/share/gtk-2.0 /usr/share/gtk-2.0 \
+	--ro-bind /usr/share/gimp /usr/share/gimp \
+	\
+	$(bind_lcmessage gimp20-libgimp.mo) \
+	$(bind_lcmessage gimp20.mo) \
+	$(bind_lcmessage gimp20-python.mo) \
+	$(bind_lcmessage gimp20-script-fu.mo) \
+	$(bind_lcmessage gimp20-std-plug-ins.mo) \
+	$(bind_lcmessage gimp20-tips.mo) \
+	\
+	--tmpfs /tmp \
+	--ro-bind /tmp/.X11-unix/X0 /tmp/.X11-unix/X0 \
+	--bind $HOME $HOME \
+	--ro-bind $HOME/.Xauthority $HOME/.Xauthority \
+	--ro-bind $HOME/.config/fcitx/dbus $HOME/.config/fcitx/dbus \
+	--bind /media /media \
+	\
+	--unshare-user-try \
+	--unshare-ipc \
+	--unshare-uts \
+	--unshare-cgroup-try \
+	--unshare-net \
+	--new-session \
+	--die-with-parent \
+	/usr/bin/gimp "$@"
+

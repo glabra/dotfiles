@@ -10,6 +10,10 @@ then
 fi
 
 export LANG='ja_JP.UTF-8'
+
+printf '%s' "${PATH}" | fgrep -q "${HOME}/.local/bin" \
+	|| export PATH="${HOME}/.local/bin:${PATH}"
+
 printf '%s' "${PATH}" | fgrep -q "${HOME}/.local/bin" \
 	|| export PATH="${HOME}/.local/bin:${PATH}"
 
@@ -57,8 +61,12 @@ __run_singleton () {
 [ "$(command -v dwm-statusline)" ] \
 	&& __run_singleton dwm-statusline forever
 
+# autostart keepassxc
+[ "$(command -v keepassxc)" ] \
+	&& keepassxc &
+
 # wallpaper
 [ "$(command -v feh)" -a -f "${HOME}/.local/wallpaper.jpg" ] \
-	&& feh --bg-fill "${HOME}/.local/wallpaper.jpg"
+	&& ( sleep 0.1; feh --bg-fill "${HOME}/.local/wallpaper.jpg" ) &
 
 exec dwm

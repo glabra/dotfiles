@@ -1,0 +1,45 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+IFS=' 	
+'
+
+exec env -i bwrap \
+	--setenv DISPLAY "${DISPLAY}" \
+	--setenv GTK_IM_MODULE "${GTK_IM_MODULE}" \
+	--setenv HOME "${HOME}" \
+	--setenv LANG "${LANG}" \
+	--setenv USER "${USER}" \
+	--setenv XDG_RUNTIME_DIR "${XDG_RUNTIME_DIR}" \
+	\
+	--ro-bind /usr/bin /usr/bin \
+	--ro-bind /usr/lib /usr/lib \
+	--symlink usr/lib /lib64 \
+	--ro-bind /etc/machine-id /etc/machine-id \
+	--bind /run/user/${UID} /run/user/${UID} \
+	--dev-bind /dev/null /dev/null \
+	\
+	--ro-bind /usr/share/fonts /usr/share/fonts \
+	--ro-bind /etc/fonts /etc/fonts \
+	\
+	--ro-bind /usr/share/libfm /usr/share/libfm \
+	--ro-bind /usr/share/icons /usr/share/icons \
+	--ro-bind /usr/share/mime /usr/share/mime \
+	--ro-bind /usr/share/applications /usr/share/applications \
+	--ro-bind /usr/share/gtk-2.0 /usr/share/gtk-2.0 \
+	\
+	--ro-bind /usr/share/locale/ja/LC_MESSAGES/pcmanfm.mo /usr/share/locale/ja/LC_MESSAGES/pcmanfm.mo \
+	\
+	--tmpfs /tmp \
+	--ro-bind /tmp/.X11-unix/X0 /tmp/.X11-unix/X0 \
+	--bind $HOME $HOME \
+	--ro-bind $HOME/.Xauthority $HOME/.Xauthority \
+	--ro-bind $HOME/.config/fcitx/dbus $HOME/.config/fcitx/dbus \
+	--bind /media /media \
+	\
+	--unshare-all \
+	--new-session \
+	--die-with-parent \
+	/usr/bin/pcmanfm "$@"
+

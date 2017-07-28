@@ -1,0 +1,43 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+IFS=' 	
+'
+
+exec env -i bwrap \
+	--setenv DISPLAY "${DISPLAY}" \
+	--setenv QT_IM_MODULE "${QT_IM_MODULE}" \
+	--setenv HOME "${HOME}" \
+	--setenv LANG "${LANG}" \
+	--setenv USER "${USER}" \
+	--setenv XDG_RUNTIME_DIR "${XDG_RUNTIME_DIR}" \
+	\
+	--ro-bind /usr/bin/keepassxc /usr/bin/keepassxc \
+	--ro-bind /usr/lib /usr/lib \
+	--symlink usr/lib /lib64 \
+	--ro-bind /etc/machine-id /etc/machine-id \
+	--dev-bind /dev/random /dev/random \
+	--dev-bind /dev/urandom /dev/urandom \
+	--bind /run/user/${UID} /run/user/${UID} \
+	--ro-bind /usr/share/X11/xkb /usr/share/X11/xkb \
+	--ro-bind /usr/share/keepassxc /usr/share/keepassxc \
+	\
+	--ro-bind /usr/share/fonts /usr/share/fonts \
+	--ro-bind /etc/fonts /etc/fonts \
+	\
+	--tmpfs /tmp \
+	--ro-bind /tmp/.X11-unix/X0 /tmp/.X11-unix/X0 \
+	--tmpfs $HOME \
+	--ro-bind $HOME/.Xauthority $HOME/.Xauthority \
+	--ro-bind $HOME/.config/fcitx/dbus $HOME/.config/fcitx/dbus \
+	\
+	--bind "$HOME/.config/keepassxc" "$HOME/.config/keepassxc" \
+	--bind $HOME/Drive $HOME/Drive \
+	\
+	--unshare-all \
+	--share-net \
+	--new-session \
+	--die-with-parent \
+	/usr/bin/keepassxc "$@"
+

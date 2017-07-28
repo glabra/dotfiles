@@ -13,9 +13,10 @@ source_if_exists_lazy "${HOME}/.cargo/env" \
     rustc rustdoc rust-gdb rust-lldb rustup cargo
 
 # nvm
-export NVM_DIR="$HOME/.nvm"
-source_if_exists_lazy "$NVM_DIR/nvm.sh" \
-    nvm npm node
+if [ -d "$HOME/.nvm" ]; then
+    export NVM_DIR="$HOME/.nvm"
+    source_if_exists_lazy "$NVM_DIR/nvm.sh" nvm npm node
+fi
 
 # android-studio
 append_path_if_exists "${HOME}/.local/android-studio/bin"

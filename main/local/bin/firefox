@@ -1,0 +1,85 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+IFS=' 	
+'
+
+setenv () {
+	printf -- '--setenv %s %s' "$1" $(eval "printf -- '%s' \$$1")
+}
+
+ro_bind () {
+	printf -- '--ro-bind %s %s' "$1" "$1"
+}
+
+rw_bind () {
+	printf -- '--bind %s %s' "$1" "$1"
+}
+
+dev_bind () {
+	printf -- '--dev-bind /dev/%s /dev/%s' "$1" "$1"
+}
+
+# sharing pid namespace is required to fcitx working
+exec env -i bwrap \
+	${DRI_PRIME:+--setenv DRI_PRIME ${DRI_PRIME}} \
+	$(setenv DISPLAY) \
+	$(setenv GTK_IM_MODULE) \
+	$(setenv HOME) \
+	$(setenv LANG) \
+	$(setenv MOZ_PLUGIN_PATH) \
+	$(setenv USER) \
+	$(setenv XDG_RUNTIME_DIR) \
+	$(setenv XDG_SEAT) \
+	$(setenv XDG_SESSION_ID) \
+	\
+	$(ro_bind /usr/lib) \
+	--symlink usr/lib /lib64 \
+	$(ro_bind /etc/machine-id) \
+	\
+	$(dev_bind shm) \
+	$(dev_bind dri) \
+	$(dev_bind null) \
+	$(ro_bind /sys/dev/char) \
+	$(ro_bind /sys/devices/pci0000:00) \
+	$(rw_bind /run/user/${UID}) \
+	--proc /proc \
+	\
+	$(dev_bind random) \
+	$(dev_bind urandom) \
+	$(ro_bind /etc/ssl) \
+	$(ro_bind /etc/ca-certificates) \
+	$(ro_bind /usr/share/ca-certificates) \
+	\
+	$(ro_bind /usr/share/icons) \
+	$(ro_bind /usr/share/mime) \
+	$(ro_bind /usr/share/glib-2.0) \
+	\
+	$(ro_bind /usr/share/fonts) \
+	$(ro_bind /etc/fonts) \
+	\
+	$(ro_bind /usr/share/zoneinfo) \
+	$(ro_bind /etc/localtime) \
+	\
+	--tmpfs /tmp \
+	$(ro_bind /tmp/.X11-unix/X0) \
+	--tmpfs $HOME \
+	$(ro_bind $HOME/.Xauthority) \
+	$(rw_bind $HOME/.config/pulse) \
+	$(ro_bind $HOME/.config/fcitx/dbus) \
+	\
+	$(ro_bind $HOME/.pki) \
+	$(rw_bind "$HOME/.mozilla") \
+	\
+	$(rw_bind "$HOME/Downloads") \
+	--bind "$HOME/Downloads" "$HOME/ダウンロード" \
+	$(ro_bind /etc) \
+	\
+	--unshare-user-try \
+	--unshare-ipc \
+	--unshare-uts \
+	--unshare-cgroup-try \
+	--die-with-parent \
+	/usr/lib/firefox/firefox "$@"
+

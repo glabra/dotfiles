@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+IFS=' 	
+'
+
+(exec env -i bwrap \
+	--setenv HOME "${HOME}" \
+	--setenv USER "${USER}" \
+	--setenv LANG "${LANG}" \
+	\
+	--ro-bind /usr/bin/ssh /usr/bin/ssh \
+	--ro-bind /usr/bin/sftp /usr/bin/sftp \
+	--ro-bind /usr/lib /usr/lib \
+	--symlink usr/lib /lib64 \
+	--dev-bind /dev/null /dev/null \
+	--dev-bind /dev/random /dev/random \
+	--dev-bind /dev/tty /dev/tty \
+	--ro-bind /etc/ssh /etc/ssh \
+	\
+	--bind $HOME $HOME \
+	--ro-bind $HOME/.ssh $HOME/.ssh \
+	--bind $HOME/.ssh/known_hosts $HOME/.ssh/known_hosts \
+	--file 11 /etc/passwd \
+	--file 12 /etc/group \
+	\
+	--unshare-all \
+	--share-net \
+	--die-with-parent \
+	/usr/bin/sftp "$@") \
+	11< <(getent passwd $UID 65534) \
+	12< <(getent group $(id -g) 65534)
+

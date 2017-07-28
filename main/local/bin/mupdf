@@ -1,0 +1,27 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+IFS=' 	
+'
+
+exec env -i bwrap \
+	--setenv DISPLAY "${DISPLAY}" \
+	--setenv HOME "${HOME}" \
+	\
+	--ro-bind /usr/bin/mupdf /usr/bin/mupdf \
+	--ro-bind /usr/lib /usr/lib \
+	--symlink usr/lib /lib64 \
+	\
+	--ro-bind /usr/share/fonts /usr/share/fonts \
+	--ro-bind /etc/fonts /etc/fonts \
+	\
+	--tmpfs /tmp \
+	--ro-bind /tmp/.X11-unix/X0 /tmp/.X11-unix/X0 \
+	--ro-bind $HOME $HOME \
+	\
+	--unshare-all \
+	--new-session \
+	--die-with-parent \
+	/usr/bin/mupdf "$@"
+

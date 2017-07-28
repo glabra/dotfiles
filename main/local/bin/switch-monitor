@@ -24,13 +24,11 @@ toggle_audio () {
 
 xrandr_action () {
 	(
-	INTERNAL_MONITOR='eDP1'
-	EXTERNAL_MONITOR='HDMI2'
-	EXTERNAL_AUDIO='IEC958,1'
+	INTERNAL_MONITOR='eDP-1'
+	EXTERNAL_MONITOR='HDMI-2'
 
 	xrandr --output "${EXTERNAL_MONITOR}" --auto --$1 "${INTERNAL_MONITOR}"
-	xrandr --listactivemonitors | fgrep -q "${EXTERNAL_MONITOR}" \
-		|| amixer sset "${EXTERNAL_AUDIO}" mute
+	xrandr --listactivemonitors | fgrep -q "${EXTERNAL_MONITOR}"
 	)
 }
 
@@ -43,6 +41,6 @@ case "${1:-}" in
 		toggle_audio
 		;;
 	*)
-		printf 'Usage: switch-monitor (right-of|same-as)\n'
+		printf 'Usage: switch-monitor (right-of|same-as|toggle-audio)\n'
 		;;
 esac
