@@ -5,40 +5,59 @@ export PATH='/bin:/usr/bin'
 IFS=' 	
 '
 
+passenv () {
+	printf -- '--setenv %s %s' "$1" $(eval "printf -- '%s' \$$1")
+}
+
+ro_bind () {
+	printf -- '--ro-bind %s %s' "$1" "$1"
+}
+
+rw_bind () {
+	printf -- '--bind %s %s' "$1" "$1"
+}
+
+dev_bind () {
+	printf -- '--dev-bind /dev/%s /dev/%s' "$1" "$1"
+}
+
 exec env -i bwrap \
-	--setenv DISPLAY "${DISPLAY}" \
-	--setenv GTK_IM_MODULE "${GTK_IM_MODULE}" \
-	--setenv HOME "${HOME}" \
-	--setenv LANG "${LANG}" \
-	--setenv USER "${USER}" \
-	--setenv XDG_RUNTIME_DIR "${XDG_RUNTIME_DIR}" \
+	--setenv VDPAU_DRIVER 'va_gl' \
+	$(passenv DISPLAY) \
+	$(passenv GTK_IM_MODULE) \
+	$(passenv HOME) \
+	$(passenv LANG) \
+	$(passenv USER) \
+	$(passenv XDG_RUNTIME_DIR) \
 	\
-	--ro-bind /usr/bin /usr/bin \
-	--ro-bind /usr/lib /usr/lib \
+	$(ro_bind /usr/bin) \
+	$(ro_bind /usr/lib) \
 	--symlink usr/lib /lib64 \
-	--ro-bind /etc/machine-id /etc/machine-id \
-	--bind /run/user/${UID} /run/user/${UID} \
-	--dev-bind /dev/null /dev/null \
+	$(ro_bind /etc/machine-id) \
+	$(rw_bind /run/user/${UID}) \
 	\
-	--ro-bind /usr/share/fonts /usr/share/fonts \
-	--ro-bind /etc/fonts /etc/fonts \
+	$(dev_bind dri) \
+	$(dev_bind null) \
+	$(ro_bind /sys/dev/char) \
+	$(ro_bind /sys/devices/pci0000:00) \
 	\
-	--ro-bind /usr/share/libfm /usr/share/libfm \
-	--ro-bind /usr/share/icons /usr/share/icons \
-	--ro-bind /usr/share/mime /usr/share/mime \
-	--ro-bind /usr/share/applications /usr/share/applications \
-	--ro-bind /usr/share/gtk-2.0 /usr/share/gtk-2.0 \
+	$(ro_bind /usr/share) \
+	$(ro_bind /etc/fonts) \
 	\
-	--ro-bind /usr/share/locale/ja/LC_MESSAGES/pcmanfm.mo /usr/share/locale/ja/LC_MESSAGES/pcmanfm.mo \
+	$(ro_bind /usr/share/locale/ja/LC_MESSAGES/pcmanfm.mo) \
 	\
 	--tmpfs /tmp \
-	--ro-bind /tmp/.X11-unix/X0 /tmp/.X11-unix/X0 \
-	--bind $HOME $HOME \
-	--ro-bind $HOME/.Xauthority $HOME/.Xauthority \
-	--ro-bind $HOME/.config/fcitx/dbus $HOME/.config/fcitx/dbus \
-	--bind /media /media \
+	$(ro_bind /tmp/.X11-unix/X0) \
+	$(rw_bind $HOME) \
+	$(ro_bind $HOME/.Xauthority) \
+	$(ro_bind $HOME/.config/fcitx/dbus) \
+	$(rw_bind /media) \
 	\
-	--unshare-all \
+	--unshare-user-try \
+	--unshare-ipc \
+	--unshare-uts \
+	--unshare-cgroup-try \
+	--unshare-net \
 	--new-session \
 	--die-with-parent \
 	/usr/bin/pcmanfm "$@"

@@ -7,7 +7,6 @@ IFS='
 
 exec env -i bwrap \
 	--setenv DISPLAY "${DISPLAY}" \
-	--setenv QT_IM_MODULE "${QT_IM_MODULE}" \
 	--setenv HOME "${HOME}" \
 	--setenv LANG "${LANG}" \
 	--setenv USER "${USER}" \
@@ -30,7 +29,6 @@ exec env -i bwrap \
 	--ro-bind /tmp/.X11-unix/X0 /tmp/.X11-unix/X0 \
 	--tmpfs $HOME \
 	--ro-bind $HOME/.Xauthority $HOME/.Xauthority \
-	--ro-bind $HOME/.config/fcitx/dbus $HOME/.config/fcitx/dbus \
 	\
 	--bind "$HOME/.config/keepassxc" "$HOME/.config/keepassxc" \
 	--bind $HOME/Drive $HOME/Drive \
