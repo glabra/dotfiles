@@ -1,0 +1,38 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+IFS=' 	
+'
+
+ro_bind () {
+	printf -- '--ro-bind %s %s' "$1" "$1"
+}
+
+exec env -i bwrap \
+	--setenv DISPLAY "${DISPLAY}" \
+	--setenv HOME "${HOME}" \
+	--setenv XDG_RUNTIME_DIR "${XDG_RUNTIME_DIR}" \
+	\
+	$(ro_bind /usr/bin/evince) \
+	$(ro_bind /usr/lib) \
+	--symlink usr/lib /lib64 \
+	$(ro_bind /etc/machine-id) \
+	\
+	$(ro_bind /usr/share/GConf/gsettings) \
+	$(ro_bind /usr/share/icons) \
+	$(ro_bind /usr/share/mime) \
+	$(ro_bind /usr/share/glib-2.0) \
+	\
+	$(ro_bind /usr/share/fonts) \
+	$(ro_bind /etc/fonts) \
+	\
+	--tmpfs /tmp \
+	$(ro_bind /tmp/.X11-unix/X0) \
+	$(ro_bind $HOME) \
+	\
+	--unshare-all \
+	--new-session \
+	--die-with-parent \
+	/usr/bin/evince "$@"
+

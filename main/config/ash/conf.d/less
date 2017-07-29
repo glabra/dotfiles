@@ -10,3 +10,5 @@ case "$(detect_less_variant)" in
 esac
 
 unset -f detect_less_variant
+
+alias le=less

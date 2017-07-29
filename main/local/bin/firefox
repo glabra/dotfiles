@@ -31,8 +31,6 @@ exec env -i bwrap \
 	$(passenv MOZ_PLUGIN_PATH) \
 	$(passenv USER) \
 	$(passenv XDG_RUNTIME_DIR) \
-	$(passenv XDG_SEAT) \
-	$(passenv XDG_SESSION_ID) \
 	\
 	$(ro_bind /usr/lib) \
 	--symlink usr/lib /lib64 \
