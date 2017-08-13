@@ -1,21 +1,15 @@
 # sh.snip
 
-snippet shebang
-alias #!
-options head
-    #!/bin/sh
-    ${0}
-
 snippet if
 options head
-    if test ${1:#:condition}
+    if ${1:#:condition}
     then
     ${0:TARGET}
     fi
 
 snippet elif
 options head
-    elif test ${1:#:condition}
+    elif ${1:#:condition}
     then
     ${0:TARGET}
 
@@ -28,53 +22,53 @@ options head
 
 snippet while
 options head
-    while test ${1:#:condition}
+    while ${1:#:condition}
     do
     ${0:TARGET}
     done
 
 snippet case
 options head
-    case ${${1:{name\}}} in
-        ${2:pattern*})
-            ${0}
-            ;;
-        *)
+    case "${${1:{name\}}}" in
+    ${0:TARGET}
     esac
+
+snippet casi
+options head
+    ${1})
+        ${0:TARGET}
+        ;;
 
 snippet random
 options word
     \`od -vAn -tu2 -N2 < /dev/urandom\`
 
 snippet tmp
-    ${1:TMPFILE}="mktemp -t ${2:untitled}"
-    trap "rm -f \"${${1}}\"" 0               # EXIT
-    trap "rm -f \"${${1}}\"; exit 1" 2       # INT
-    trap "rm -f \"${${1}}\"; exit 1" 1 15    # HUP TERM
+    ${1:TMPFILE}=$(mktemp -t ${2:untitled})
+    trap "rm -f \"${${1}}\"; exit" EXIT
+    trap "rm -f \"${${1}}\"; exit 1" INT HUP TERM
     ${0}
 
-snippet executable
+snippet exist
 alias exist?
-    if type '${1}' > /dev/null 2>&1
-    then
-      ${0}
-    fi
-
-snippet strict
-options head
-    set -u
-    set -e
-    umask 0750
-    export PATH="/bin:/usr/bin"
-    export LANG="C"
-    IFS=$' \t\n'
-    "
+    [ "$(command -v '${1}')" ]
 
 snippet scriptdir
-    "\`dirname \"\${0}\"\`"
+    "$(dirname '\${0}')"
 
 snippet absolutedir
-    "$(cd $(dirname \"${0}\"); pwd)"
+    "$(cd $(dirname '${0}'); pwd)"
 
 snippet echo
-  printf '%s\n'
+    printf '%s\n'
+
+snippet prelude
+options head
+    #!/bin/sh
+    set -ue
+    umask 0027
+    export PATH='/bin:/usr/bin'
+    export LANG='C'
+    IFS=' 	
+    '
+

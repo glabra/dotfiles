@@ -5,27 +5,13 @@ export PATH='/bin:/usr/bin'
 IFS=' 	
 '
 
-setenv () {
-	printf -- '--setenv %s %s' "$1" $(eval "printf -- '%s' \$$1")
-}
-
-ro_bind () {
-	printf -- '--ro-bind %s %s' "$1" "$1"
-}
-
-rw_bind () {
-	printf -- '--bind %s %s' "$1" "$1"
-}
-
-dev_bind () {
-	printf -- '--dev-bind /dev/%s /dev/%s' "$1" "$1"
-}
+. "$HOME/.local/bin/bwrap-functions.sh"
 
 exec env -i bwrap \
-	$(setenv DISPLAY) \
-	$(setenv HOME) \
-	$(setenv LANG) \
-	$(setenv XDG_RUNTIME_DIR) \
+	$(passenv DISPLAY) \
+	$(passenv HOME) \
+	$(passenv LANG) \
+	$(passenv XDG_RUNTIME_DIR) \
 	\
 	$(ro_bind /usr/bin/spicy) \
 	$(ro_bind /usr/lib) \
@@ -33,20 +19,13 @@ exec env -i bwrap \
 	$(rw_bind /run/user/${UID}) \
 	$(ro_bind /etc/machine-id) \
 	\
-	$(ro_bind /usr/share/fonts) \
-	$(ro_bind /etc/fonts) \
-	\
-	$(dev_bind random) \
-	$(dev_bind urandom) \
-	$(ro_bind /etc/ssl) \
-	$(ro_bind /etc/ca-certificates) \
-	$(ro_bind /usr/share/ca-certificates) \
+	$(allow_fonts) \
+	$(allow_ssl) \
 	\
 	--tmpfs /tmp \
 	$(ro_bind /tmp/.X11-unix/X0) \
 	--tmpfs $HOME \
 	$(ro_bind $HOME/.Xauthority) \
-	$(ro_bind $HOME/.config/spicy) \
 	\
 	--unshare-all \
 	--share-net \

@@ -1,0 +1,44 @@
+#!/bin/sh
+set -ue
+export PATH='/bin:/usr/bin'
+export LANG='C'
+IFS=' 	
+'
+
+BACKLIGHT='/sys/class/backlight/intel_backlight'
+readonly BACKLIGHT
+
+read __bmax < "${BACKLIGHT}/max_brightness"
+readonly __bmax
+
+clamp () {
+	[ $1 -lt $2 ] && _t=$2 || _t=$1
+	[ $_t -gt $3 ] && _t=$3
+	printf '%d' $_t
+}
+
+get_brightness () {
+	read _c < "$BACKLIGHT/brightness"
+	printf '%d' $(($_c * 100 / $__bmax))
+}
+
+set_brightness_relative () {
+	read _c < "$BACKLIGHT/brightness"
+	_n=$(clamp $(($__bmax * $1 / 100 + $_c)) 0 $__bmax)
+	printf '%d\n' $_n > "$BACKLIGHT/brightness"
+}
+
+set_brightness () {
+	_n=$(clamp $(($__bmax * $1 / 100)) 0 $__bmax)
+	printf '%d\n' $_n > "$BACKLIGHT/brightness"
+}
+
+case "${1:-}" in
+	+[0-9] | -[0-9] | +[1-9][0-9] | -[1-9][0-9])
+		set_brightness_relative $1;;
+	[0-9] | [1-9][0-9] | '100')
+		set_brightness $1;;
+	*)
+		get_brightness;;
+esac
+

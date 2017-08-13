@@ -1,3 +1,0 @@
-alias ash='docker run --rm -ti alpine:3.5 ash'
-alias hugo='docker-shared hugo'
-alias dockviz="docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock nate/dockviz"

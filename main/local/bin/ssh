@@ -5,26 +5,41 @@ export PATH='/bin:/usr/bin'
 IFS=' 	
 '
 
+. "$HOME/.local/bin/bwrap-functions.sh"
+
+[ ! -f "$HOME/.ssh/known_hosts" ] \
+	&& touch $HOME/.ssh/known_hosts \
+	&& chmod 600 $HOME/.ssh/known_hosts
+
 (exec env -i bwrap \
-	--setenv HOME "${HOME}" \
-	--setenv USER "${USER}" \
-	--setenv LANG "${LANG}" \
+	$(passenv HOME) \
+	$(passenv LANG) \
+	$(passenv USER) \
+	$(passenv TERM) \
+	$(passenv_if_exists SSH_ASKPASS) \
+	$(passenv_if_exists SSH_AGENT_PID) \
+	$(passenv_if_exists SSH_AUTH_SOCK) \
 	\
-	--ro-bind /usr/bin/ssh /usr/bin/ssh \
-	--ro-bind /usr/lib /usr/lib \
+	$(ro_bind /usr/bin/ssh) \
+	$(ro_bind /usr/lib) \
 	--symlink usr/lib /lib64 \
-	--dev-bind /dev/null /dev/null \
-	--dev-bind /dev/random /dev/random \
-	--dev-bind /dev/tty /dev/tty \
-	--ro-bind /etc/ssh /etc/ssh \
+	$(dev_bind null) \
+	$(dev_bind random) \
+	$(dev_bind urandom) \
+	$(dev_bind tty) \
+	$(ro_bind /etc/ssh) \
 	\
 	--tmpfs $HOME \
-	--ro-bind $HOME/.ssh $HOME/.ssh \
-	--bind $HOME/.ssh/known_hosts $HOME/.ssh/known_hosts \
+	$(ro_bind $HOME/.ssh) \
+	$(rw_bind $HOME/.ssh/known_hosts) \
+	$(rw_bind_if_exists ${SSH_AUTH_SOCK:-}) \
 	--file 11 /etc/passwd \
 	--file 12 /etc/group \
 	\
-	--unshare-all \
+	--unshare-user-try \
+	--unshare-ipc \
+	--unshare-uts \
+	--unshare-cgroup-try \
 	--share-net \
 	--die-with-parent \
 	/usr/bin/ssh "$@") \

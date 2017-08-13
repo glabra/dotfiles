@@ -12,3 +12,4 @@ esac
 unset -f detect_less_variant
 
 alias le=less
+

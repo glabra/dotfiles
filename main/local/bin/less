@@ -1,0 +1,37 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+IFS=' 	
+'
+
+. "$HOME/.local/bin/bwrap-functions.sh"
+
+for i in $(seq 1 $(($# - 1))); do
+	opts="${opts:+$opts }$1"
+	shift 1
+done
+
+if [ -f "${1:-}" ]; then
+	ext=${1##*.}
+else
+	opts="${opts:+$opts }${1:-}"
+fi
+
+exec env -i bwrap \
+	$(passenv TERM) \
+	$(passenv LANG) \
+	\
+	$(ro_bind /usr/bin/less) \
+	$(ro_bind /usr/lib) \
+	--symlink usr/lib /lib64 \
+	$(ro_bind /usr/share/terminfo) \
+	\
+	--chdir / \
+	${ext:+--ro-bind "$1" /data.$ext} \
+	\
+	--unshare-all \
+	--new-session \
+	--die-with-parent \
+	/usr/bin/less ${opts:-} ${ext:+/data.$ext}
+

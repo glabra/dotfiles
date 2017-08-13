@@ -1,6 +1,0 @@
-block-lidsleep ()
-{
-    local secs=${1:-3600}
-    printf 'sleep by lid-switch is blocked for %d seconds.\n' "${secs}"
-    systemd-inhibit --what=handle-lid-switch --mode=block sleep "${secs}"
-}

@@ -5,25 +5,11 @@ export PATH='/bin:/usr/bin'
 IFS=' 	
 '
 
-passenv () {
-	printf -- '--setenv %s %s' "$1" $(eval "printf -- '%s' \$$1")
-}
-
-ro_bind () {
-	printf -- '--ro-bind %s %s' "$1" "$1"
-}
-
-rw_bind () {
-	printf -- '--bind %s %s' "$1" "$1"
-}
-
-dev_bind () {
-	printf -- '--dev-bind /dev/%s /dev/%s' "$1" "$1"
-}
+. "$HOME/.local/bin/bwrap-functions.sh"
 
 # sharing pid namespace is required to fcitx working
 exec env -i bwrap \
-	${DRI_PRIME:+--setenv DRI_PRIME ${DRI_PRIME}} \
+	$(passenv_if_exists DRI_PRIME) \
 	$(passenv DISPLAY) \
 	$(passenv GTK_IM_MODULE) \
 	$(passenv HOME) \
@@ -37,28 +23,18 @@ exec env -i bwrap \
 	$(ro_bind /etc/machine-id) \
 	\
 	$(dev_bind shm) \
-	$(dev_bind dri) \
-	$(dev_bind null) \
-	$(ro_bind /sys/dev/char) \
-	$(ro_bind /sys/devices/pci0000:00) \
+	$(allow_gpu) \
 	$(rw_bind /run/user/${UID}) \
 	--proc /proc \
 	\
-	$(dev_bind random) \
-	$(dev_bind urandom) \
-	$(ro_bind /etc/ssl) \
-	$(ro_bind /etc/ca-certificates) \
-	$(ro_bind /usr/share/ca-certificates) \
+	$(allow_ssl) \
+	$(allow_fonts) \
+	$(allow_localtime) \
 	\
+	$(ro_bind /usr/share/X11/xkb) \
 	$(ro_bind /usr/share/icons) \
 	$(ro_bind /usr/share/mime) \
 	$(ro_bind /usr/share/glib-2.0) \
-	\
-	$(ro_bind /usr/share/fonts) \
-	$(ro_bind /etc/fonts) \
-	\
-	$(ro_bind /usr/share/zoneinfo) \
-	$(ro_bind /etc/localtime) \
 	\
 	--tmpfs /tmp \
 	$(ro_bind /tmp/.X11-unix/X0) \
@@ -78,6 +54,7 @@ exec env -i bwrap \
 	--unshare-ipc \
 	--unshare-uts \
 	--unshare-cgroup-try \
+	--share-net \
 	--new-session \
 	--die-with-parent \
 	/usr/lib/firefox/firefox "$@"

@@ -5,28 +5,16 @@ export PATH='/bin:/usr/bin'
 IFS=' 	
 '
 
-passenv () {
-	printf -- '--setenv %s %s' "$1" $(eval "printf -- '%s' \$$1")
-}
+[ "$#" -eq 0 ] && exit 1
 
-ro_bind () {
-	printf -- '--ro-bind %s %s' "$1" "$1"
-}
+. "$HOME/.local/bin/bwrap-functions.sh"
 
-rw_bind () {
-	printf -- '--bind %s %s' "$1" "$1"
-}
-
-dev_bind () {
-	printf -- '--dev-bind /dev/%s /dev/%s' "$1" "$1"
-}
+parse_opts "$@"
 
 exec env -i bwrap \
 	--setenv VDPAU_DRIVER 'va_gl' \
 	$(passenv DISPLAY) \
 	$(passenv HOME) \
-	$(passenv LANG) \
-	$(passenv USER) \
 	$(passenv XDG_RUNTIME_DIR) \
 	\
 	$(ro_bind /usr/bin/ffplay) \
@@ -35,18 +23,17 @@ exec env -i bwrap \
 	$(ro_bind /etc/machine-id) \
 	$(rw_bind /run/user/${UID}) \
 	\
-	$(dev_bind dri) \
-	$(dev_bind null) \
-	$(ro_bind /sys/dev/char) \
-	$(ro_bind /sys/devices/pci0000:00) \
+	$(allow_gpu) \
 	\
 	--tmpfs /tmp \
 	$(ro_bind /tmp/.X11-unix/X0) \
-	$(ro_bind $HOME) \
+	--tmpfs $HOME \
+	$(ro_bind $HOME/.Xauthority) \
 	$(rw_bind $HOME/.config/pulse) \
+	${filepath:+--ro-bind "${filepath}" /media.$fileext} \
+	--chdir / \
 	\
 	--unshare-all \
 	--new-session \
-	--die-with-parent \
-	/usr/bin/ffplay "$@"
+	/usr/bin/ffplay ${opts:-} ${filepath:+/media.$fileext}
 

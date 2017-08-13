@@ -21,11 +21,3 @@ elif [ -n "${ZSH_VERSION}" ]; then
     source_if_exists "/usr/share/git/completion/git-completion.zsh"
 fi
 
-require_secrets
-
-__gitconf () {
-  git config user.name "$1"
-  git config user.email "$2"
-}
-
-alias 'git-conf'="__gitconf '${GITCONF_DEFAULT_USERNAME}' '${GITCONF_DEFAULT_EMAIL}'"

@@ -5,12 +5,11 @@ conf_d="${CONFIG_DIR}/conf.d"
 ## is_busybox_binary
 is_busybox_binary () {
 	readlink "$(which $1 2> /dev/null)" 2> /dev/null | fgrep -q '/busybox'
-	return $?
 }
 
 # append_path PATH
 __initsh_append_path () {
-	printf '%s' "${1}" | fgrep -q "${1}" \
+	printf '%s' "${PATH}" | fgrep -q "${1}" \
 		|| export PATH="${1}:${PATH}"
 }
 
@@ -57,10 +56,11 @@ source_if_exists_lazy () {
 	unset path
 }
 
-## require_secrets: is ${SECRETS_PATH} exist?
-alias require_secrets='return'
-source_if_exists "${SECRETS_PATH}" && \
-	alias require_secrets=':'
+# if tput is not exist, fallback to shellscript implimentation.
+type tput >&/dev/null || . "${CONFIG_DIR}/tput.sh"
+
+# append ~/.local/bin into PATH before reading configs
+__initsh_append_path "${HOME}/.local/bin"
 
 # read config
 ## `_FNAME` is always read.
@@ -75,7 +75,6 @@ done
 unset i
 
 # cleanup
-unalias require_secrets
 unset -f is_busybox_binary
 unset -f source_if_exists
 unset -f source_if_exists_lazy

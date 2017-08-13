@@ -7,50 +7,48 @@ IFS='
 
 . "$HOME/.local/bin/bwrap-functions.sh"
 
-bind_lcmessage () {
-	allow_locale ja $1
-}
-
 # sharing pid namespace is required to fcitx working
 exec env -i bwrap \
 	$(passenv DISPLAY) \
 	$(passenv GTK_IM_MODULE) \
 	$(passenv HOME) \
 	$(passenv LANG) \
+	$(passenv MOZ_PLUGIN_PATH) \
 	$(passenv USER) \
-	$(passenv XDG_RUNTIME_DIR) \
 	\
-	$(ro_bind /usr/bin/gimp) \
+	$(ro_bind /usr/bin/thunderbird) \
+	$(ro_bind /bin/sh) \
 	$(ro_bind /usr/lib) \
 	--symlink usr/lib /lib64 \
 	$(ro_bind /etc/machine-id) \
-	$(rw_bind /run/user/${UID}) \
+	--proc /proc \
+	\
+	$(allow_ssl) \
 	$(dev_bind null) \
 	\
+	$(ro_bind /usr/share/icons) \
+	$(ro_bind /usr/share/mime) \
+	$(ro_bind '/usr/share/glib-2.0') \
+	$(ro_bind /usr/share/applications) \
+	\
 	$(allow_fonts) \
-	\
-	$(ro_bind /usr/share/gtk-2.0) \
-	$(ro_bind /usr/share/gimp) \
-	\
-	$(bind_lcmessage gimp20-libgimp) \
-	$(bind_lcmessage gimp20) \
-	$(bind_lcmessage gimp20-python) \
-	$(bind_lcmessage gimp20-script-fu) \
-	$(bind_lcmessage gimp20-std-plug-ins) \
-	$(bind_lcmessage gimp20-tips) \
+	$(allow_localtime) \
 	\
 	--tmpfs /tmp \
 	$(ro_bind /tmp/.X11-unix/X0) \
-	$(rw_bind $HOME) \
+	--tmpfs $HOME \
 	$(ro_bind $HOME/.Xauthority) \
 	$(ro_bind $HOME/.config/fcitx/dbus) \
-	$(rw_bind /media) \
+	$(rw_bind "$HOME/Downloads") \
+	\
+	$(rw_bind "$HOME/.thunderbird") \
 	\
 	--unshare-user-try \
 	--unshare-ipc \
 	--unshare-uts \
 	--unshare-cgroup-try \
-	--unshare-net \
+	--share-net \
 	--new-session \
-	/usr/bin/gimp "$@"
+	--die-with-parent \
+	/usr/bin/thunderbird "$@"
 

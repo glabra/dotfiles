@@ -5,23 +5,8 @@ export PATH='/bin:/usr/bin'
 IFS=' 	
 '
 
-passenv () {
-	printf -- '--setenv %s %s' "$1" $(eval "printf -- '%s' \$$1")
-}
+. "$HOME/.local/bin/bwrap-functions.sh"
 
-ro_bind () {
-	printf -- '--ro-bind %s %s' "$1" "$1"
-}
-
-rw_bind () {
-	printf -- '--bind %s %s' "$1" "$1"
-}
-
-dev_bind () {
-	printf -- '--dev-bind /dev/%s /dev/%s' "$1" "$1"
-}
-
-# sharing pid namespace is required to fcitx working
 exec env -i bwrap \
 	--setenv DRI_PRIME 1 \
 	$(passenv DISPLAY) \
@@ -35,14 +20,9 @@ exec env -i bwrap \
 	--symlink usr/lib /lib64 \
 	\
 	$(ro_bind /etc/ld.so.cache) \
-	$(dev_bind dri) \
-	$(dev_bind null) \
-	$(ro_bind /sys/dev/char) \
-	$(ro_bind /sys/devices/pci0000:00) \
+	$(allow_gpu) \
 	$(rw_bind /run/user/${UID}) \
-	\
-	$(ro_bind /usr/share/fonts) \
-	$(ro_bind /etc/fonts) \
+	$(allow_fonts) \
 	\
 	--tmpfs /tmp \
 	$(ro_bind /tmp/.X11-unix/X0) \

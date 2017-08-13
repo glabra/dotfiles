@@ -1,0 +1,82 @@
+#!/bin/sh
+
+export LANG='ja_JP.UTF-8'
+
+# tell xdg-open to use pcmanfm
+[ -z "${DESKTOP_SESSION}" ] \
+	&& export DESKTOP_SESSION=LXDE
+
+printf '%s' "${PATH}" | fgrep -q "${HOME}/.local/bin" \
+	|| export PATH="${HOME}/.local/bin:${PATH}"
+
+# keyboard settings
+xset r rate 200 45
+setxkbmap -option ctrl:nocaps -option altwin:prtsc_rwin
+
+# ime
+if [ "$(command -v fcitx-autostart)" ]; then
+	export XMODIFIERS=@im=fcitx
+	export QT_IM_MODULE=fcitx
+	export GTK_IM_MODULE=fcitx
+	fcitx-autostart &
+fi
+
+# touchpad
+if [ "$(command -v xinput)" ]; then
+	DEVID=12
+	xinput set-prop $DEVID 'libinput Tapping Enabled' 1
+	xinput set-prop $DEVID 'libinput Tapping Drag Enabled' 1
+	xinput set-prop $DEVID 'libinput Middle Emulation Enabled' 1
+	xinput set-prop $DEVID 'libinput Natural Scrolling Enabled' 1
+	xinput set-prop $DEVID 'libinput Click Method Enabled' 0 1
+	xinput set-prop $DEVID 'libinput Accel Speed' 0.5
+fi
+
+
+# hack for beautiful looking in Java, avoid Java AWT bugs
+export _JAVA_OPTIONS='-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dawt.useSystemAAFontSettings=gasp'
+export _JAVA_AWT_WM_NONREPARENTING=1
+export AWT_TOOLKIT=MToolkit
+[ "$(command -v wmname)" ] && wmname LG3D
+
+# display calibration
+## for xiaomi mi notebook air 13, sharp:
+##   https://github.com/tlvince/xiaomi-mi-notebook-air-13
+calibration_profile="${HOME}/.config/6500k.icm"
+[ "$(command -v dispwin)" -a -f "${calibration_profile}" ] \
+	&& dispwin -d1 "${calibration_profile}"
+unset calibration_profile
+
+# pee display
+[ "$(command -v redshift)" ] && {
+	pkill redshift
+	redshift &
+}
+
+# dwm statusbar
+[ "$(command -v dwm-statusline)" ] && {
+	pkill dwm-statusline
+	dwm-statusline forever &
+}
+
+# xss-lock
+[ "$(command -v xss-lock)" ] && {
+	pkill xss-lock
+	xss-lock -- slock &
+}
+
+# compositor
+[ "$(command -v compton)" -a -f "${HOME}/.config/compton.conf" ] \
+	&& compton --config "${HOME}/.config/compton.conf" --daemon
+
+# wallpaper
+[ -x "${HOME}/.local/wallpaper.sh" ] \
+	&& "${HOME}/.local/wallpaper.sh" &
+
+# autostart
+[ "$(command -v keepassxc)" ] && {
+	# workaround for lock file
+	rm ${HOME}/Drive/.Passwords.kdbx.lock
+	keepassxc ${HOME}/Drive/Passwords.kdbx &
+}
+

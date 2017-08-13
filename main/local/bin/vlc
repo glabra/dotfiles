@@ -5,28 +5,33 @@ export PATH='/bin:/usr/bin'
 IFS=' 	
 '
 
-setenv () {
-	printf -- '--setenv %s %s' "$1" $(eval "printf -- '%s' \$$1")
-}
+. "$HOME/.local/bin/bwrap-functions.sh"
 
-ro_bind () {
-	printf -- '--ro-bind %s %s' "$1" "$1"
-}
+for i in $(seq 1 $(($# - 1))); do
+	opts="${opts:+$opts }$1"
+	shift 1
+done
 
-rw_bind () {
-	printf -- '--bind %s %s' "$1" "$1"
-}
+media_path=$(urldecode "${1:-}")
+media_path=${media_path#file://}
+if [ -f "${media_path}" ]; then
+	media_ext=${media_path##*.}
 
-dev_bind () {
-	printf -- '--dev-bind /dev/%s /dev/%s' "$1" "$1"
-}
+	homeenv="--tmpfs $HOME"
+	homeenv="${homeenv} $(ro_bind $HOME/.Xauthority)"
+	homeenv="${homeenv} $(rw_bind $HOME/.config/pulse)"
+else
+	homeenv="$(ro_bind /media)"
+	homeenv="${homeenv} $(ro_bind $HOME)"
+
+	opts="${opts:+$opts }${1:-}"
+fi
 
 exec env -i bwrap \
-	--setenv VDPAU_DRIVER 'va_gl' \
-	$(setenv DISPLAY) \
-	$(setenv HOME) \
-	$(setenv LANG) \
-	$(setenv XDG_RUNTIME_DIR) \
+	$(passenv DISPLAY) \
+	$(passenv HOME) \
+	$(passenv LANG) \
+	$(passenv XDG_RUNTIME_DIR) \
 	\
 	$(ro_bind /usr/bin/vlc) \
 	$(ro_bind /usr/lib) \
@@ -35,20 +40,13 @@ exec env -i bwrap \
 	$(ro_bind /etc/ld.so.cache) \
 	$(rw_bind /run/user/${UID}) \
 	\
-	$(dev_bind dri) \
-	$(dev_bind null) \
-	$(ro_bind /sys/dev/char) \
-	$(ro_bind /sys/devices/pci0000:00) \
-	\
-	$(ro_bind /usr/share/fonts) \
-	$(ro_bind /etc/fonts) \
-	\
-	$(ro_bind /usr/share/locale/ja/LC_MESSAGES/vlc.mo) \
+	$(allow_locale ja vlc) \
+	$(allow_fonts) \
 	\
 	--tmpfs /tmp \
 	$(ro_bind /tmp/.X11-unix/X0) \
-	$(ro_bind $HOME) \
-	$(rw_bind $HOME/.config/vlc) \
+	${homeenv} \
+	${media_ext:+--ro-bind "${media_path}" /media.$media_ext} \
 	\
 	--unshare-user-try \
 	--unshare-uts \
@@ -57,5 +55,5 @@ exec env -i bwrap \
 	--unshare-net \
 	--new-session \
 	--die-with-parent \
-	/usr/bin/vlc "$@"
+	/usr/bin/vlc ${opts:-} ${media_ext:+/media.$media_ext}
 

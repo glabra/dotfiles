@@ -8,46 +8,38 @@ IFS='
 FORTUNE_FILE="${HOME}/.local/share/fortune.txt"
 
 __fetch () {
-    if which curl >/dev/null 2>&1; then
-        curl "${1}"
-    elif which wget >/dev/null 2>&1; then
-        wget -O - "${1}"
-    else
-        printf 'wget or curl not found.\n'
-        exit 1
-    fi
+	if which curl >/dev/null 2>&1; then
+		curl "${1}"
+	elif which wget >/dev/null 2>&1; then
+		wget -O - "${1}"
+	else
+		printf 'wget or curl not found.\n'
+		exit 1
+	fi
 }
 
 die () {
-    cat << _EOF_
-usage: $0 COMMAND
+	cat <<- _EOF_
+	usage: $0 [COMMAND]
 
-The following commands are available:
-  pick:
-    pickup 1 fortune
-  update:
-    update fortune database
-  help:
-    show this text.
-
-Default command is [pick].
-_EOF_
-    exit $1
+	The following commands are available:
+	  pick: pick a fortune (default)
+	  update: update fortune database
+	  help: show this text.
+	_EOF_
+	exit $1
 }
 
 update () {
-    local url='https://raw.githubusercontent.com/sasairc/yasuna/master/quotes/yasuna-quotes'
-    __fetch "${url}" | \
-        tail -n +2 | \
-        cut -d':' -f3 > "${FORTUNE_FILE}"
+	(
+	url='https://raw.githubusercontent.com/sasairc/yasuna/master/quotes/yasuna-quotes'
+	__fetch "${url}" | tail -n +2 | cut -d':' -f3 > "${FORTUNE_FILE}"
+	)
 }
 
 pick () {
-    if [ -f "${FORTUNE_FILE}" ]; then
-        cat "${FORTUNE_FILE}" | shuf -n 1
-    else
-        printf 'Dictionary file not found.\n'
-    fi
+	shuf -n1 "${FORTUNE_FILE}" 2>/dev/null \
+		|| printf 'Cannot read dictionary file.\n'
 }
 
 case "${1:-}" in

@@ -1,0 +1,21 @@
+NEUTRALIZE_SUFFIX=xxx
+neutralize () {
+        (
+        for f in "$@"; do
+                mv -- "$f" "$f.$NEUTRALIZE_SUFFIX"
+        done
+        )
+}
+
+unneutralize () {
+        (
+        for f in "$@"; do
+                af=${f%%.$NEUTRALIZE_SUFFIX}
+                case "$f" in
+                        "$af") ;;
+                        *) mv -- "$f" "$af";;
+                esac
+        done
+        )
+}
+

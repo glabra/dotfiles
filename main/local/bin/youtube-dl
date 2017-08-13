@@ -5,23 +5,22 @@ export PATH='/bin:/usr/bin'
 IFS=' 	
 '
 
+. "$HOME/.local/bin/bwrap-functions.sh"
+
 exec env -i bwrap \
-	--setenv HOME "${HOME}" \
-	--setenv LANG "${LANG}" \
+	$(passenv HOME) \
+	$(passenv LANG) \
 	\
-	--ro-bind /usr/bin/youtube-dl /usr/bin/youtube-dl \
-	--ro-bind /usr/bin/python /usr/bin/python \
-	--ro-bind /usr/lib /usr/lib \
+	$(ro_bind /usr/bin/youtube-dl) \
+	$(ro_bind /usr/bin/python) \
+	$(ro_bind /usr/bin/ffmpeg) \
+	$(ro_bind /usr/lib) \
 	--symlink usr/lib /lib64 \
 	\
-	--dev-bind /dev/random /dev/random \
-	--dev-bind /dev/urandom /dev/urandom \
-	--ro-bind /etc/ssl /etc/ssl \
-	--ro-bind /etc/ca-certificates /etc/ca-certificates \
-	--ro-bind /usr/share/ca-certificates /usr/share/ca-certificates \
+	$(allow_ssl) \
 	\
-	--tmpfs $HOME \
-	--bind $HOME/Downloads $HOME/Downloads \
+	--bind "$(pwd)" /opt \
+	--chdir /opt \
 	\
 	--unshare-all \
 	--share-net \

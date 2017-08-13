@@ -1,0 +1,30 @@
+#!/bin/sh
+set -ue
+umask 0027
+export PATH='/bin:/usr/bin'
+export LANG='C'
+IFS=' 	
+'
+
+off () {
+	xset s off
+	xset -dpms
+}
+
+on () {
+	xset s on
+	xset +dpms
+}
+
+sta () {
+	xset q | fgrep -q 'DPMS is Enabled' \
+		&& printf 'on\n' \
+		|| printf 'off\n'
+}
+
+case "${1:-}" in
+	'off') off;;
+	'on') on;;
+esac
+
+sta

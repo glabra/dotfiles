@@ -4,3 +4,4 @@ if type tree >/dev/null 2>&1; then
     export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -50'"
     export FZF_CTRL_T_OPTS="--preview '(if [ -d {} ]; then tree -C {}; elif file -bi {} | grep -q charset=binary; then printf -- BINARY:\ %s {}; else cat {}; fi) 2> /dev/null | head -50'"
 fi
+

@@ -25,8 +25,15 @@ urlencode() {
 content=$(xsel ${1:-})
 [ -z "$content" ] && exit 1
 
-echo $content
+case "$(printf '%s' "$content" | sed 's/ \+/ /g' | cut -d' ' -f-2)" in
+	'git clone')
+		cd ${HOME}/workspace
+		url=$(printf '%s' "$content" | sed 's/ \+/ /g' | cut -d' ' -f3)
+		st -e git clone $url
+		;;
+	*)
+		xdg-open "$content" \
+		|| xdg-open "https://duckduckgo.com/?q=$(urlencode "$content")"
+		;;
+esac
 
-if ! xdg-open "$content"; then
-	xdg-open "https://duckduckgo.com/?q=$(urlencode "$content")"
-fi

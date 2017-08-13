@@ -7,3 +7,4 @@ if ! type nvim >/dev/null 2>&1; then
     alias iv='vi'
     alias ci='vi'
 fi
+

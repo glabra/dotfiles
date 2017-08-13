@@ -20,3 +20,4 @@ case "$(detect_ls_variant)" in
 esac
 
 unset -f detect_ls_variant
+

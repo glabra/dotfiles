@@ -14,6 +14,22 @@ else
 	VIM_CONFDIR="${DESTINATION}/.vim"
 fi
 
+__symlink_bins () {
+	(
+	cd $HOME/.local/bin/
+
+	[ -e gimp -a ! -e gimp-2.8 ] && ln -s gimp gimp-2.8
+	)
+}
+
+__unsymlink_bins () {
+	(
+	cd $HOME/.local/bin/
+
+	rm -f gimp-2.8
+	)
+}
+
 __vim_install () {
 	if ! which ${VIM_VARIENT} git openssl >/dev/null 2>&1; then
 		printf 'vim, git or openssl not found. aborting vim initialize.\n'
@@ -88,6 +104,7 @@ __fzf_uninstall () {
 
 module_install () {
 	local errs=''
+	__symlink_bins || errmods="${errs} bin_symlink"
 	__shellrc_install || errmods="${errs} shellrc"
 	__vim_install || errmods="${errs} vimrc"
 	__fzf_install || errmods="${errs} fzf"
@@ -96,6 +113,7 @@ module_install () {
 }
 
 module_uninstall () {
+	__unsymlink_bins
 	__vim_uninstall
 	__shellrc_warn
 	__fzf_uninstall

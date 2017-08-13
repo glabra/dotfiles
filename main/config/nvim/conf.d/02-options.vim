@@ -11,7 +11,7 @@ set list
 set listchars=tab:>.,trail:~,nbsp:%
 set magic
 set modeline
-set mouse=a
+set mouse=
 set nocursorline
 set nocursorcolumn
 set nofoldenable

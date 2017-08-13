@@ -5,15 +5,48 @@ export PATH='/bin:/usr/bin'
 export LANG='C'
 IFS=' 	
 '
-BATTERY_ID=BAT0
-BRIGHTNESS_ID=intel_backlight
-CPUTEMP_PATH=hwmon1/temp1_input
+
+readonly EPOCH_TIME=0.5
+readonly EPOCH_TIME_INVERSE=2 # must be integer
+readonly BATTERY_ID=BAT0
+readonly BRIGHTNESS_ID=intel_backlight
+readonly CPUTEMP_PATH=hwmon1/temp1_input
+
+readonly __rx_old=$(mktemp)
+readonly __tx_old=$(mktemp)
+printf '\n' > "${__tx_old}"
+printf '\n' > "${__rx_old}"
+
+trap "cleanup; exit" SIGINT SIGQUIT SIGKILL SIGTERM
+
+cleanup () {
+	rm -f "${__tx_old}" "${__rx_old}"
+}
+
+get_net_average () {
+	NETWORK_DEV=$(ls -1 /sys/class/net/ | fgrep -v lo | fgrep w | head -n1)
+	read -r _c < "/sys/class/net/${NETWORK_DEV}/statistics/${1}_bytes"
+	read -r _o < $2
+	printf '%d\n' "${_c}" >| $2
+	if [ -z "${_o}" ]; then
+		printf '   ?kB/s'
+	else
+		_v=$(((${_c} - ${_o}) * $EPOCH_TIME_INVERSE / 1000))
+		printf '%4dkB/s' "$_v"
+	fi
+}
 
 generate_wifi_entry () {
-	(
-	station=$(connmanctl services | egrep '^[*A]*[OR]' | sed 's/ \+/ /' | cut -d' ' -f2)
-	printf '(%s)' "${station:-NIL}"
-	)
+	_sta=$(connmanctl services | egrep '^[*A]*[OR]' | tail -c+5 | cut -d' ' -f1)
+	if [ -z "${_sta:-}" ]; then
+		printf '(NIL)'
+	else
+		printf '(v'
+		get_net_average rx ${__rx_old}
+		printf ' ^'
+		get_net_average tx ${__tx_old}
+		printf ' %s)' "${_sta}"
+	fi
 }
 
 get_cpu_temperture () {
@@ -21,38 +54,32 @@ get_cpu_temperture () {
 }
 
 is_battery_charging () {
-	case "$(cat /sys/class/power_supply/${BATTERY_ID}/status)" in
+	read -r _l < "/sys/class/power_supply/${BATTERY_ID}/status"
+	case "$_l" in
 		'Charging') return 0;;
 		*) return 1;;
 	esac
 }
 
 get_battery_dischargingrate () {
-	(
 	vol=$(head -c-7 "/sys/class/power_supply/${BATTERY_ID}/voltage_now")
 	cur=$(head -c-7 "/sys/class/power_supply/${BATTERY_ID}/current_now")
 	printf '%d' "$((${cur:-1} * ${vol:-1}))"
-	)
 }
 
 get_battery_remaining () {
-	(
-	full=$(cat "/sys/class/power_supply/${BATTERY_ID}/charge_full")
-	now=$(cat "/sys/class/power_supply/${BATTERY_ID}/charge_now")
-	printf '%d' "$((${now:-0} * 100 / ${full:-1}))"
-	)
+	read -r _f < "/sys/class/power_supply/${BATTERY_ID}/charge_full"
+	read -r _c < "/sys/class/power_supply/${BATTERY_ID}/charge_now"
+	printf '%d' "$((${_c:-0} * 100 / ${_f:-1}))"
 }
 
 get_brightness () {
-	(
-	full=$(cat "/sys/class/backlight/${BRIGHTNESS_ID}/max_brightness")
-	now=$(cat "/sys/class/backlight/${BRIGHTNESS_ID}/actual_brightness")
-	printf '%d' "$((${now:-0} * 100 / ${full:-1}))"
-	)
+	read -r _f < "/sys/class/backlight/${BRIGHTNESS_ID}/max_brightness"
+	read -r _c < "/sys/class/backlight/${BRIGHTNESS_ID}/actual_brightness"
+	printf '%d' "$((${_c:-0} * 100 / ${_f:-1}))"
 }
 
 generate_volume_entry () {
-	(
 	EXTERNAL_ID=hdmi-stereo-extra
 
 	sink_info=$(ponymix defaults | fgrep -A2 'sink')
@@ -71,29 +98,38 @@ generate_volume_entry () {
 			printf 'S%s' "${vol}"
 		fi
 	fi
-	)
 }
 
 generate_line () {
-	printf '%s %dC b%d%% %s%dW/%d%% %s %s' \
-		"$(generate_wifi_entry)" \
-		"$(get_cpu_temperture)" \
-		"$(get_brightness)" \
-		"$(is_battery_charging && printf '%c' '+' || printf '%c' '-')" \
-		"$(get_battery_dischargingrate)" \
-		"$(get_battery_remaining)" \
-		"$(generate_volume_entry)" \
-		"$(date +%m/%d.%H:%M:%S)"
+	generate_wifi_entry
+	printf ' '
+	get_cpu_temperture
+	printf 'C b'
+	get_brightness
+	printf '%% '
+	is_battery_charging \
+		&& printf '%c' '+' \
+		|| printf '%c' '-'
+	get_battery_dischargingrate
+	printf 'W/'
+	get_battery_remaining
+	printf '%% '
+	generate_volume_entry
+	printf ' '
+	date +%m/%d.%H:%M:%S
 }
 
 case "${1:-}" in
 	'forever')
 		while :; do
 			xsetroot -name "$(generate_line)"
-			sleep 0.5
+			sleep ${EPOCH_TIME}
 		done
 		;;
 	*)
 		xsetroot -name "$(generate_line)"
+		;;
 esac
+
+cleanup
 
