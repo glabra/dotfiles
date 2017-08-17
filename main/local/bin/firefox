@@ -7,6 +7,12 @@ IFS='
 
 . "$HOME/.local/bin/bwrap-functions.sh"
 
+[ ! -d "$HOME/.mozilla" ] \
+	&& mkdir "$HOME/.mozilla"
+
+[ ! -d "$HOME/.pki" ] \
+	&& mkdir "$HOME/.pki"
+
 # sharing pid namespace is required to fcitx working
 exec env -i bwrap \
 	$(passenv_if_exists DRI_PRIME) \

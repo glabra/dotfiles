@@ -31,6 +31,7 @@ exec env -i bwrap \
 	\
 	$(ro_bind /usr/share/gtk-2.0) \
 	$(ro_bind /usr/share/gimp) \
+	$(ro_bind /etc/gimp) \
 	\
 	$(bind_lcmessage gimp20-libgimp) \
 	$(bind_lcmessage gimp20) \

@@ -1,84 +1,50 @@
-# source conf.d
-conf_d="${CONFIG_DIR}/conf.d"
-
 # util function
 ## is_busybox_binary
 is_busybox_binary () {
-	readlink "$(which $1 2> /dev/null)" 2> /dev/null | fgrep -q '/busybox'
+	readlink "$(command -v $1)" | fgrep -q '/busybox'
 }
 
-# append_path PATH
-__initsh_append_path () {
-	printf '%s' "${PATH}" | fgrep -q "${1}" \
-		|| export PATH="${1}:${PATH}"
-}
-
-# append_path_if_exists PATH
-append_path_if_exists () {
-	[ -e "${1}" ] && __initsh_append_path "${1}"
-}
-
-# append_path_if_exists_lazy PATH commands...
-append_path_if_exists_lazy () {
-	path="${1}"
-	shift 1
-	[ -e "${path}" ] && for cmd in "$@"; do
-		eval "${cmd} () {
-			__initsh_append_path \"${path}\"
-			unset -f $@
-			${cmd} \"\$@\"
-		}"
-	done
-	unset path
-}
-
-# source_if_exists PATH
+## source_if_exists PATH
 source_if_exists () {
-	if [ -f "${1}" ]; then
-		. "${1}"
-		return 0
-	else
-		return 1
-	fi
+	[ -f "${1}" ] \
+		&& . "${1}"
 }
 
-# source_if_exists_lazy PATH commands...
-source_if_exists_lazy () {
+# source_lazy PATH commands...
+source_lazy () {
+	[ -e "${1}" ] || return
+
 	path="${1}"
 	shift 1
-	[ -e "${path}" ] && for cmd in "$@"; do
-		eval "${cmd} () {
+	for c in $@; do
+		eval "$c () {
 			unset -f $@
 			. \"${path}\"
-			${cmd} \"\$@\"
+			$c \"\$@\"
 		}"
 	done
 	unset path
 }
 
-# if tput is not exist, fallback to shellscript implimentation.
-type tput >&/dev/null || . "${CONFIG_DIR}/tput.sh"
+append_path () {
+	case "${PATH}" in
+		*${1}*) ;;
+		*) export PATH="${1}:${PATH}";;
+	esac
+}
 
 # append ~/.local/bin into PATH before reading configs
-__initsh_append_path "${HOME}/.local/bin"
+append_path "${HOME}/.local/bin"
 
 # read config
-## `_FNAME` is always read.
-for i in $(ls -1 "${conf_d}" | fgrep '_'); do
-	. "${conf_d}/${i}"
-done
-## `FNAME` is read only when `FNAME` is defined or exist.
-for i in $(ls -1 "${conf_d}" | fgrep -v '_'); do
-	type "${i}" > /dev/null 2>&1 && \
-		. "${conf_d}/${i}"
+for i in ${CONFIG_DIR}/conf.d/*; do
+	. "${i}"
 done
 unset i
 
 # cleanup
 unset -f is_busybox_binary
 unset -f source_if_exists
-unset -f source_if_exists_lazy
-unset -f append_path_if_exists
-unset -f append_path_if_exists_lazy
-unset conf_d
-unset files
+unset -f source_lazy
+unset -f append_path
+

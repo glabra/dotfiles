@@ -30,25 +30,25 @@ reload_compton () {
 	)
 }
 
-load_wallpaper () {
-	[ -x "${HOME}/.local/wallpaper.sh" ] \
-		&& . "${HOME}/.local/wallpaper.sh"
-}
-
 xrandr_action () {
 	(
 	INTERNAL_MONITOR='eDP-1'
 	EXTERNAL_MONITOR='HDMI-2'
 
-	xrandr --output "${EXTERNAL_MONITOR}" --auto --$1 "${INTERNAL_MONITOR}"
+	if xrandr --query | fgrep -q "${EXTERNAL_MONITOR} disconnected"; then
+		xrandr --output "${EXTERNAL_MONITOR}" --off
+	else
+		xrandr --output "${EXTERNAL_MONITOR}" --auto --$1 "${INTERNAL_MONITOR}"
+	fi
 	reload_compton
-	load_wallpaper
 	)
 }
 
 case "${1:-}" in
 	'right-of'|'same-as')
 		xrandr_action $1
+		[ -x "${HOME}/.local/wallpaper.sh" ] \
+			&& . "${HOME}/.local/wallpaper.sh" &
 		;;
 	'toggle-audio')
 		toggle_audio;;

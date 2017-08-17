@@ -23,13 +23,14 @@ fi
 
 # touchpad
 if [ "$(command -v xinput)" ]; then
-	DEVID=12
+	(DEVID=$(xinput list --id-only 'SynPS/2 Synaptics TouchPad')
 	xinput set-prop $DEVID 'libinput Tapping Enabled' 1
 	xinput set-prop $DEVID 'libinput Tapping Drag Enabled' 1
 	xinput set-prop $DEVID 'libinput Middle Emulation Enabled' 1
 	xinput set-prop $DEVID 'libinput Natural Scrolling Enabled' 1
 	xinput set-prop $DEVID 'libinput Click Method Enabled' 0 1
 	xinput set-prop $DEVID 'libinput Accel Speed' 0.5
+	)
 fi
 
 

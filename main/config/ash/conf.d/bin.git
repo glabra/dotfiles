@@ -1,3 +1,5 @@
+command -v 'git' >/dev/null || return
+
 alias gi='git'
 alias gt='git'
 alias gti='git'
@@ -6,18 +8,19 @@ alias gits='git s'
 
 # git_ps1
 source_if_exists "/usr/share/git/completion/git-prompt.sh"
-if ! type __git_ps1 >/dev/null 2>&1; then
+
+if ! command -v __git_ps1 >/dev/null; then
     __git_ps1() {
-      local branch="$(git branch 2>/dev/null | fgrep '* ' | tail -c +3)"
-      test -n "${branch}" && \
-        printf "$1" "${branch}"
+      (branch="$(git branch 2>/dev/null | fgrep '* ' | tail -c +3)"
+      [ -n "${branch}" ] && printf "$1" "${branch}"
+      )
     }
 fi
 
 # source completion file
-if [ -n "${BASH_VERSION}" ]; then
+if [ -n "${BASH_VERSION:-}" ]; then
     source_if_exists "/usr/share/git/completion/git-completion.bash"
-elif [ -n "${ZSH_VERSION}" ]; then
+elif [ -n "${ZSH_VERSION:-}" ]; then
     source_if_exists "/usr/share/git/completion/git-completion.zsh"
 fi
 

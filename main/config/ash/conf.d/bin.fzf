@@ -1,0 +1,11 @@
+[ -z "${BASH_VERSION:-}" -o ! -f "${HOME}/.fzf.bash" ] && return
+
+. "${HOME}/.fzf.bash"
+
+export FZF_COMPLETION_TRIGGER='//'
+export FZF_DEFAULT_OPTS='--bind ctrl-f:page-down,ctrl-b:page-up'
+export FZF_ALT_C_COMMAND='command find -L . -mindepth 1 \( -path '*/\.git' \) -prune -o -type d -print 2> /dev/null | cut -b3-'
+
+[ -n "${TMUX:-}" ] \
+        && export FZF_TMUX=1
+

@@ -1,4 +1,0 @@
-export GOPATH="${HOME}/workspace/golang"
-
-[ ! -d "${GOPATH}" ] && mkdir "${GOPATH}"
-

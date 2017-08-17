@@ -5,14 +5,14 @@ export PATH='/bin:/usr/bin'
 IFS=' 	
 '
 
-[ "$#" -eq 0 ] && exit 1
-
 . "$HOME/.local/bin/bwrap-functions.sh"
 
 [ ! -d "$HOME/.config/keepassxc" ] \
 	&& mkdir "$HOME/.config/keepassxc"
 
 parse_opts "$@"
+
+[ -z "${filepath:-}" ] && filepath="$HOME/Drive/Passwords.kdbx"
 
 exec env -i bwrap \
 	$(passenv DISPLAY) \

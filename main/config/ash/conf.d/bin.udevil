@@ -1,3 +1,5 @@
+command -v 'udevil' >/dev/null || return
+
 smb_mount_ts () {
         udevil mount smb://berochoro@192.168.1.3/ts
 }

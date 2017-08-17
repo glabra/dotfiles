@@ -1,0 +1,16 @@
+# disable ^S
+stty stop undef
+
+# for delete key in st
+# same as `tput smkx`
+printf '\033[?1h\033='
+
+# PS1
+PS1='\[\e[1m\]\W\[\e[0m\]$(__git_ps1 '':%s'') (\t) \[\e[2m\]『$(__fortune)』\[\e[0m\]\n\$ '
+
+# completion
+if [ -n "${BASH_VERSION:-}" ]; then
+    source_if_exists "/etc/bash-completion/bash_completion"
+    source_if_exists "/usr/share/bash-completion/bash_completion"
+fi
+
