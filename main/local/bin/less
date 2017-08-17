@@ -33,5 +33,5 @@ exec env -i bwrap \
 	--unshare-all \
 	--new-session \
 	--die-with-parent \
-	/usr/bin/less ${opts:-} ${ext:+/data.$ext}
+	/usr/bin/less ${opts:--R} ${ext:+/data.$ext}
 
