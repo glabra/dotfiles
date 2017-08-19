@@ -29,7 +29,9 @@ __symlink_bins () {
 	(
 	cd ${DESTDIR}/.local/bin/
 
-	[ -e gimp -a ! -e gimp-2.8 ] && ln -s gimp gimp-2.8
+	if [ -e gimp -a ! -e gimp-2.8 ]; then
+		ln -s gimp gimp-2.8
+	fi
 	)
 }
 
@@ -44,7 +46,7 @@ __unsymlink_bins () {
 __vim_install () {
 	(
 	[ ! "$(command -v ${VIM_VARIENT})" -o ! "$(command -v git)" ] \
-		&& printf 'vim or git not found. aborting vim initialize.\n'
+		&& printf 'vim or git not found. aborting vim initialize.\n' \
 		&& return 1
 
 	vimplug_dest="${VIM_CONFDIR}/autoload/plug.vim"
@@ -79,16 +81,16 @@ __shellrc_install () {
 __shellrc_warn () {
 	if [ -f "${HOME}/.zshrc" ]; then
 		fgrep -q "${SOURCE_LINE}" "${HOME}/.zshrc" \
-			&& printf '! remove `%s` from .zshrc manually.' "${SOURCE_LINE}"
+			&& printf '! remove `%s` from .zshrc manually.\n' "${SOURCE_LINE}"
 	elif [ -f "${HOME}/.bashrc" ]; then
 		fgrep -q "${SOURCE_LINE}" "${HOME}/.bashrc" \
-			&& printf '! remove `%s` from .bashrc manually.' "${SOURCE_LINE}"
+			&& printf '! remove `%s` from .bashrc manually.\n' "${SOURCE_LINE}"
 	fi
 }
 
 __fzf_install () {
 	[ ! "$(command -v git)" ] \
-		&& printf 'git not found. aborting fzf initialize.\n'
+		&& printf 'git not found. aborting fzf initialize.\n' \
 		&& return 1
 
 	[ -d "${FZF_DIR}" ] && return 0
@@ -109,7 +111,9 @@ module_install () {
 	__vim_install || errs="${errs} vimrc"
 	__fzf_install || errs="${errs} fzf"
 
-	[ -n "${errs}" ] && printf '\n> error: %s\n'  "${errs}"
+	if [ -n "${errs}" ]; then
+		printf '\n> error: %s\n'  "${errs}"
+	fi
 	)
 }
 
