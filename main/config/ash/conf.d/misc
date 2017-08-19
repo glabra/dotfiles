@@ -7,9 +7,7 @@ fi
 # fast-sync
 if [ -x "${HOME}/.dotfiles/bootstrap.sh" ]; then
 	dotfiles_bootstrap () {
-		(cd ${HOME}/.dotfiles
-		./bootstrap.sh "$@"
-		)
+		("${HOME}/.dotfiles/bootstrap.sh" "$@")
 	}
 
 	dotfiles_move () {
@@ -27,19 +25,42 @@ if [ -x "${HOME}/.dotfiles/bootstrap.sh" ]; then
 			*) return ;;
 		esac
 
-		if [ -d "${HOME}/.dotfiles/$1" ]; then
-			dest="${HOME}/.dotfiles/$1/${file#${HOME}/.}"
-			printf -- 'move "%s" into "%s" [y/N] ' "$2" "$dest"
-			read -r _in
-			if [ "_${_in:0:1}" = '_y' -o "_${_in:0:1}" = '_Y' ]; then
-				dir=$(dirname "$dest")
-				[ ! -d $dir ] && mkdir -p $dir
-				mv -- "$file" "$dest"
-				printf 'moved.\n'
-			else
-				printf 'aborted.\n'
-			fi
+		[ -d "${HOME}/.dotfiles/$1" ] || return
+
+		dest="${HOME}/.dotfiles/$1/${file#${HOME}/.}"
+		printf -- 'move "%s" into "%s" [y/N] ' "$2" "$dest"
+		read -r _in
+		[ "_${_in:0:1}" = '_y' -o "_${_in:0:1}" = '_Y' ] || return
+
+		dir=$(dirname "$dest")
+		[ ! -d $dir ] && mkdir -p $dir
+		mv -- "$file" "$dest"
+		printf 'moved.\n'
+		"${HOME}/.dotfiles/bootstrap.sh" sync
+		)
+	}
+
+	dotfiles_rm () {
+		(
+		if [ -z "${1:-}" ]; then
+			printf 'Usage: dotfiles_move FILE\n'
+			return
 		fi
+
+		file=$(realpath "$1")
+
+		case "$file" in
+			${HOME}/.dotfiles/*) ;;
+			*) return ;;
+		esac
+
+		printf -- 'remove "%s" [y/N] ' "$file"
+		read -r _in
+		[ "_${_in:0:1}" = '_y' -o "_${_in:0:1}" = '_Y' ] || return
+
+		rm -f -- "$file"
+		printf 'removed.\n'
+		"${HOME}/.dotfiles/bootstrap.sh" sync
 		)
 	}
 fi
