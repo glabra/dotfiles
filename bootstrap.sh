@@ -5,29 +5,11 @@ export LANG='C'
 IFS=' 	
 '
 
-ROOT="$(pwd)"
-SRCTYPE_FILE="${ROOT}/.src_type"
-DESTINATION="${HOME}"
+: ${SRCDIR:=${HOME}/.dotfiles}
+: ${DESTDIR:=${HOME}}
+: ${SRCTYPE:=${SRCDIR}/.src_type}
 
-die () {
-	cat <<- _EOF_
-	usage: $0 COMMAND
-
-	The following commands are available:
-	  install [src_type]:
-	    install dotfiles into ~/
-	  uninstall:
-	    uninstall dotfiles from ~/
-	  sync:
-	    remove unresolvable symlinks
-	  help:
-	    show this text.
-
-	Default command is [install].
-	_EOF_
-	exit $1
-}
-
+# create_symlinks FROM TO
 create_symlinks () {
 	(
 	srcdir=$1
@@ -47,126 +29,119 @@ create_symlinks () {
 	)
 }
 
+# remove_symlinks FROM TO ${REMOVE_ALL_SYMLINKS:-false}
 remove_symlinks () {
 	(
-	srcdir=$1
-	destdir=$2
+	for d in $(find $1 -type d); do
+		case "$d" in
+			"$1") path=$2;;
+			*) path="$2/.${d#$1/}";;
+		esac
 
-	files=$(find "${srcdir}" -type f)
-	for file in ${files}; do
-		dest="${destdir}/.${file#${srcdir}/}"
-		[ -L "${dest}" ] && rm -f "${dest}"
+		for l in $(find "$path" -maxdepth 1 -type l); do
+			realFile=$(readlink "$l")
+			case "$realFile" in
+				$1*)
+					[ "_${3:-}" = '_true' -o ! -e "$l" ] \
+						&& rm -f "$l"
+					;;
+			esac
+		done
+
+		rmdir -p "$d" >/dev/null 2>&1 || true
 	done
-
-	find "${srcdir}" -type d | \
-		sed "s%^${srcdir}/%${destdir}/.%" | \
-		xargs rmdir -p >/dev/null 2>&1
 
 	return 0
 	)
 }
 
-remove_dangling_symlinks () {
-	(
-	srcdir=$1
-	destdir=$2
-
-	files=$(find "${destdir}" -type l)
-	for file in ${files}; do
-		realfile=$(readlink "${file}") && \
-			printf '%s' "${realfile}" | fgrep -q "${srcdir}" && \
-			[ ! -e "${realfile}" ] && \
-			rm -f -- "${file}"
-	done
-
-	find "${srcdir}" -type d | \
-		sed "s%^${srcdir}/%${destdir}/.%" | \
-		xargs rmdir -p >/dev/null 2>&1
-
-	return 0
-	)
+check_srctype () {
+	find "${SRCDIR}" -maxdepth 1 -type d ! -name '_*' ! -name '.*' \
+		| fgrep -q "${SRCDIR}/${1:-_invalid}" \
+		|| return 1
 }
 
 get_srctype () {
 	(
-	[ -n "${1:-}" ] && \
-		printf -- '%s' "${1}" > "${SRCTYPE_FILE}"
+	[ -f "${SRCTYPE}" ] \
+		&& read -r _type < "${SRCTYPE}"
 
-	[ -e "${SRCTYPE_FILE}" ] && \
-		src_type=$(cat "${SRCTYPE_FILE}")
-
-	[ -z "${src_type:-}" ] && \
-		printf -- 'No src_type defined.\n' && \
-		exit 1
-
-	printf -- '%s' "${src_type}"
-
-	return 0
+	if check_srctype "${_type:-}"; then
+		printf '%s' "${_type}"
+	else
+		printf ''
+	fi
 	)
+
 }
 
-__install () {
+dotfiles_install () {
 	(
-	src_type=$(get_srctype ${1:-})
+	check_srctype $1
+	_previous=$(get_srctype)
 
-	[ ! -d "${ROOT}/${src_type}" ] && \
-		printf -- '`%s` not found.\n' "${src_type}" && \
-		return 1
+	if [ "_${_previous:-$1}" != "_$1" ]; then
+		printf -- '-> remove previously installed symlinks\n'
+		dotfiles_uninstall
+	fi
 
 	printf -- '-> create symlinks\n'
-	create_symlinks "${ROOT}/${src_type}" "${DESTINATION}"
-	[ -d "${ROOT}/_common" ] && create_symlinks "${ROOT}/_common" "${DESTINATION}"
+	create_symlinks "${SRCDIR}/$1" "${DESTDIR}"
+	for i in ${SRCDIR}/_*/; do
+		create_symlinks "${i%/}" "${DESTDIR}"
+	done
 
 	printf -- '-> module install\n'
-	[ -f "${ROOT}/${src_type}.sh" ] && \
-		. "${ROOT}/${src_type}.sh" && \
+	if [ -f "${SRCDIR}/$1.sh" ]; then
+		. "${SRCDIR}/$1.sh"
 		module_install
+	fi
 
-	return 0
+	printf "%s\n" "$1" > "${SRCTYPE}"
 	)
 }
 
-__uninstall () {
+dotfiles_uninstall () {
 	(
-	src_type=$(get_srctype ${1:-})
-
-	[ ! -d "${ROOT}/${src_type}" ] && \
-		printf -- '`%s` not found.\n' "${srcdir}" && \
-		return 1
+	_type=$(get_srctype)
+	[ -z "${_type}" ] && return 1
 
 	printf -- '-> module uninstall\n'
-	[ -f "${ROOT}/${src_type}.sh" ] && \
-		. "${ROOT}/${src_type}.sh" && \
+	if [ -f "${SRCDIR}/${_type}.sh" ]; then
+		. "${SRCDIR}/${_type}.sh"
 		module_uninstall
+	fi
 
-	printf -- '-> delete symlinks\n'
-	remove_dangling_symlinks "${ROOT}/${src_type}" "${DESTINATION}"
-	remove_symlinks "${ROOT}/${src_type}" "${DESTINATION}"
-	[ -d "${ROOT}/_common" ] && remove_symlinks "${ROOT}/_common" "${DESTINATION}"
+	printf -- '-> remove symlinks\n'
+	remove_symlinks "${SRCDIR}/${_type}" "${DESTDIR}" true
+	for i in ${SRCDIR}/_*/; do
+		remove_symlinks "${i%/}" "${DESTDIR}" true
+	done
 
-	return 0
+	rm -f "${SRCTYPE}"
 	)
 }
 
-__sync () {
+dotfiles_sync () {
 	(
-	src_type=$(get_srctype ${1:-})
-	srcdir="${ROOT}/${src_type}"
-	[ ! -d "${srcdir}" ] && \
-		printf -- '`%s` not found.\n' "${srcdir}" && \
-		return 1
+	_type=$(get_srctype)
+	[ -z "${_type}" ] && return 1
 
-	remove_dangling_symlinks "${srcdir}" "${DESTINATION}"
+	printf -- '-> remove dangling symlinks\n'
+	remove_symlinks "${SRCDIR}/${_type}" "${DESTDIR}"
+	for i in ${SRCDIR}/_*/; do
+		remove_symlinks "${i%/}" "${DESTDIR}"
+	done
 
-	return 0
+	printf -- '-> update current symlinks\n'
+	dotfiles_install ${_type}
 	)
 }
 
 case "${1:-}" in
-	'install' | '') __install "${2:-}" ;;
-	'uninstall') __uninstall ;;
-	'sync') __sync ;;
-	'help') die 0;;
-	*) die 1;;
+	'install') dotfiles_install "${2}" ;;
+	'uninstall') dotfiles_uninstall;;
+	'sync' | '') dotfiles_sync;;
+	*) printf -- 'Usage: %s [(install [src_type]|uninstall|sync)]' "$0"
 esac
 

@@ -38,7 +38,7 @@ case "${1:-}" in
 		set_brightness_relative $1;;
 	[0-9] | [1-9][0-9] | '100')
 		set_brightness $1;;
-	*)
-		get_brightness;;
 esac
+
+get_brightness
 

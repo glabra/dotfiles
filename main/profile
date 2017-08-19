@@ -1,1 +1,7 @@
+[ -z "${DISPLAY:-}" -a "${XDG_VTNR:-0}" -eq 1 ] \
+	&& exec startx
+
+[ -z "${DISPLAY:-}" ] \
+	&& export LANG=en_US.UTF-8
+
 . "${HOME}/.config/ash/init.sh"

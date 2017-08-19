@@ -12,9 +12,8 @@ fi
 
 . "$HOME/.xprofile"
 
-if [ "$(command -v ssh-agent)" ]; then
-	exec ssh-agent dwm
-else
-	exec dwm
-fi
+command -v ssh-agent >/dev/null \
+	&& exec ssh-agent dwm
+
+exec dwm
 

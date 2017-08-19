@@ -17,7 +17,7 @@ toggle_audio () {
 			;;
 		*)
 			ponymix set-profile "${INTERNAL_PROFILE}"
-			ll
+			;;
 	esac
 	)
 }
@@ -48,7 +48,7 @@ case "${1:-}" in
 	'right-of'|'same-as')
 		xrandr_action $1
 		[ -x "${HOME}/.local/wallpaper.sh" ] \
-			&& . "${HOME}/.local/wallpaper.sh" &
+			&& "${HOME}/.local/wallpaper.sh" &
 		;;
 	'toggle-audio')
 		toggle_audio;;

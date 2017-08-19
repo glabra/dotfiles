@@ -14,5 +14,7 @@ CONFIG_DIR="${HOME}/.config/ash"
 unset CONFIG_DIR
 
 # initialize finished
-date
+cat << _EOF
+$(date)
+_EOF
 

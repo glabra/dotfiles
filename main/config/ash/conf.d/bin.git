@@ -7,20 +7,21 @@ alias sgit='git'
 alias gits='git s'
 
 # git_ps1
-source_if_exists "/usr/share/git/completion/git-prompt.sh"
+[ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ] \
+	&& source_if_exists "/usr/share/git/completion/git-prompt.sh"
 
 if ! command -v __git_ps1 >/dev/null; then
-    __git_ps1() {
-      (branch="$(git branch 2>/dev/null | fgrep '* ' | tail -c +3)"
-      [ -n "${branch}" ] && printf "$1" "${branch}"
-      )
-    }
+	__git_ps1() {
+		(branch="$(git branch 2>/dev/null | fgrep '* ' | tail -c +3)"
+		[ -n "${branch}" ] && printf "$1" "${branch}"
+		)
+	}
 fi
 
 # source completion file
 if [ -n "${BASH_VERSION:-}" ]; then
-    source_if_exists "/usr/share/git/completion/git-completion.bash"
+	source_if_exists "/usr/share/git/completion/git-completion.bash"
 elif [ -n "${ZSH_VERSION:-}" ]; then
-    source_if_exists "/usr/share/git/completion/git-completion.zsh"
+	source_if_exists "/usr/share/git/completion/git-completion.zsh"
 fi
 

@@ -1,83 +1,72 @@
 #!/bin/sh
-
 export LANG='ja_JP.UTF-8'
 
-# tell xdg-open to use pcmanfm
-[ -z "${DESKTOP_SESSION}" ] \
-	&& export DESKTOP_SESSION=LXDE
+case "$PATH" in
+	*$HOME/.local/bin*) ;;
+	*) export PATH="${HOME}/.local/bin:${PATH}";;
+esac
 
-printf '%s' "${PATH}" | fgrep -q "${HOME}/.local/bin" \
-	|| export PATH="${HOME}/.local/bin:${PATH}"
+# tell xdg-open to use pcmanfm
+: ${DESKTOP_SESSION:=LXDE}
+export DESKTOP_SESSION
 
 # keyboard settings
-xset r rate 200 45
-setxkbmap -option ctrl:nocaps -option altwin:prtsc_rwin
+xset r rate 200 45 &
+setxkbmap -option ctrl:nocaps -option altwin:prtsc_rwin &
 
 # ime
-if [ "$(command -v fcitx-autostart)" ]; then
+command -v fcitx-autostart >/dev/null && {
 	export XMODIFIERS=@im=fcitx
 	export QT_IM_MODULE=fcitx
 	export GTK_IM_MODULE=fcitx
 	fcitx-autostart &
-fi
+}
 
 # touchpad
-if [ "$(command -v xinput)" ]; then
-	(DEVID=$(xinput list --id-only 'SynPS/2 Synaptics TouchPad')
+command -v xinput >/dev/null && (
+	DEVID=$(xinput list --id-only 'SynPS/2 Synaptics TouchPad')
 	xinput set-prop $DEVID 'libinput Tapping Enabled' 1
 	xinput set-prop $DEVID 'libinput Tapping Drag Enabled' 1
 	xinput set-prop $DEVID 'libinput Middle Emulation Enabled' 1
 	xinput set-prop $DEVID 'libinput Natural Scrolling Enabled' 1
 	xinput set-prop $DEVID 'libinput Click Method Enabled' 0 1
 	xinput set-prop $DEVID 'libinput Accel Speed' 0.5
-	)
-fi
+) &
 
+autostart () {
+	(command -v $1 >/dev/null || return
+	app=$1
+	shift 1
+	pkill $app
+	$app "$@" &
+	)
+}
 
 # hack for beautiful looking in Java, avoid Java AWT bugs
 export _JAVA_OPTIONS='-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dawt.useSystemAAFontSettings=gasp'
 export _JAVA_AWT_WM_NONREPARENTING=1
 export AWT_TOOLKIT=MToolkit
-[ "$(command -v wmname)" ] && wmname LG3D
+autostart wmname LG3D
 
-# display calibration
-## for xiaomi mi notebook air 13, sharp:
-##   https://github.com/tlvince/xiaomi-mi-notebook-air-13
-calibration_profile="${HOME}/.config/6500k.icm"
-[ "$(command -v dispwin)" -a -f "${calibration_profile}" ] \
-	&& dispwin -d1 "${calibration_profile}"
-unset calibration_profile
-
-# pee display
-[ "$(command -v redshift)" ] && {
-	pkill redshift
-	redshift &
-}
-
-# dwm statusbar
-[ "$(command -v dwm-statusline)" ] && {
-	pkill dwm-statusline
-	dwm-statusline forever &
-}
-
-# xss-lock
-[ "$(command -v xss-lock)" ] && {
-	pkill xss-lock
-	xss-lock -- slock &
-}
+# misc autostart
+autostart redshift
+autostart dunst
+autostart dwm-statusline forever
+autostart xss-lock -- slock
+autostart "${HOME}/.local/wallpaper.sh"
 
 # compositor
 [ "$(command -v compton)" -a -f "${HOME}/.config/compton.conf" ] \
 	&& compton --config "${HOME}/.config/compton.conf" --daemon
 
-# wallpaper
-[ -x "${HOME}/.local/wallpaper.sh" ] \
-	&& "${HOME}/.local/wallpaper.sh" &
+## mi notebook air 13, sharp; https://github.com/tlvince/xiaomi-mi-notebook-air-13
+[ -f "${HOME}/.config/6500k.icm" ] \
+	&& autostart dispwin -d1 "${HOME}/.config/6500k.icm"
 
-# autostart
-[ "$(command -v keepassxc)" ] && {
-	# workaround for lock file
-	rm ${HOME}/Drive/.Passwords.kdbx.lock
-	keepassxc ${HOME}/Drive/Passwords.kdbx &
-}
+# workaround for lock file
+[ -f "${HOME}/Drive/.Passwords.kdbx.lock" ] \
+	&& rm -f "${HOME}/Drive/.Passwords.kdbx.lock"
+autostart keepassxc ${HOME}/Drive/Passwords.kdbx
+
+unset -f autostart
 

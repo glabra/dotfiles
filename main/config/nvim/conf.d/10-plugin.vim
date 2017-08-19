@@ -4,6 +4,7 @@ call plug#begin(expand(g:myvim . '/bundle'))
 Plug 'justinmk/vim-dirvish'
 Plug 'simeji/winresizer'
 Plug 'neomake/neomake'
+Plug 'thinca/vim-splash'
 
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Shougo/neco-syntax'

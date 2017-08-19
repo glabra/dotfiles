@@ -12,11 +12,18 @@ SCREEN_SIZE=1920x1080
 [ ! "$(command -v feh)" -o ! "$(command -v convert)" ] \
 	&& exit 2
 
-wallpaper=${1:-}
-: ${wallpaper:=$(ls -1 | egrep 'wallpaper\..+\.(jpg|png)' | head -n1)}
-: ${wallpaper:=$WALLPAPERS/$(ls -1 $WALLPAPERS | shuf -n1)}
+if [ -z "${1:-}" ]; then
+	defaultpaper=$(ls -1 $WALLPAPERS | fgrep '!default' || true)
+	if [ -n "$defaultpaper" ]; then
+		wallpaper=$WALLPAPERS/$defaultpaper
+	else
+		wallpaper=$WALLPAPERS/$(ls -1 $WALLPAPERS | shuf -n1)
+	fi
+else
+	wallpaper=${1:-}
+fi
 
-[ ! -f "${wallpaper}" ] \
+[ ! -e "${wallpaper}" ] \
 	&& exit 1
 
 case "${wallpaper}" in
@@ -24,7 +31,7 @@ case "${wallpaper}" in
 		feh --no-fehbg --bg-tile "${wallpaper}"
 		;;
 	*.center.*)
-		color=$(printf '%s' "${wallpaper}" | egrep -o '[0-9a-f]+\..+$' | cut -d. -f1)
+		color=$(printf '%s' "${wallpaper}" | egrep -o '[0-9a-f]+\.(jpg|png)$' | cut -d. -f1)
 		convert "${wallpaper}" \
 			-gravity center \
 			-background "#${color}" \

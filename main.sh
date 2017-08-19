@@ -9,14 +9,25 @@ FZF_DIR="${HOME}/.fzf"
 VIM_VARIENT='nvim'
 
 if [ "${VIM_VARIENT}" = 'nvim' ]; then
-	VIM_CONFDIR="${DESTINATION}/.config/nvim"
+	VIM_CONFDIR="${DESTDIR}/.config/nvim"
 else
-	VIM_CONFDIR="${DESTINATION}/.vim"
+	VIM_CONFDIR="${DESTDIR}/.vim"
 fi
+
+__fetch () {
+	if command -v curl >/dev/null; then
+		curl -o - -- "$1"
+	elif command -v wget >/dev/null; then
+		wget -O - -- "$1"
+	else
+		printf 'curl, wget not found.' 1>&2
+		return 1
+	fi
+}
 
 __symlink_bins () {
 	(
-	cd $HOME/.local/bin/
+	cd ${DESTDIR}/.local/bin/
 
 	[ -e gimp -a ! -e gimp-2.8 ] && ln -s gimp gimp-2.8
 	)
@@ -24,42 +35,30 @@ __symlink_bins () {
 
 __unsymlink_bins () {
 	(
-	cd $HOME/.local/bin/
+	cd ${DESTDIR}/.local/bin/
 
 	rm -f gimp-2.8
 	)
 }
 
 __vim_install () {
-	if ! which ${VIM_VARIENT} git openssl >/dev/null 2>&1; then
-		printf 'vim, git or openssl not found. aborting vim initialize.\n'
-		return 1
-	fi
+	(
+	[ ! "$(command -v ${VIM_VARIENT})" -o ! "$(command -v git)" ] \
+		&& printf 'vim or git not found. aborting vim initialize.\n'
+		&& return 1
 
-	local vimplug_dest="${VIM_CONFDIR}/autoload/plug.vim"
-	local vimplug_url='https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+	vimplug_dest="${VIM_CONFDIR}/autoload/plug.vim"
+	vimplug_url='https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 	# check if vim is already initialized
 	[ -f "${vimplug_dest}" ] && return 0
 
 	mkdir -p -- "$(dirname "${vimplug_dest}")"
 
-	if which curl >/dev/null 2>&1; then
-		curl -o "${vimplug_dest}" -- "${vimplug_url}"
-	elif which wget >/dev/null 2>&1; then
-		wget -O "${vimplug_dest}" -- "${vimplug_url}"
-	else
-		printf 'wget or curl not found. aborting.\n'
-		return 1
-	fi
-
-	if [ "${VIM_VARIENT}" = 'nvim' ]; then
-		${VIM_VARIENT} +PlugInstall +UpdateRemotePlugins +qall
-	else
-		${VIM_VARIENT} +PlugInstall +qall
-	fi
+	__fetch "${vimplug_url}" > "${vimplug_dest}"
 
 	${VIM_VARIENT} +PlugInstall +qall
+	)
 }
 
 __vim_uninstall () {
@@ -69,28 +68,28 @@ __vim_uninstall () {
 SOURCE_LINE='. "${HOME}/.profile"'
 __shellrc_install () {
 	if [ -f "${HOME}/.zshrc" ]; then
-		fgrep -q "${SOURCE_LINE}" "${HOME}/.zshrc" || \
-			printf '%s\n' "${SOURCE_LINE}" >> "${HOME}/.zshrc"
+		fgrep -q "${SOURCE_LINE}" "${HOME}/.zshrc" \
+			|| printf '%s\n' "${SOURCE_LINE}" >> "${HOME}/.zshrc"
 	elif [ -f "${HOME}/.bashrc" ]; then
-		fgrep -q "${SOURCE_LINE}" "${HOME}/.bashrc" || \
-			printf '%s\n' "${SOURCE_LINE}" >> "${HOME}/.bashrc"
+		fgrep -q "${SOURCE_LINE}" "${HOME}/.bashrc" \
+			|| printf '%s\n' "${SOURCE_LINE}" >> "${HOME}/.bashrc"
 	fi
 }
 
 __shellrc_warn () {
-	[ -f "${HOME}/.zshrc" ] && \
-		fgrep -q "${SOURCE_LINE}" "${HOME}/.zshrc" && \
-		printf 'Please remove source procedure from .zshrc.'
-	[ -f "${HOME}/.bashrc" ] && \
-		fgrep -q "${SOURCE_LINE}" "${HOME}/.bashrc" && \
-		printf 'Please remove source procedure from .bashrc.'
+	if [ -f "${HOME}/.zshrc" ]; then
+		fgrep -q "${SOURCE_LINE}" "${HOME}/.zshrc" \
+			&& printf '! remove `%s` from .zshrc manually.' "${SOURCE_LINE}"
+	elif [ -f "${HOME}/.bashrc" ]; then
+		fgrep -q "${SOURCE_LINE}" "${HOME}/.bashrc" \
+			&& printf '! remove `%s` from .bashrc manually.' "${SOURCE_LINE}"
+	fi
 }
 
 __fzf_install () {
-	if ! which ${VIM_VARIENT} git openssl >/dev/null 2>&1; then
-		printf 'vim, git or openssl not found. aborting vim initialize.\n'
-		return 1
-	fi
+	[ ! "$(command -v git)" ] \
+		&& printf 'git not found. aborting fzf initialize.\n'
+		&& return 1
 
 	[ -d "${FZF_DIR}" ] && return 0
 
@@ -103,13 +102,15 @@ __fzf_uninstall () {
 }
 
 module_install () {
-	local errs=''
-	__symlink_bins || errmods="${errs} bin_symlink"
-	__shellrc_install || errmods="${errs} shellrc"
-	__vim_install || errmods="${errs} vimrc"
-	__fzf_install || errmods="${errs} fzf"
+	(
+	errs=''
+	__symlink_bins || errs="bin_symlink"
+	__shellrc_install || errs="${errs} shellrc"
+	__vim_install || errs="${errs} vimrc"
+	__fzf_install || errs="${errs} fzf"
 
 	[ -n "${errs}" ] && printf '\n> error: %s\n'  "${errs}"
+	)
 }
 
 module_uninstall () {

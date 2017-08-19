@@ -1,0 +1,7 @@
+[ ! "$(command -v xset)" -o "$(command -v setxkbmap)" ] && return
+
+xkeyboard_set () {
+        xset r rate 200 45
+        setxkbmap -option ctrl:nocaps -option altwin:prtsc_rwin
+}
+

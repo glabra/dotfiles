@@ -1,8 +1,0 @@
-danime_randomid () {
-        (
-        a=$(od -vAn -tu2 -N2 < /dev/urandom | tr -d ' ')
-        b=$(od -vAn -tu2 -N2 < /dev/urandom | tr -d ' ')
-        printf '%d' $(( ($a % 2 + 1) * 10000 + $b  % 1632))
-        )
-}
-

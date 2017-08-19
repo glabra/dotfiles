@@ -1,19 +1,23 @@
-command -v 'shuf' >/dev/null || return
+command -v shuf >/dev/null || return
 
 __fortune () {
 	shuf -n1 "${HOME}/.local/share/fortune.txt" 2>/dev/null
 }
 
 update_fortune () {
-	({
+	(
 	src='https://raw.githubusercontent.com/sasairc/yasuna/master/quotes/yasuna-quotes'
-	if command -v curl >/dev/null; then
-		curl "$src"
-	elif command -v wget >/dev/null; then
-		wget -O - "$src"
-	fi
+	{
+		if command -v curl >/dev/null; then
+			curl "$src"
+		elif command -v wget >/dev/null; then
+			wget -O - "$src"
+		else
+			printf 'curl, wget not found.' 1>&2
+			return 1
+		fi
 	} | tail -n +2 | cut -d: -f3 \
-	> "${HOME}/.local/share/fortune.txt"
+		> "${HOME}/.local/share/fortune.txt"
 	)
 }
 

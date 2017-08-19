@@ -1,13 +1,14 @@
-# util function
-## is_busybox_binary
+## is_busybox_binary bin
 is_busybox_binary () {
-	readlink "$(command -v $1)" | fgrep -q '/busybox'
+	case $(readlink "$(command -v $1)") in
+		*/busybox) return 0;;
+		*) return 1;;
+	esac
 }
 
 ## source_if_exists PATH
 source_if_exists () {
-	[ -f "${1}" ] \
-		&& . "${1}"
+	[ -f "${1}" ] && . "${1}"
 }
 
 # source_lazy PATH commands...
@@ -26,6 +27,7 @@ source_lazy () {
 	unset path
 }
 
+## append_path PATH
 append_path () {
 	case "${PATH}" in
 		*${1}*) ;;

@@ -8,11 +8,9 @@ passenv () {
 }
 
 passenv_if_exists () {
-	(
-	enval=$(eval printf '%s' '${'$1':-}')
-	[ -n "$enval" ] \
-		&& printf -- '--setenv %s %s ' $1 "$enval"
-	)
+	_enval=$(eval printf '%s' '${'$1':-}')
+	[ -n "$_enval" ] \
+		&& printf -- '--setenv %s %s ' $1 "$_enval"
 }
 
 ro_bind () {
