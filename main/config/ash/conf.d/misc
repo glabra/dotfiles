@@ -12,8 +12,35 @@ if [ -x "${HOME}/.dotfiles/bootstrap.sh" ]; then
 		)
 	}
 
-	dotfiles_cd () {
-		cd ${HOME}/.dotfiles
+	dotfiles_move () {
+		(
+		if [ -z "${2:-}" ]; then
+			printf 'Usage: dotfiles_move TYPE FILE\n'
+			return
+		fi
+
+		file=$(realpath "$2")
+
+		case "$file" in
+			${HOME}/.dotfiles/*) return ;;
+			${HOME}/*) ;;
+			*) return ;;
+		esac
+
+		if [ -d "${HOME}/.dotfiles/$1" ]; then
+			dest="${HOME}/.dotfiles/$1/${file#${HOME}/.}"
+			printf -- 'move "%s" into "%s" [y/N] ' "$2" "$dest"
+			read -r _in
+			if [ "_${_in:0:1}" = '_y' -o "_${_in:0:1}" = '_Y' ]; then
+				dir=$(dirname "$dest")
+				[ ! -d $dir ] && mkdir -p $dir
+				mv -- "$file" "$dest"
+				printf 'moved.\n'
+			else
+				printf 'aborted.\n'
+			fi
+		fi
+		)
 	}
 fi
 
