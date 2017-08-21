@@ -35,7 +35,6 @@ if [ -x "${HOME}/.dotfiles/bootstrap.sh" ]; then
 		dir=$(dirname "$dest")
 		[ ! -d $dir ] && mkdir -p $dir
 		mv -- "$file" "$dest"
-		printf 'moved.\n'
 		"${HOME}/.dotfiles/bootstrap.sh" sync
 		)
 	}
@@ -59,7 +58,6 @@ if [ -x "${HOME}/.dotfiles/bootstrap.sh" ]; then
 		[ "_${_in:0:1}" = '_y' -o "_${_in:0:1}" = '_Y' ] || return
 
 		rm -f -- "$file"
-		printf 'removed.\n'
 		"${HOME}/.dotfiles/bootstrap.sh" sync
 		)
 	}

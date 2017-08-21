@@ -104,7 +104,6 @@ dotfiles_install () {
 
 	for t in $@; do
 		printf -- 'type: %s\n' "$t"
-
 		__update $t
 	done
 	unset t
