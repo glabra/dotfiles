@@ -35,6 +35,17 @@ append_path () {
 	esac
 }
 
+__fetch () {
+	if command -v curl >/dev/null; then
+		curl -s "$1"
+	elif command -v wget >/dev/null; then
+		wget -q -O - "$1"
+	else
+		printf 'curl, wget not found.' 1>&2
+		return 1
+	fi
+}
+
 # append ~/.local/bin into PATH before reading configs
 append_path "${HOME}/.local/bin"
 

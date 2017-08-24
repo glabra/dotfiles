@@ -5,19 +5,8 @@ __fortune () {
 }
 
 update_fortune () {
-	(
-	src='https://raw.githubusercontent.com/sasairc/yasuna/master/quotes/yasuna-quotes'
-	{
-		if command -v curl >/dev/null; then
-			curl "$src"
-		elif command -v wget >/dev/null; then
-			wget -O - "$src"
-		else
-			printf 'curl, wget not found.' 1>&2
-			return 1
-		fi
-	} | tail -n +2 | cut -d: -f3 \
+	__fetch 'https://raw.githubusercontent.com/sasairc/yasuna/master/quotes/yasuna-quotes' \
+		| tail -n +2 | cut -d: -f3 \
 		> "${HOME}/.local/share/fortune.txt"
-	)
 }
 

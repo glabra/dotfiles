@@ -6,6 +6,7 @@ set autoread
 set autowrite
 set backspace=indent
 set expandtab
+set fileencodings=utf-8,ucs-bom,iso-2022-jp,euc-jp,cp932,default,latin
 set laststatus=2
 set list
 set listchars=tab:>.,trail:~,nbsp:%

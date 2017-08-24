@@ -1,7 +1,7 @@
 danime_randomid () {
 	(a=$(od -vAn -tu2 -N2 </dev/urandom | tr -d ' ')
 	b=$(od -vAn -tu2 -N2 </dev/urandom | tr -d ' ')
-	printf '%d\n' "$((($a % 2 + 1) * 10000 + $b % 1632))"
+	printf '%d\n' "$((($a % 2 + 1) * 10000 + $b % 1700))"
 	)
 }
 
@@ -9,11 +9,11 @@ danime_pickup () {
 	(P_EXPIRED='<p class="text outofperiod">'
 	for i in $(seq 0 5); do
 		url="https://anime.dmkt-sp.jp/animestore/ci_pc?workId=$(danime_randomid)"
-		body=$(__dotfile_fetch "$url")
+		body=$(__fetch "$url")
 		title=$(printf '%s' "$body" \
 			| fgrep -A1 '<title>' \
 			| tail -n1 \
-			| sed 's/のアニメ見放題.*$//')
+			| sed 's/のアニメ.*$//')
 
 		if [ -z "$title" ] \
 			|| (printf '%s' "$body" | fgrep -q "$P_EXPIRED")

@@ -6,10 +6,6 @@ case "$PATH" in
 	*) export PATH="${HOME}/.local/bin:${PATH}";;
 esac
 
-# tell xdg-open to use pcmanfm
-: ${DESKTOP_SESSION:=LXDE}
-export DESKTOP_SESSION
-
 # keyboard settings
 xset r rate 200 45 &
 setxkbmap -option ctrl:nocaps -option altwin:prtsc_rwin &
