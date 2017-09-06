@@ -1,0 +1,5 @@
+#!/bin/sh
+set -ue
+
+cmd=$(dmenu_path | dmenu "$@")
+[ -n "$cmd" ] && st -g80x8 -ndropdown -e $cmd

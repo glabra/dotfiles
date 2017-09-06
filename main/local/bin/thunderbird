@@ -7,12 +7,11 @@ IFS='
 
 . "$HOME/.local/bin/bwrap-functions.sh"
 
-# sharing pid namespace is required to fcitx working
 exec env -i bwrap \
 	$(passenv DISPLAY) \
-	$(passenv GTK_IM_MODULE) \
 	$(passenv HOME) \
 	$(passenv LANG) \
+	$(passenv GTK_IM_MODULE) \
 	$(passenv MOZ_PLUGIN_PATH) \
 	$(passenv USER) \
 	\
@@ -35,16 +34,14 @@ exec env -i bwrap \
 	$(allow_localtime) \
 	\
 	--tmpfs /tmp \
-	$(ro_bind /tmp/.X11-unix/X0) \
 	--tmpfs $HOME \
-	$(ro_bind $HOME/.Xauthority) \
+	$(allow_x11) \
 	$(ro_bind $HOME/.config/fcitx/dbus) \
 	$(rw_bind "$HOME/Downloads") \
 	\
 	$(rw_bind "$HOME/.thunderbird") \
 	\
 	--unshare-user-try \
-	--unshare-ipc \
 	--unshare-uts \
 	--unshare-cgroup-try \
 	--share-net \

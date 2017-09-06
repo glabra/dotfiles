@@ -27,8 +27,5 @@ case "${1:-}" in
 	'on') on;;
 esac
 
-command -v notify-send >/dev/null \
-	&& notify-send -a 'dpms' "dpms is $(sta)"
-
 sta
 

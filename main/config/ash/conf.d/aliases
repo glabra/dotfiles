@@ -32,5 +32,3 @@ alias '......'='cd ../../../'
 alias '........'='cd ../../../../'
 alias '..........'='cd ../../../../../'
 
-alias reload-wifi='sudo systemctl restart connman-resume'
-

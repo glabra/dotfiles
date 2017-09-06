@@ -46,10 +46,10 @@ autostart wmname LG3D
 
 # misc autostart
 autostart redshift
-autostart dunst
 autostart dwm-statusline forever
 autostart xss-lock -- slock
-autostart "${HOME}/.local/wallpaper.sh"
+[ -x "${HOME}/.local/wallpaper.sh" ] \
+	&& autostart "${HOME}/.local/wallpaper.sh"
 
 # compositor
 [ "$(command -v compton)" -a -f "${HOME}/.config/compton.conf" ] \

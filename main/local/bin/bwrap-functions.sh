@@ -44,6 +44,12 @@ allow_gpu () {
 	ro_bind /sys/devices/pci0000:00
 }
 
+allow_x11 () {
+# /tmp, /home must be declared
+	ro_bind /tmp/.X11-unix/X0
+	ro_bind $HOME/.Xauthority
+}
+
 allow_locale () {
 	ro_bind "/usr/share/locale/$1/LC_MESSAGES/$2.mo"
 }

@@ -27,14 +27,11 @@ exec env -i bwrap \
 	$(ro_bind /usr/share/mime) \
 	$(ro_bind /usr/share/glib-2.0) \
 	$(ro_bind /usr/share/poppler) \
-	\
 	$(allow_fonts) \
+	$(allow_x11) \
 	\
-	--tmpfs /tmp \
-	$(ro_bind /tmp/.X11-unix/X0) \
-	--tmpfs $HOME \
-	$(ro_bind $HOME/.Xauthority) \
 	--ro-bind "$docpath" /document.pdf \
+	--chdir / \
 	\
 	--unshare-all \
 	--new-session \

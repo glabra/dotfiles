@@ -11,7 +11,6 @@ bind_lcmessage () {
 	allow_locale ja $1
 }
 
-# sharing pid namespace is required to fcitx working
 exec env -i bwrap \
 	$(passenv DISPLAY) \
 	$(passenv GTK_IM_MODULE) \
@@ -40,18 +39,11 @@ exec env -i bwrap \
 	$(bind_lcmessage gimp20-std-plug-ins) \
 	$(bind_lcmessage gimp20-tips) \
 	\
-	--tmpfs /tmp \
-	$(ro_bind /tmp/.X11-unix/X0) \
 	$(rw_bind $HOME) \
 	$(ro_bind $HOME/.Xauthority) \
-	$(ro_bind $HOME/.config/fcitx/dbus) \
-	$(rw_bind /media) \
+	$(allow_x11) \
 	\
-	--unshare-user-try \
-	--unshare-ipc \
-	--unshare-uts \
-	--unshare-cgroup-try \
-	--unshare-net \
+	--unshare-all \
 	--new-session \
 	/usr/bin/gimp "$@"
 

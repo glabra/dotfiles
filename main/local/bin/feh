@@ -19,11 +19,9 @@ exec env -i bwrap \
 	$(ro_bind /usr/lib) \
 	--symlink usr/lib /lib64 \
 	\
-	--tmpfs /tmp \
-	$(ro_bind /tmp/.X11-unix/X0) \
-	--tmpfs $HOME \
-	$(ro_bind $HOME/.Xauthority) \
+	$(allow_x11) \
 	--ro-bind "$filepath" "/media.$fileext" \
+	--chdir / \
 	\
 	--unshare-all \
 	--new-session \

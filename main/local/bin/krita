@@ -12,17 +12,24 @@ exec env -i bwrap \
 	$(passenv DISPLAY) \
 	$(passenv HOME) \
 	$(passenv LANG) \
+	$(passenv USER) \
+	$(passenv XDG_RUNTIME_DIR) \
 	\
-	$(ro_bind /usr/bin/blender) \
-	$(ro_bind /usr/share/blender) \
+	$(ro_bind /usr/bin/krita) \
 	$(ro_bind /usr/lib) \
-	$(ro_bind /usr/lib64) \
 	--symlink usr/lib /lib64 \
+	$(ro_bind /etc/machine-id) \
+	$(rw_bind /run/user/${UID}) \
+	$(ro_bind /usr/share/X11/xkb) \
+	$(ro_bind /usr/share/krita) \
+	$(ro_bind /usr/share/kritaplugins) \
+	$(ro_bind /usr/share/locale) \
+	$(ro_bind /usr/share/color) \
 	\
 	$(ro_bind /etc/ld.so.cache) \
 	$(allow_gpu) \
-	$(rw_bind /run/user/${UID}) \
 	$(allow_fonts) \
+	\
 	$(allow_x11) \
 	\
 	$(rw_bind "$HOME/Documents") \
@@ -31,5 +38,5 @@ exec env -i bwrap \
 	--unshare-all \
 	--new-session \
 	--die-with-parent \
-	/usr/bin/blender "$@"
+	/usr/bin/krita "$@"
 
