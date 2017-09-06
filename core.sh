@@ -25,24 +25,6 @@ __fetch () {
 	fi
 }
 
-__symlink_bins () {
-	(
-	cd ${DESTDIR}/.local/bin/
-
-	if [ -e gimp -a ! -e gimp-2.8 ]; then
-		ln -s gimp gimp-2.8
-	fi
-	)
-}
-
-__unsymlink_bins () {
-	(
-	cd ${DESTDIR}/.local/bin/
-
-	rm -f gimp-2.8
-	)
-}
-
 __vim_install () {
 	(
 	[ ! "$(command -v ${VIM_VARIENT})" -o ! "$(command -v git)" ] \
@@ -106,7 +88,6 @@ __fzf_uninstall () {
 module_install () {
 	(
 	errs=''
-	__symlink_bins || errs="bin_symlink"
 	__shellrc_install || errs="${errs} shellrc"
 	__vim_install || errs="${errs} vimrc"
 	__fzf_install || errs="${errs} fzf"
@@ -118,7 +99,6 @@ module_install () {
 }
 
 module_uninstall () {
-	__unsymlink_bins
 	__vim_uninstall
 	__shellrc_warn
 	__fzf_uninstall

@@ -5,6 +5,9 @@ __fortune () {
 }
 
 update_fortune () {
+	[ ! -d "${HOME}/.local/share" ] \
+		&& mkdir -p "${HOME}/.local/share"
+
 	__fetch 'https://raw.githubusercontent.com/sasairc/yasuna/master/quotes/yasuna-quotes' \
 		| tail -n +2 | cut -d: -f3 \
 		> "${HOME}/.local/share/fortune.txt"

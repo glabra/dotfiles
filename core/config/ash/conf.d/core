@@ -1,0 +1,7 @@
+# disable ^S
+stty stop undef
+
+# for delete key in st
+#tput smkx
+printf '\033[?1h\033='
+
