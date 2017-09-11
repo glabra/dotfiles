@@ -5,7 +5,6 @@ export LANG='C'
 IFS=' 	
 '
 
-FZF_DIR="${HOME}/.fzf"
 VIM_VARIENT='nvim'
 
 if [ "${VIM_VARIENT}" = 'nvim' ]; then
@@ -70,27 +69,11 @@ __shellrc_warn () {
 	fi
 }
 
-__fzf_install () {
-	[ ! "$(command -v git)" ] \
-		&& printf 'git not found. aborting fzf initialize.\n' \
-		&& return 1
-
-	[ -d "${FZF_DIR}" ] && return 0
-
-	git clone --depth 1 https://github.com/junegunn/fzf.git "${FZF_DIR}"
-	"${FZF_DIR}/install" --key-bindings --completion --no-update-rc --64
-}
-
-__fzf_uninstall () {
-	rm -rf "${FZF_DIR}"
-}
-
 module_install () {
 	(
 	errs=''
 	__shellrc_install || errs="${errs} shellrc"
 	__vim_install || errs="${errs} vimrc"
-	__fzf_install || errs="${errs} fzf"
 
 	if [ -n "${errs}" ]; then
 		printf '\n> error: %s\n'  "${errs}"
@@ -101,6 +84,5 @@ module_install () {
 module_uninstall () {
 	__vim_uninstall
 	__shellrc_warn
-	__fzf_uninstall
 }
 

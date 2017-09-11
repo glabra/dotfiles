@@ -1,4 +1,7 @@
-command -v 'git' >/dev/null || return
+# on WSL, `git` should be provided
+if [ -z "${RCFILE_ON_WSL:-}" ];then
+	command -v 'git' >/dev/null || return
+fi
 
 alias gi='git'
 alias gt='git'

@@ -1,4 +1,7 @@
-command -v shuf >/dev/null || return
+# on WSL, `shuf` should be provided
+if [ -z "${RCFILE_ON_WSL:-}" ]; then
+	command -v shuf >/dev/null || return
+fi
 
 __fortune () {
 	shuf -n1 "${HOME}/.local/share/fortune.txt" 2>/dev/null

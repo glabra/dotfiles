@@ -1,6 +1,12 @@
-if ! is_busybox_binary 'less'; then
-        alias less='less -R'
+# on WSL, `less` should be provided
+if [ -z "${RCFILE_ON_WSL:-}" ]; then
+	command -v 'less' >/dev/null || return
 fi
 
 alias le=less
+
+# on WSL, `less` should be non-busybox binary
+if [ -n "${RCFILE_ON_WSL:-}" ] || ! is_busybox_binary 'less'; then
+        alias less='less -R'
+fi
 

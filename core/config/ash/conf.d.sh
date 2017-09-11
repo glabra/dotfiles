@@ -47,7 +47,14 @@ __fetch () {
 }
 
 # append ~/.local/bin into PATH before reading configs
-append_path "${HOME}/.local/bin"
+[ -d "${HOME}/.local/bin" ] \
+	&& append_path "${HOME}/.local/bin"
+
+# whether current shell is on WSL or not.
+case $(uname -r) in
+	*Microsoft)
+		RCFILE_ON_WSL=true
+esac
 
 # read config
 for i in ${CONFIG_DIR}/conf.d/*; do
@@ -56,6 +63,7 @@ done
 unset i
 
 # cleanup
+[ -n "${RCFILE_ON_WSL:-}" ] && unset RCFILE_ON_WSL
 unset -f is_busybox_binary
 unset -f source_if_exists
 unset -f source_lazy

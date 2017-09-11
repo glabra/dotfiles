@@ -13,8 +13,3 @@ CONFIG_DIR="${HOME}/.config/ash"
 # cleanup consts
 unset CONFIG_DIR
 
-# initialize finished
-cat << _EOF
-$(date)
-_EOF
-
