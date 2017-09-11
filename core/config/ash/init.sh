@@ -13,3 +13,5 @@ CONFIG_DIR="${HOME}/.config/ash"
 # cleanup consts
 unset CONFIG_DIR
 
+# initialization finished
+date
