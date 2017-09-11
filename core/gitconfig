@@ -9,9 +9,9 @@
 	d = diff
 	l = log --graph --date=iso --stat
 	s = status --branch --short
+	ch = checkout
+	po = push origin
 	lo = log --graph --date=iso --pretty=format:'%C(auto)%h: by %aN%n%s%n'
-	si = submodule update --init
-	smup = submodule foreach git pull origin master
 [user]
 	email = inoue@kamikakushi.net
 	name = INOUE Yosuke

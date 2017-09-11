@@ -1,5 +1,6 @@
 # completion
-if [ -n "${BASH_VERSION:-}" ]; then
+# disable completion on WSL because completion is too slow
+if [ -z "${RCFILE_ON_WSL:-}" -a -n "${BASH_VERSION:-}" ]; then
 	source_if_exists "/etc/bash-completion/bash_completion"
 	source_if_exists "/usr/share/bash-completion/bash_completion"
 fi
