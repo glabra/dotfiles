@@ -1,2 +1,2 @@
-export PS1='\[\e[1m\]\W\[\e[0m\] (\t) \[\e[2m\]『$(__fortune)』\[\e[0m\]\n\$ '
+PS1='\[\e[1m\]\W\[\e[0m\] (\t) \[\e[2m\]『$(__fortune)』\[\e[0m\]\n\$ '
 
