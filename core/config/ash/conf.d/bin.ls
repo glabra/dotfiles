@@ -1,4 +1,4 @@
-if [ -n "${RCFILE_ON_WSL:-}" ]; then
+if [ -n "${IS_WSL:-}" ]; then
 	# on WSL, assuming ls as GNU binary
 	alias ls='ls --color=auto'
 	return

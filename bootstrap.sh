@@ -93,7 +93,12 @@ __purge () {
 
 dotfiles_install () {
 	if [ -f "${SRCTYPE}" ]; then
-		printf '! dotfiles are already installed.\n'
+		printf -- '! dotfiles are already installed.\n'
+		return
+	fi
+
+	if [ "$#" -eq 0 ]; then
+		printf -- '! no src_type defined.\n'
 		return
 	fi
 
@@ -106,9 +111,12 @@ dotfiles_install () {
 }
 
 dotfiles_uninstall () {
-	[ -f "${SRCTYPE}" ] \
-		&& read -r _type < "${SRCTYPE}"
-	[ -z "${_type:-}" ] && return 1
+	if [ ! -f "${SRCTYPE}" ]; then
+		printf -- '! dotfiles are not installed. (or broken)\n'
+		return
+	fi
+
+	read -r _type < "${SRCTYPE}"
 
 	for t in ${_type}; do
 		printf -- 'type: %s\n' "$t"

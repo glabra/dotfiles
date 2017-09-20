@@ -1,5 +1,5 @@
 # on WSL, `shuf` should be provided
-if [ -z "${RCFILE_ON_WSL:-}" ]; then
+if [ -z "${IS_WSL:-}" ]; then
 	command -v shuf >/dev/null || return
 fi
 

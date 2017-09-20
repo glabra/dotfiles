@@ -53,7 +53,7 @@ __fetch () {
 # whether current shell is on WSL or not.
 case $(uname -r) in
 	*Microsoft)
-		RCFILE_ON_WSL=true
+		IS_WSL=true
 esac
 
 # read config
@@ -63,7 +63,7 @@ done
 unset i
 
 # cleanup
-[ -n "${RCFILE_ON_WSL:-}" ] && unset RCFILE_ON_WSL
+[ -n "${IS_WSL:-}" ] && unset IS_WSL
 unset -f is_busybox_binary
 unset -f source_if_exists
 unset -f source_lazy
