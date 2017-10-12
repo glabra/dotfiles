@@ -3,11 +3,7 @@ if [ -z "${IS_WSL:-}" ];then
 	command -v 'git' >/dev/null || return
 fi
 
-alias gi='git'
-alias gt='git'
-alias gti='git'
-alias sgit='git'
-alias gits='git s'
+alias g='git'
 
 # source completion file
 if [ -n "${BASH_VERSION:-}" ]; then

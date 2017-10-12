@@ -50,20 +50,18 @@ __fetch () {
 [ -d "${HOME}/.local/bin" ] \
 	&& append_path "${HOME}/.local/bin"
 
-# whether current shell is on WSL or not.
-case $(uname -r) in
-	*Microsoft)
-		IS_WSL=true
-esac
-
 # read config
+source_if_exists "${CONFIG_DIR}/conf.d.local.sh" \
+	&& __conf_local_onload \
+	&& CONF_LOCAL_LOADED=true
+
 for i in ${CONFIG_DIR}/conf.d/*; do
 	. "${i}"
 done
 unset i
 
 # cleanup
-[ -n "${IS_WSL:-}" ] && unset IS_WSL
+[ -n "${CONF_LOCAL_LOADED:-}" ] && __conf_local_cleanup
 unset -f is_busybox_binary
 unset -f source_if_exists
 unset -f source_lazy

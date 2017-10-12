@@ -1,9 +1,5 @@
 command -v 'nvim' >/dev/null || return
 
 export EDITOR=nvim
-
 alias vi='nvim'
-alias svi='vi'
-alias iv='vi'
-alias ci='vi'
 

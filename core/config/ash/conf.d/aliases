@@ -1,19 +1,17 @@
 ## foolproof
 alias rm='rm -i'
 
-## typosafe
-alias ':q'='exit'
-alias sl='ls'
-alias l='ls'
-alias ll='ls -la'
-
 ## safer su
+alias c='cd'
 alias su='su -'
 
-## smoother cd dir
+## smoother cd
 alias '..'='cd ../'
 alias '....'='cd ../../'
 alias '......'='cd ../../../'
 alias '........'='cd ../../../../'
 alias '..........'='cd ../../../../../'
+
+## vi
+alias v='vi'
 

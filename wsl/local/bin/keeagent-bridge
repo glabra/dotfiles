@@ -4,11 +4,11 @@ PATH='/usr/bin:/bin'
 IFS=' 	
 '
 
-#WSL_USERDIR=$(cd /mnt/c; cmd.exe /D /C 'ECHO %USERPROFILE:\=/%')
-#WSL_USERDIR="/mnt/c/${WSL_USERDIR:3}"
 KEEAGENT_SOCK="/mnt/c/Users/not_j/AppData/Local/Temp/syslockfile"
 
 run="${HOME}/.keeagent-bridge"
+[ ! -d "${run}" ] && mkdir -p -- "${run}"
+
 if [ ! -f "${run}/bridge.py" ]; then
 	url='https://gist.githubusercontent.com/duebbert/4298b5f4eb7cc064b09e9d865dd490c9/raw/50d813f8ab6ce792bd30374602abbb9c836ac66b/msysgit2unix-socket.py'
 	curl -Lo "${run}/bridge.py" ${url}
