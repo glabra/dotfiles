@@ -19,3 +19,7 @@ module_install () {
 	__bloatware_warn
 }
 
+module_uninstall () {
+	:
+}
+

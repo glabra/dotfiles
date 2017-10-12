@@ -1,17 +1,11 @@
-# whether current shell is on WSL or not.
-#case $(uname -r) in
-#        *Microsoft)
-#                IS_WSL=true
-#                ;;
-#esac
-
 __conf_local_onload () {
-	wsl_root=/mnt/c
 	IS_WSL=1
-	WSL_USERDIR=$(cd ${wsl_root}; cmd.exe /D /C 'ECHO %USERPROFILE:\=/%')
-	WSL_USERDIR="${wsl_root}/${WSL_USERDIR:3}"
-	# erase `cr`, using bash extension since WSL should works on bash.
-	WSL_USERDIR="${WSL_USERDIR:0:-1}"
+
+	wsl_root=/mnt/c
+	WSL_USERDIR=$(cmd.exe /D /C 'ECHO %USERPROFILE:\=/%' 2>/dev/null)
+	# erase drive letter (C:/) and `cr`, then append prefix (${wsl_root})
+	WSL_USERDIR="${wsl_root}/${WSL_USERDIR:3:$((${#WSL_USERDIR} - 4))}"
+	export WSL_USERDIR
 	unset wsl_root
 }
 
@@ -20,3 +14,4 @@ __conf_local_cleanup () {
 	unset -f __conf_local_onload
 	unset -f __conf_local_cleanup
 }
+

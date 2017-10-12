@@ -1,6 +1,6 @@
 alias l='ls'
-alias la='ls -a'
-alias ll='ls -la'
+alias ll='ls -a'
+alias la='ls -la'
 
 if [ -n "${IS_WSL:-}" ]; then
 	# on WSL, assuming ls as GNU binary

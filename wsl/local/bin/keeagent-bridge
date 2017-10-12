@@ -3,8 +3,9 @@ set -ue
 PATH='/usr/bin:/bin'
 IFS=' 	
 '
+umask 0022
 
-KEEAGENT_SOCK="/mnt/c/Users/not_j/AppData/Local/Temp/syslockfile"
+KEEAGENT_SOCK="${WSL_USERDIR:-/mnt/c/Users/not_j}/AppData/Local/Temp/syslockfile"
 
 run="${HOME}/.keeagent-bridge"
 [ ! -d "${run}" ] && mkdir -p -- "${run}"

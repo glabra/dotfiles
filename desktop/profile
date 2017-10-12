@@ -5,3 +5,4 @@
 	&& export LANG=en_US.UTF-8
 
 . "${HOME}/.config/ash/init.sh"
+

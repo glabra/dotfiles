@@ -11,13 +11,14 @@ Category: Productivity
 
 
 ## Dependencies
+- POSIX compliant shell
+
 ### type: `core`
 - [wget](https://busybox.net/) or [curl](https://curl.haxx.se/)
 - [openssl](https://www.openssl.org/) for https access
 
 ### type: `wsl`
 - [Ubuntu](http://www.ubuntu.com/)
-- [bash](https://www.gnu.org/software/bash/) or [zsh](http://www.zsh.org/)
 - [Python3](https://www.python.org/) (keeagent-bridge)
 
 ### type: `nvim`

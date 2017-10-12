@@ -15,3 +15,4 @@ unset CONFIG_DIR
 
 # initialization finished
 date
+
