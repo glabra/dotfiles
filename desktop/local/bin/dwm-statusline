@@ -10,7 +10,6 @@ readonly EPOCH_TIME=0.5
 readonly EPOCH_TIME_INVERSE=2 # must be integer
 readonly BATTERY_ID=BAT0
 readonly BRIGHTNESS_ID=intel_backlight
-readonly CPUTEMP_PATH=hwmon1/temp1_input
 
 readonly __rx_old=$(mktemp)
 readonly __tx_old=$(mktemp)
@@ -47,10 +46,6 @@ generate_wifi_entry () {
 		get_net_average tx ${__tx_old}
 		printf ' %s)' "${_sta}"
 	fi
-}
-
-get_cpu_temperture () {
-	head -c-4 /sys/class/hwmon/${CPUTEMP_PATH}
 }
 
 is_battery_charging () {
@@ -102,9 +97,7 @@ generate_volume_entry () {
 
 generate_line () {
 	generate_wifi_entry
-	printf ' '
-	get_cpu_temperture
-	printf 'C b'
+	printf ' b'
 	get_brightness
 	printf '%% '
 	is_battery_charging \
