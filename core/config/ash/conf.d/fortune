@@ -3,16 +3,65 @@ if [ -z "${IS_WSL:-}" ]; then
 	command -v shuf >/dev/null || return
 fi
 
+__FORTUNE_DIR="${HOME}/.local/share/fortune"
+
 __fortune () {
-	shuf -n1 "${HOME}/.local/share/fortune.txt" 2>/dev/null
+	shuf -n1 "${__FORTUNE_DIR}/fortune.txt" 2>/dev/null
+}
+
+__fortune_get_yasuna () {
+	(export LC_ALL=C
+	export LANG=C
+
+	__fetch 'https://raw.githubusercontent.com/sasairc/yasuna/master/quotes/yasuna-quotes' \
+		| tail -n +2 | cut -d: -f3 | sort | uniq \
+		> "${__FORTUNE_DIR}/fortune.txt"
+
+	printf 'yasuna\n' > "${__FORTUNE_DIR}/current.txt"
+	)
+}
+
+__fortune_get_fushinsha () {
+	(export LC_ALL=C
+	export LANG=C
+
+	LATEST=201710
+	for d in $(seq 201701 $LATEST); do
+		[ -f "${__FORTUNE_DIR}/fushinsha${d}.txt" -a "_${d}" != "_${LATEST}" ] \
+			&& continue
+
+		__fetch "https://fushinsha-joho.co.jp/serif.cgi?ym=${d}" \
+			| egrep -o '<div style="margin-top: 4px; font-size: 24px; line-height: 28px; font-weight: bold;">.+</div>' \
+			| egrep -o '「.+」' \
+			| sed 's/」「/。/g' \
+			| sed 's/「//g' \
+			| sed 's/」//g' \
+			> "${__FORTUNE_DIR}/fushinsha${d}.txt"
+	done
+
+	sort ${__FORTUNE_DIR}/fushinsha*.txt | uniq \
+		> "${__FORTUNE_DIR}/fortune.txt"
+
+	printf 'fushinsha\n' > "${__FORTUNE_DIR}/current.txt"
+	)
 }
 
 update_fortune () {
-	[ ! -d "${HOME}/.local/share" ] \
-		&& mkdir -p "${HOME}/.local/share"
+	[ -d "${__FORTUNE_DIR}" ] || mkdir -p "${__FORTUNE_DIR}"
 
-	__fetch 'https://raw.githubusercontent.com/sasairc/yasuna/master/quotes/yasuna-quotes' \
-		| tail -n +2 | cut -d: -f3 \
-		> "${HOME}/.local/share/fortune.txt"
+	case "$1" in
+		'yasuna')
+			__fortune_get_yasuna;;
+		'fushinsha')
+			__fortune_get_fushinsha;;
+		*)
+			if [ -f "${__FORTUNE_DIR}/current.txt" ]; then
+				printf 'Current type is: '
+				cat "${__FORTUNE_DIR}/current.txt"
+			else
+				printf 'fortune is not initialized.\n'
+			fi
+			;;
+	esac
 }
 
