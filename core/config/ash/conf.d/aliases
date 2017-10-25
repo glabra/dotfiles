@@ -2,7 +2,6 @@
 alias rm='rm -i'
 
 ## safer su
-alias c='cd'
 alias su='su -'
 
 ## smoother cd

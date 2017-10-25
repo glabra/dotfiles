@@ -3,11 +3,4 @@ __chdir_to_wsluserdir () {
 }
 
 alias cdw='__chdir_to_wsluserdir'
-alias cw='__chdir_to_wsluserdir'
-
-case "${PWD}" in
-	"${WSL_USERDIR}")
-		cd "${HOME}"
-		;;
-esac
 

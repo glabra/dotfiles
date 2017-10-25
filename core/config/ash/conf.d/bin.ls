@@ -1,5 +1,5 @@
 alias l='ls'
-alias s='ls -a'
+alias la='ls -a'
 alias ll='ls -la'
 
 if [ -n "${IS_WSL:-}" ]; then
