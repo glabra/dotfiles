@@ -1,17 +1,20 @@
 __FORTUNE_DIR="${HOME}/.local/share/fortune"
+__FORTUNE_FILE="${__FORTUNE_DIR}/fortune.txt"
 
 # on WSL, shuf must be provided
 if [ -n "${IS_WSL:-}" ] || command -v shuf >/dev/null; then
 	__fortune () {
-		shuf -n1 "${__FORTUNE_DIR}/fortune.txt" 2>/dev/null
+		shuf -n1 "${__FORTUNE_FILE}" 2>/dev/null
+	}
+elif [ -n "${BASH_VERSION:-}" ]; then
+	__fortune () {
+		head -n$(($RANDOM % $(wc -l < "${__FORTUNE_FILE}") + 1)) "${__FORTUNE_FILE}" \
+			| tail -n1
 	}
 else
 	__fortune () {
-		__R=$(od -vAn -tu2 -N2 </dev/urandom | tr -d ' ')
-		__F="${__FORTUNE_DIR}/fortune.txt"
-		head -n$(($__R % $(wc -l < "$__F") + 1)) "$__F" | tail -n1
-		unset __R
-		unset __F
+		head -n$(($(od -vAn -tu2 -N2 </dev/urandom) % $(wc -l < "${__FORTUNE_FILE}") + 1)) "${__FORTUNE_FILE}" \
+			| tail -n1
 	}
 fi
 
@@ -21,9 +24,7 @@ __fortune_get_yasuna () {
 
 	__fetch 'https://raw.githubusercontent.com/sasairc/yasuna/master/quotes/yasuna-quotes' \
 		| tail -n +2 | cut -d: -f3 | sort | uniq \
-		> "${__FORTUNE_DIR}/fortune.txt"
-
-	printf 'yasuna\n' > "${__FORTUNE_DIR}/current.txt"
+		> "${__FORTUNE_FILE}"
 	)
 }
 
@@ -46,9 +47,7 @@ __fortune_get_fushinsha () {
 	done
 
 	sort ${__FORTUNE_DIR}/fushinsha*.txt | uniq \
-		> "${__FORTUNE_DIR}/fortune.txt"
-
-	printf 'fushinsha\n' > "${__FORTUNE_DIR}/current.txt"
+		> "${__FORTUNE_FILE}"
 	)
 }
 
@@ -61,13 +60,7 @@ update_fortune () {
 		'fushinsha')
 			__fortune_get_fushinsha;;
 		*)
-			if [ -f "${__FORTUNE_DIR}/current.txt" ]; then
-				printf 'Current type is: '
-				cat "${__FORTUNE_DIR}/current.txt"
-			else
-				printf 'fortune is not initialized.\n'
-			fi
-			;;
+			printf 'invalid type.\n';;
 	esac
 }
 
