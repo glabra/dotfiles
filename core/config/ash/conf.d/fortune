@@ -9,7 +9,7 @@ else
 	__fortune () {
 		__R=$(od -vAn -tu2 -N2 </dev/urandom | tr -d ' ')
 		__F="${__FORTUNE_DIR}/fortune.txt"
-		head -n$(($__R % $(wc -l < "$__F") + 1)) < "$__F" | tail -n1
+		head -n$(($__R % $(wc -l < "$__F") + 1)) "$__F" | tail -n1
 		unset __R
 		unset __F
 	}
