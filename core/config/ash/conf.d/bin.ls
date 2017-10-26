@@ -8,7 +8,7 @@ if [ -n "${IS_WSL:-}" ]; then
 	return
 fi
 
-if is_busybox_binary 'ls' || ls --help 2>&1 >/dev/null; then
+if is_busybox_binary 'ls' || ls --help >/dev/null 2>/dev/null; then
         # Busybox | GNU
         alias ls='ls --color=auto'
 else

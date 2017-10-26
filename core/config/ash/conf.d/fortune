@@ -1,13 +1,19 @@
-# on WSL, `shuf` should be provided
-if [ -z "${IS_WSL:-}" ]; then
-	command -v shuf >/dev/null || return
-fi
-
 __FORTUNE_DIR="${HOME}/.local/share/fortune"
 
-__fortune () {
-	shuf -n1 "${__FORTUNE_DIR}/fortune.txt" 2>/dev/null
-}
+# on WSL, shuf must be provided
+if [ -n "${IS_WSL:-}" ] || command -v shuf >/dev/null; then
+	__fortune () {
+		shuf -n1 "${__FORTUNE_DIR}/fortune.txt" 2>/dev/null
+	}
+else
+	__fortune () {
+		__R=$(od -vAn -tu2 -N2 </dev/urandom | tr -d ' ')
+		__F="${__FORTUNE_DIR}/fortune.txt"
+		head -n$(($__R % $(wc -l < "$__F") + 1)) < "$__F" | tail -n1
+		unset __R
+		unset __F
+	}
+fi
 
 __fortune_get_yasuna () {
 	(export LC_ALL=C
