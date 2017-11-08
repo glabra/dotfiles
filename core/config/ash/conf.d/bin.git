@@ -1,14 +1,18 @@
 # on WSL, `git` should be provided
-if [ -z "${IS_WSL:-}" ];then
+if [ -z "${IS_WSL:-}" ]; then
 	command -v 'git' >/dev/null || return
 fi
 
 alias g='git'
 
+[ -n "${IS_WSL:-}" ] && return
+
 # source completion file
 if [ -n "${BASH_VERSION:-}" ]; then
-	source_if_exists "/usr/share/git/completion/git-completion.bash"
+	[ -f "/usr/share/git/completion/git-completion.bash" ] \
+		&& . "/usr/share/git/completion/git-completion.bash"
 elif [ -n "${ZSH_VERSION:-}" ]; then
-	source_if_exists "/usr/share/git/completion/git-completion.zsh"
+	[ -f "/usr/share/git/completion/git-completion.zsh" ] \
+		&& . "/usr/share/git/completion/git-completion.zsh"
 fi
 

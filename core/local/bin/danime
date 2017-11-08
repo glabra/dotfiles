@@ -1,0 +1,99 @@
+#!/bin/sh
+set -ue
+umask 0022
+export PATH='/bin:/usr/bin'
+export LANG='C'
+IFS=' 	
+'
+
+RETRY_LIMIT=5
+readonly RETRY_LIMIT
+DBFILE="${HOME}/.local/share/danime.db"
+readonly DBFILE
+URL_BASE='https://anime.dmkt-sp.jp/animestore/ci_pc?workId='
+readonly URL_BASE
+
+# utilities {{{
+if [ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ]; then
+	__random () {
+		printf '%d' "$RANDOM"
+	}
+else
+	__random () {
+		od -vAn -tu2 -N2 </dev/urandom
+	}
+fi
+
+if command -v curl >/dev/null; then
+	FETCH='curl -s'
+elif command -v wget >/dev/null; then
+	FETCH='wget -q -O -'
+fi
+# }}} utilities
+
+init_db () {
+	[ -d "${1%/*}" ] || mkdir -p "${1%/*}"
+	[ -f "$1" ] || touch "$1"
+}
+
+get_randomid () {
+	printf '%d%04d' "$(($(__random) % 2 + 1))" "$(($(__random) % 1800))"
+}
+
+# get_title URL_BASE ID
+get_title () {
+	__P_EXPIRED='<p class="text outofperiod">'
+
+	init_db "${DBFILE}"
+
+	set +e
+	__title=$(fgrep "$2	" "${DBFILE}")
+	__err="$?"
+	set -e
+	if [ "${__err}" -eq 0 ]; then
+		__title="${__title#*	}"
+	else
+		__body=$(${FETCH:?Could not fetch page.} "$1$2")
+		__title=$(printf '%s' "${__body}" \
+			| fgrep -A1 '<title>' \
+			| tail -n1 \
+			| sed 's/のアニメ.*$//')
+
+		if printf '%s' "${__body}" | fgrep -q "${__P_EXPIRED}"; then
+			printf '%d	\n' "$2" >> "${DBFILE}"
+			__title=''
+		elif [ -n "${__title}" ]; then
+			printf '%d	%s\n' "$2" "${__title}" >> "${DBFILE}"
+		fi
+	fi
+
+	printf '%s' "${__title}"
+}
+
+case "${1:-}" in
+	'pickup' | '')
+		for i in $(seq 0 ${RETRY_LIMIT}); do
+			id=$(get_randomid)
+			title=$(get_title "${URL_BASE}" ${id})
+
+			[ -z "$title" ] && continue
+
+			printf '%s%s\t%s\n' "${URL_BASE}" "${id}" "${title}"
+			exit 0
+		done
+		exit 1
+		;;
+	'flush')
+		rm -f "${DBFILE}"
+		;;
+	'vacuum')
+		tmp=$(mktemp)
+		sort "${DBFILE}" > "${tmp}"
+		mv "${tmp}" "${DBFILE}"
+		rm -f "${tmp}"
+		;;
+	*)
+		printf 'Usage: danime (pickup|flush|vacuum)\n' 1>&2
+		exit 1
+		;;
+esac

@@ -2,7 +2,8 @@ command -v 'git' >/dev/null || return
 
 # git_ps1
 [ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ] \
-	&& source_if_exists "/usr/share/git/completion/git-prompt.sh"
+	&& [ -f "/usr/share/git/completion/git-prompt.sh" ] \
+	&& . "/usr/share/git/completion/git-prompt.sh"
 
 if ! command -v __git_ps1 >/dev/null; then
 	__git_ps1() {

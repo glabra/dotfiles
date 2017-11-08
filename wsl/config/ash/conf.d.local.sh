@@ -11,7 +11,5 @@ __conf_local_onload () {
 
 __conf_local_cleanup () {
 	unset IS_WSL
-	unset -f __conf_local_onload
-	unset -f __conf_local_cleanup
 }
 

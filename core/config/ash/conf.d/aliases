@@ -5,6 +5,7 @@ alias rm='rm -i'
 alias su='su -'
 
 ## smoother cd
+alias c='cd'
 alias '..'='cd ../'
 alias '....'='cd ../../'
 alias '......'='cd ../../../'

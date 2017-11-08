@@ -6,7 +6,7 @@ if [ -n "${IS_WSL:-}" ] || command -v shuf >/dev/null; then
 	__fortune () {
 		shuf -n1 "${__FORTUNE_FILE}" 2>/dev/null
 	}
-elif [ -n "${BASH_VERSION:-}" ]; then
+elif [ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ]; then
 	__fortune () {
 		head -n$(($RANDOM % $(wc -l < "${__FORTUNE_FILE}") + 1)) "${__FORTUNE_FILE}" \
 			| tail -n1
@@ -18,11 +18,22 @@ else
 	}
 fi
 
+__fortune_fetch () {
+	if command -v curl >/dev/null; then
+		curl -s "$1"
+	elif command -v wget >/dev/null; then
+		wget -q -O - "$1"
+	else
+		printf 'curl, wget not found.' 1>&2
+		return 1
+	fi
+}
+
 __fortune_get_yasuna () {
 	(export LC_ALL=C
 	export LANG=C
 
-	__fetch 'https://raw.githubusercontent.com/sasairc/yasuna/master/quotes/yasuna-quotes' \
+	__fortune_fetch 'https://raw.githubusercontent.com/sasairc/yasuna/master/quotes/yasuna-quotes' \
 		| tail -n +2 | cut -d: -f3 | sort | uniq \
 		> "${__FORTUNE_FILE}"
 	)
@@ -37,7 +48,7 @@ __fortune_get_fushinsha () {
 		[ -f "${__FORTUNE_DIR}/fushinsha${d}.txt" -a "_${d}" != "_${LATEST}" ] \
 			&& continue
 
-		__fetch "https://fushinsha-joho.co.jp/serif.cgi?ym=${d}" \
+		__fortune_fetch "https://fushinsha-joho.co.jp/serif.cgi?ym=${d}" \
 			| egrep -o '<div style="margin-top: 4px; font-size: 24px; line-height: 28px; font-weight: bold;">.+</div>' \
 			| egrep -o '「.+」' \
 			| sed 's/」「/。/g' \

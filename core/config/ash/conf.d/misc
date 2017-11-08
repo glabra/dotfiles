@@ -1,16 +1,14 @@
 # completion
 # disable completion on WSL because completion is too slow
 if [ -z "${IS_WSL:-}" -a -n "${BASH_VERSION:-}" ]; then
-	source_if_exists "/etc/bash-completion/bash_completion"
-	source_if_exists "/usr/share/bash-completion/bash_completion"
+	[ -f "/etc/bash-completion/bash_completion" ] \
+		&& . "/etc/bash-completion/bash_completion"
+	[ -f "/usr/share/bash-completion/bash_completion" ] \
+		&& . "/usr/share/bash-completion/bash_completion"
 fi
 
 # fast-sync
 if [ -x "${HOME}/.dotfiles/bootstrap.sh" ]; then
-	dotfiles_bootstrap () {
-		("${HOME}/.dotfiles/bootstrap.sh" "$@")
-	}
-
 	dotfiles_move () {
 		(
 		if [ -z "${2:-}" ]; then

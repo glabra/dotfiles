@@ -35,25 +35,15 @@ append_path () {
 	esac
 }
 
-__fetch () {
-	if command -v curl >/dev/null; then
-		curl -s "$1"
-	elif command -v wget >/dev/null; then
-		wget -q -O - "$1"
-	else
-		printf 'curl, wget not found.' 1>&2
-		return 1
-	fi
-}
-
 # append ~/.local/bin into PATH before reading configs
 [ -d "${HOME}/.local/bin" ] \
 	&& append_path "${HOME}/.local/bin"
 
 # read config
-source_if_exists "${CONFIG_DIR}/conf.d.local.sh" \
-	&& __conf_local_onload \
-	&& CONF_LOCAL_LOADED=true
+if [ -f "${CONFIG_DIR}/conf.d.local.sh" ]; then
+	. "${CONFIG_DIR}/conf.d.local.sh"
+	__conf_local_onload
+fi
 
 for i in ${CONFIG_DIR}/conf.d/*; do
 	. "${i}"
@@ -61,9 +51,12 @@ done
 unset i
 
 # cleanup
-[ -n "${CONF_LOCAL_LOADED:-}" ] && __conf_local_cleanup
+if [ -f "${CONFIG_DIR}/conf.d.local.sh" ]; then
+	unset -f __conf_local_onload
+	unset -f __conf_local_cleanup
+fi
+
 unset -f is_busybox_binary
-unset -f source_if_exists
 unset -f source_lazy
 unset -f append_path
 
