@@ -6,12 +6,16 @@ export LANG='C'
 IFS=' 	
 '
 
-RETRY_LIMIT=5
-readonly RETRY_LIMIT
+ID_CLAMP=2500
+ID_HIGHBIT_CLAMP=2
+RETRY_LIMIT=10
 DBFILE="${HOME}/.local/share/danime.db"
-readonly DBFILE
 URL_BASE='https://anime.dmkt-sp.jp/animestore/ci_pc?workId='
+readonly RETRY_LIMIT
+readonly DBFILE
 readonly URL_BASE
+readonly ID_CLAMP
+readonly ID_HIGHBIT_CLAMP
 
 # utilities {{{
 if [ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ]; then
@@ -37,7 +41,7 @@ init_db () {
 }
 
 get_randomid () {
-	printf '%d%04d' "$(($(__random) % 2 + 1))" "$(($(__random) % 1800))"
+	printf '%d%04d' "$(($(__random) % ${ID_HIGHBIT_CLAMP} + 1))" "$(($(__random) % ${ID_CLAMP}))"
 }
 
 # get_title URL_BASE ID
@@ -70,18 +74,29 @@ get_title () {
 	printf '%s' "${__title}"
 }
 
+pickup () {
+	for i in $(seq 0 ${RETRY_LIMIT}); do
+		id=$(get_randomid)
+		title=$(get_title "${URL_BASE}" ${id})
+
+		[ -z "$title" ] && continue
+
+		printf '%s%s\t%s\n' "${URL_BASE}" "${id}" "${title}"
+		return 0
+	done
+	return 1
+}
+
 case "${1:-}" in
 	'pickup' | '')
-		for i in $(seq 0 ${RETRY_LIMIT}); do
-			id=$(get_randomid)
-			title=$(get_title "${URL_BASE}" ${id})
-
-			[ -z "$title" ] && continue
-
-			printf '%s%s\t%s\n' "${URL_BASE}" "${id}" "${title}"
-			exit 0
-		done
-		exit 1
+		pickup;;
+	'open')
+		url=$(pickup)
+		url=${url%	*}
+		case $(uname) in
+			'Darwin') open "${url}";;
+			*) printf 'Unsupported OS.\n' 1>&2;;
+		esac
 		;;
 	'flush')
 		rm -f "${DBFILE}"

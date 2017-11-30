@@ -35,28 +35,3 @@ append_path () {
 	esac
 }
 
-# append ~/.local/bin into PATH before reading configs
-[ -d "${HOME}/.local/bin" ] \
-	&& append_path "${HOME}/.local/bin"
-
-# read config
-if [ -f "${CONFIG_DIR}/conf.d.local.sh" ]; then
-	. "${CONFIG_DIR}/conf.d.local.sh"
-	__conf_local_onload
-fi
-
-for i in ${CONFIG_DIR}/conf.d/*; do
-	. "${i}"
-done
-unset i
-
-# cleanup
-if [ -f "${CONFIG_DIR}/conf.d.local.sh" ]; then
-	unset -f __conf_local_onload
-	unset -f __conf_local_cleanup
-fi
-
-unset -f is_busybox_binary
-unset -f source_lazy
-unset -f append_path
-

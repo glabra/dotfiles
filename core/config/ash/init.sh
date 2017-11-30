@@ -4,13 +4,15 @@ case "$-" in
 	*) return ;;
 esac
 
-# consts
 CONFIG_DIR="${HOME}/.config/ash"
-
-# load configs
-. "${CONFIG_DIR}/conf.d.sh"
-
-# cleanup consts
+for i in \
+	${CONFIG_DIR}/pre.d/* \
+	${CONFIG_DIR}/conf.d/* \
+	${CONFIG_DIR}/post.d/*
+do
+	. "${i}"
+done
+unset i
 unset CONFIG_DIR
 
 # initialization finished

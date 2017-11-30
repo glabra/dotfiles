@@ -1,5 +1,5 @@
 # disable ^S
-stty stop undef
+#stty stop undef
 
 # for delete key in st
 #tput smkx

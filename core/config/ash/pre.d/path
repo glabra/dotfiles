@@ -1,0 +1,4 @@
+# append ~/.local/bin into PATH before reading configs
+[ -d "${HOME}/.local/bin" ] \
+	&& append_path "${HOME}/.local/bin"
+

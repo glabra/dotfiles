@@ -10,8 +10,8 @@ alias '..'='cd ../'
 alias '....'='cd ../../'
 alias '......'='cd ../../../'
 alias '........'='cd ../../../../'
-alias '..........'='cd ../../../../../'
 
-## vi
+## misc
 alias v='vi'
+alias s='ssh'
 

@@ -5,6 +5,7 @@
 
 # Mac Fuckin' OS X
 .DS_Store
+._*
 __MACOSX
 
 # TeX
