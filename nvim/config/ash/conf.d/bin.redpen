@@ -1,0 +1,4 @@
+[ ! -d "${HOME}/.local/redpen" ] && return
+
+export PATH="${HOME}/.local/redpen/bin:${PATH}"
+

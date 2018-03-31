@@ -1,4 +1,4 @@
-command -v 'nvim' >/dev/null || return
+# command -v 'nvim' >/dev/null || return
 
 export EDITOR=nvim
 alias vi='nvim'

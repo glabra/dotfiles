@@ -1,0 +1,8 @@
+command -v 'npm' >/dev/null || return
+
+if [ ! -d "${HOME}/.npm-global" ]; then
+        mkdir "${HOME}/.npm-global"
+        npm config set prefix "${HOME}/.npm-global"
+fi
+
+export PATH="${HOME}/.npm-global/bin:${PATH}"

@@ -1,3 +1,7 @@
+if [ ! -f ${HOME}/.keeagent-bridge/pid ]; then
+	rm -f ${HOME}/.keeagent-bridge/socket
+fi
+
 (keeagent-bridge >/dev/null 2>&1 &)
 export SSH_AUTH_SOCK=${HOME}/.keeagent-bridge/socket
 

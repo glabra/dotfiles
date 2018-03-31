@@ -46,7 +46,7 @@ __vim_uninstall () {
 module_install () {
 	(
 	if ! __vim_install; then
-		printf '\nnvim initialization failed.\n'
+		printf '\n%s initialization failed.\n' "${VIM_VARIENT}"
 	fi
 	)
 }

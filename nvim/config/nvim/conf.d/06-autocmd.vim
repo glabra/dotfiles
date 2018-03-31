@@ -11,7 +11,18 @@ augroup vimrc_loading
   autocmd FileType ruby ChangeTabSpaces 2
 
   autocmd FileType tex ChangeTabSpaces 2
-  autocmd FileType tex setlocal makeprg=latexmk\ -xelatex\ -interaction=nonstopmode
   autocmd FileType tex setlocal foldmethod=indent
   autocmd FileType tex setlocal foldenable
+  if executable("latexmk.exe")
+    autocmd FileType tex setlocal makeprg=latexmk.exe\ -interaction=nonstopmode
+  else
+    autocmd FileType tex setlocal makeprg=latexmk\ -interaction=nonstopmode
+  endif
+
+  autocmd FileType vim ChangeTabSpaces 2
+
+  autocmd Filetype *
+    \ if &omnifunc == "" |
+    \   setlocal omnifunc=syntaxcomplete#Complete |
+    \ endif
 augroup END

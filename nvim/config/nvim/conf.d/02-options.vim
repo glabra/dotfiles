@@ -4,27 +4,29 @@ scriptencoding utf-8
 set autoindent
 set autoread
 set autowrite
-set backspace=indent
+set ambiwidth=double
+set backspace=indent,start
 set expandtab
 set fileencodings=utf-8,ucs-bom,iso-2022-jp,euc-jp,cp932,default,latin
-set laststatus=2
 set list
 set listchars=tab:>.,trail:~,nbsp:%
 set magic
-set modeline
+set nomodeline
 set mouse=
 set nocursorline
 set nocursorcolumn
 set nofoldenable
-set number
-set numberwidth=5
+"set number
+"set numberwidth=5
 set noshowmatch
 set smartindent
 set splitbelow
 set wrap
+set laststatus=1
+set rulerformat=%v:%l/%L%=\ \ %P
 set statusline=%f%(\ %M%R%)
 set statusline+=%=\ \ 
-set statusline+=%{(&ft!=''?&ft:'plain').':'.(&fenc!=''?&fenc:&enc).':'.&ff}\ [%2B]\ %v:%l/%L
+set statusline+=%{(&ft!=''?&ft:'plain').':'.(&fenc!=''?&fenc:&enc).':'.&ff}\ [%2B]\ %v:%l/%L\ %P
 
 if (v:version >= 704) && has('patch338')
     set breakindent
@@ -34,12 +36,18 @@ endif
 " 代償として、補完が少し弱くなる
 let g:ruby_path = ""
 
-" allow directory-specific vimrc
-set exrc
-set secure
+" set tex flavour as latex
+let g:tex_flavor = "latex"
 
 " enable files
 set swapfile
 set undofile
 set backup
 set backupdir-=.
+
+" if backupdir not exist, create it
+if !isdirectory(&backupdir)
+    call mkdir(&backupdir)
+endif
+
+colorscheme industry
