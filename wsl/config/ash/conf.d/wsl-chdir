@@ -1,6 +1,0 @@
-__chdir_to_wsluserdir () {
-	cd "${WSL_USERDIR}"
-}
-
-alias cdw='__chdir_to_wsluserdir'
-

@@ -47,7 +47,7 @@ set backupdir-=.
 
 " if backupdir not exist, create it
 if !isdirectory(&backupdir)
-    call mkdir(&backupdir)
+    call mkdir(&backupdir, "p")
 endif
 
 colorscheme industry
