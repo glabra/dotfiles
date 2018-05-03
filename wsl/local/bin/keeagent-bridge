@@ -5,14 +5,18 @@ IFS='
 '
 umask 0022
 
-KEEAGENT_SOCK="${WSL_USERDIR:-/mnt/c/Users/not_j}/AppData/Local/Temp/syslockfile"
+KEEAGENT_SOCK="${1?KEEAGENT_SOCK undefined}"
 
 run="${HOME}/.keeagent-bridge"
 [ ! -d "${run}" ] && mkdir -p -- "${run}"
 
 if [ ! -f "${run}/bridge.py" ]; then
 	url='https://gist.githubusercontent.com/duebbert/4298b5f4eb7cc064b09e9d865dd490c9/raw/50d813f8ab6ce792bd30374602abbb9c836ac66b/msysgit2unix-socket.py'
-	curl -Lo "${run}/bridge.py" ${url}
+	if command -v curl >/dev/null; then
+		curl -Lo "${run}/bridge.py" ${url}
+	else
+		wget -q -O "${run}/bridge.py" ${url}
+	fi
 	chmod 755 "${run}/bridge.py"
 fi
 
