@@ -1,0 +1,3 @@
+W="${WSL_USERDIR}"
+alias open="cmd.exe /C START"
+
