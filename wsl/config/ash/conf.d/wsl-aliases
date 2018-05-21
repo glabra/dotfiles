@@ -1,3 +1,4 @@
 W="${WSL_USERDIR}"
+alias cdw="cd ${WSL_USERDIR}"
 alias open="cmd.exe /C START"
 
