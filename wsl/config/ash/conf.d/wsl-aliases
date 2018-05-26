@@ -1,3 +1,4 @@
+# TODO: consider using WSLENV=USERPROFILE/pu
 W=$(wslpath $(cmd.exe /D /C 'SET /P <NUL=%USERPROFILE%' 2>/dev/null))
 alias cdw="cd ${W}"
 alias open="cmd.exe /C START"
