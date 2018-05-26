@@ -1,4 +1,4 @@
-W="${WSL_USERDIR}"
-alias cdw="cd ${WSL_USERDIR}"
+W=$(wslpath $(cmd.exe /D /C 'SET /P T=%USERPROFILE% < nul' 2>/dev/null))
+alias cdw="cd ${W}"
 alias open="cmd.exe /C START"
 

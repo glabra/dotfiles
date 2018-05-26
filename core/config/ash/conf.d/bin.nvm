@@ -1,5 +1,0 @@
-[ -d "$HOME/.nvm" ] || return
-
-export NVM_DIR="$HOME/.nvm"
-source_lazy "$NVM_DIR/nvm.sh" nvm npm node
-

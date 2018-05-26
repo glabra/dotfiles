@@ -1,5 +1,6 @@
 ## is_busybox_binary bin
 is_busybox_binary () {
+	[ -n "${ASH_LIGHTWEIGHT_MODE:-}" ] && return 1
 	case $(readlink "$(command -v $1)") in
 		*/busybox) return 0;;
 		*) return 1;;
@@ -33,5 +34,11 @@ append_path () {
 		*${1}*) ;;
 		*) export PATH="${1}:${PATH}";;
 	esac
+}
+
+## is_binary_provided NAME
+is_binary_provided () {
+	[ -n "${ASH_LIGHTWEIGHT_MODE:-}" ] \
+		|| command -v "$1" >/dev/null
 }
 

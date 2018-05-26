@@ -1,3 +1,4 @@
+unset -f is_binary_provided
 unset -f is_busybox_binary
 unset -f source_if_exists
 unset -f source_lazy

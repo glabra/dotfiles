@@ -2,7 +2,7 @@ __FORTUNE_DIR="${HOME}/.local/share/fortune"
 __FORTUNE_FILE="${__FORTUNE_DIR}/fortune.txt"
 
 # on WSL, shuf must be provided
-if [ -n "${IS_WSL:-}" ] || command -v shuf >/dev/null; then
+if [ -n "${ASH_LIGHTWEIGHT_MODE:-}" ] || command -v shuf >/dev/null; then
 	__fortune () {
 		shuf -n1 "${__FORTUNE_FILE}" 2>/dev/null
 	}

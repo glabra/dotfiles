@@ -1,12 +1,8 @@
-# on WSL, `less` should be provided
-if [ -z "${IS_WSL:-}" ]; then
-	command -v 'less' >/dev/null || return
-fi
+is_binary_provided 'less' || return
 
 alias le=less
 
-# on WSL, `less` should be non-busybox binary
-if [ -n "${IS_WSL:-}" ] || ! is_busybox_binary 'less'; then
+if ! is_busybox_binary 'less'; then
         alias less='less -R'
 fi
 
